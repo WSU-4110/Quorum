@@ -1,0 +1,9 @@
+C:\Users\goatl\source\repos\Quorum\QuorumDB\bin\Debug\netstandard2.0\QuorumDB.deps.json
+C:\Users\goatl\source\repos\Quorum\QuorumDB\bin\Debug\netstandard2.0\QuorumDB.dll
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.csprojAssemblyReference.cache
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.AssemblyInfoInputs.cache
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.AssemblyInfo.cs
+C:\Users\goatl\source\repos\Quorum\QuorumDB\bin\Debug\netstandard2.0\QuorumDB.pdb
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.csproj.CoreCompileInputs.cache
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.dll
+C:\Users\goatl\source\repos\Quorum\QuorumDB\obj\Debug\netstandard2.0\QuorumDB.pdb

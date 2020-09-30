@@ -76,6 +76,13 @@ using Quorum.Shared;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 10 "C:\Users\goatl\source\repos\Quorum\Quorum\_Imports.razor"
+using Quorum.Model;
+
+#line default
+#line hidden
+#nullable disable
     public partial class NavMenu : Microsoft.AspNetCore.Components.ComponentBase
     {
         #pragma warning disable 1998

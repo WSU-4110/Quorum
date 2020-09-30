@@ -4,6 +4,69 @@
     "C:\\Users\\goatl\\source\\repos\\Quorum\\Quorum\\Quorum.csproj": {}
   },
   "projects": {
+    "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\QuorumDB.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\QuorumDB.csproj",
+        "projectName": "QuorumDB",
+        "projectPath": "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\QuorumDB.csproj",
+        "packagesPath": "C:\\Users\\goatl\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\goatl\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "netstandard2.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "netstandard2.0": {
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "netstandard2.0": {
+          "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.35, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[8.0.21, )"
+            },
+            "NETStandard.Library": {
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.0.3, )",
+              "autoReferenced": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.402\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
     "C:\\Users\\goatl\\source\\repos\\Quorum\\Quorum\\Quorum.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -26,7 +89,11 @@
         },
         "frameworks": {
           "netcoreapp3.1": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\QuorumDB.csproj": {
+                "projectPath": "C:\\Users\\goatl\\source\\repos\\Quorum\\QuorumDB\\QuorumDB.csproj"
+              }
+            }
           }
         },
         "warningProperties": {
@@ -38,6 +105,10 @@
       "frameworks": {
         "netcoreapp3.1": {
           "dependencies": {
+            "Dapper": {
+              "target": "Package",
+              "version": "[2.0.35, )"
+            },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
               "version": "[3.1.8, )"
@@ -57,6 +128,10 @@
             "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
               "version": "[3.1.8, )"
+            },
+            "MySql.Data": {
+              "target": "Package",
+              "version": "[8.0.21, )"
             }
           },
           "imports": [

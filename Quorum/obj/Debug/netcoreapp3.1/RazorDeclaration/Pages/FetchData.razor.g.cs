@@ -77,6 +77,13 @@ using Quorum.Shared;
 #line hidden
 #nullable disable
 #nullable restore
+#line 10 "C:\Users\goatl\source\repos\Quorum\Quorum\_Imports.razor"
+using Quorum.Model;
+
+#line default
+#line hidden
+#nullable disable
+#nullable restore
 #line 3 "C:\Users\goatl\source\repos\Quorum\Quorum\Pages\FetchData.razor"
 using Quorum.Data;
 

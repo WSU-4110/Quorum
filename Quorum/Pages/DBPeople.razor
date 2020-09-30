@@ -1,0 +1,24 @@
+﻿@page "/people"
+
+@using  Microsoft.Extensions.Configuration
+
+@inject QuorumDB.IDataAccess _data
+@inject IConfiguration _config
+
+@foreach (var user in userList)
+{
+    <p>@user.FirstName @user.LastName @user.EmailAddress</p>
+}
+
+<h1>People table</h1>
+
+@code {
+    List<UserModel> userList;
+
+    protected override async Task OnInitializedAsync()
+    {
+        string sql = "select * from users";
+        userList = await _data.LoadData<UserModel, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+    }
+}
+
