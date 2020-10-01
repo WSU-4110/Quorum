@@ -123,3 +123,6 @@ C:\Users\goatl\source\repos\Quorum\Quorum\bin\Debug\netcoreapp3.1\System.Xml.XPa
 C:\Users\goatl\source\repos\Quorum\Quorum\bin\Debug\netcoreapp3.1\QuorumDB.pdb
 C:\Users\goatl\source\repos\Quorum\Quorum\obj\Debug\netcoreapp3.1\RazorDeclaration\Pages\DBPeople.razor.g.cs
 C:\Users\goatl\source\repos\Quorum\Quorum\obj\Debug\netcoreapp3.1\Razor\Pages\DBPeople.razor.g.cs
+C:\Users\goatl\source\repos\Quorum\Quorum\bin\Debug\netcoreapp3.1\Properties\serviceDependencies.QuorumBlazor - Web Deploy.json
+C:\Users\goatl\source\repos\Quorum\Quorum\bin\Debug\netcoreapp3.1\Properties\ServiceDependencies\QuorumBlazor - Web Deploy\mssql1.arm.json
+C:\Users\goatl\source\repos\Quorum\Quorum\bin\Debug\netcoreapp3.1\Properties\ServiceDependencies\QuorumBlazor - Web Deploy\profile.arm.json
