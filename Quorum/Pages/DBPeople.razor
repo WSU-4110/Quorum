@@ -1,24 +1,25 @@
 ﻿@page "/people"
 
 @using  Microsoft.Extensions.Configuration
+@using  Microsoft.AspNetCore.Identity
 
 @inject QuorumDB.IDataAccess _data
 @inject IConfiguration _config
 
 @foreach (var user in userList)
 {
-    <p>@user.FirstName @user.LastName @user.EmailAddress</p>
+    <p>@user.UserName</p>
 }
 
 <h1>People table</h1>
 
 @code {
-    List<UserModel> userList;
-
+    List<IdentityUser> userList;
+    // TODO: fix sql connection
     protected override async Task OnInitializedAsync()
     {
-        string sql = "select * from users";
-        userList = await _data.LoadData<UserModel, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+        string sql = "select * from AspNetUsers";
+        userList = await _data.LoadData<IdentityUser, dynamic>(sql, new { }, _config.GetConnectionString("quorumDB"));
     }
 }
 
