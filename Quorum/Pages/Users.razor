@@ -1,0 +1,41 @@
+﻿@page "/users"
+
+@using  Microsoft.Extensions.Configuration
+@using  Microsoft.AspNetCore.Identity
+
+@inject QuorumDB.IUserData _data
+<h1>People table</h1>
+
+@if (userList is null)
+{
+    <p>Loading.............</p>
+}
+else
+{   
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>User Name</th>
+            </tr>        
+        </thead>
+        <tbody>
+            @foreach (var user in userList)
+            {
+                <tr>
+                    <td>@user.Email</td>
+                    <td>@user.UserName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@code {
+    private List<IdentityUser> userList;
+    protected override async Task OnInitializedAsync()
+    {
+        userList = await _data.GetUsers();
+    }
+}

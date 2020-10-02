@@ -4,14 +4,26 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 
 namespace QuorumDB
 {
     public class DataAccess : IDataAccess
     {
-        public async Task<List<T>> LoadData<T, U>(string sql, U parameters, string connectionString)
+        private readonly IConfiguration _config;
+
+        public string ConnectionString { get; set; } = "quorumDB";
+
+        public DataAccess(IConfiguration config)
         {
+            _config = config;
+        }
+
+        public async Task<List<T>> LoadData<T, U>(string sql, U parameters)
+        {
+            string connectionString = _config.GetConnectionString(ConnectionString);
+
             using (IDbConnection dbConnection = new SqlConnection(connectionString))
             {
                 var rows = await dbConnection.QueryAsync<T>(sql, parameters);
@@ -19,12 +31,13 @@ namespace QuorumDB
             }
         }
 
-        public Task Execute<U>(string sql, U parameters, string connectionString)
+        public Task Execute<U>(string sql, U parameters)
         {
+            string connectionString = _config.GetConnectionString(ConnectionString);
+
             using (IDbConnection dbConnection = new SqlConnection(connectionString))
             {
-                var rows = dbConnection.ExecuteAsync(sql, parameters);
-                return rows;
+                return dbConnection.ExecuteAsync(sql, parameters);
             }
         }
     }
