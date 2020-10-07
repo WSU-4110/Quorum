@@ -38,9 +38,8 @@ namespace Quorum
             //The environment chooses between the correct db
             //Prod db is stored in secrets while dev is stored in appsettings.dev.json
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("quorum")));
-            
-            
+                options.UseSqlServer(Configuration.GetConnectionString("quorum")));
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
@@ -48,7 +47,7 @@ namespace Quorum
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddSingleton<WeatherForecastService>();
 
-            services.AddSingleton<IDataAccess, DataAccess>();
+            services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
         }
 

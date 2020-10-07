@@ -8,9 +8,9 @@ namespace QuorumDB
 {
     public class UserData : IUserData
     {
-        private readonly IDataAccess _db;
+        private readonly IDbAccess _db;
 
-        public UserData(IDataAccess db)
+        public UserData(IDbAccess db)
         {
             _db = db;
         }
