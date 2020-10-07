@@ -16,25 +16,31 @@ using Microsoft.Extensions.Hosting;
 using Quorum.Areas.Identity;
 using Quorum.Data;
 using QuorumDB;
+using Microsoft.IdentityModel.Logging;
 
 namespace Quorum
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
+            Env = env;
         }
 
         public IConfiguration Configuration { get; }
+        private IWebHostEnvironment Env { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            //The environment chooses between the correct db
+            //Prod db is stored in secrets while dev is stored in appsettings.dev.json
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("quorumDB")));
+            options.UseSqlServer(Configuration.GetConnectionString("quorum")));
+            
+            
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
@@ -47,12 +53,13 @@ namespace Quorum
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app)
         {
-            if (env.IsDevelopment())
+            if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
+                IdentityModelEventSource.ShowPII = true;
             }
             else
             {

@@ -13,7 +13,7 @@ namespace QuorumDB
     {
         private readonly IConfiguration _config;
 
-        public string ConnectionString { get; set; } = "quorumDB";
+        public string ConnectionString { get; set; } = "quorum";
 
         public DataAccess(IConfiguration config)
         {
