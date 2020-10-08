@@ -38,6 +38,8 @@
     <Compile Remove="Data\Migrations\20201008002816_shadowkey.Designer.cs" />
     <Compile Remove="Data\Migrations\20201008003256_shadowkey.cs" />
     <Compile Remove="Data\Migrations\20201008003256_shadowkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008203541_test1.cs" />
+    <Compile Remove="Data\Migrations\20201008203541_test1.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
