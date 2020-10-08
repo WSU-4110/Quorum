@@ -12,7 +12,7 @@ namespace Quorum.Data
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
-        public DbSet<Forum> ForumModels { get; set; }
+        public DbSet<Forum> Forums { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<ForumMod> Mod { get; set; }
    

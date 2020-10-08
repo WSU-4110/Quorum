@@ -3,7 +3,7 @@
     "mssql1": {
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/quorumwsu/databases/Quorum",
       "type": "mssql.azure",
-      "connectionId": "quorumDB",
+      "connectionId": "quorum",
       "secretStore": "AzureAppSettings"
     }
   }

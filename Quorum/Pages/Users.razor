@@ -16,6 +16,7 @@ else
     <table class="table table-striped">
         <thead>
             <tr>
+                <th>Username</th>
                 <th>Email</th>
                 <th>User Name</th>
             </tr>        
@@ -24,6 +25,7 @@ else
             @foreach (var user in userList)
             {
                 <tr>
+                    <td>@user.UserName</td>
                     <td>@user.Email</td>
                     <td>@user.UserName</td>
                 </tr>
