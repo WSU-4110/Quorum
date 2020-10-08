@@ -8,6 +8,36 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20201007040935_TestMigration.cs" />
     <Compile Remove="Data\Migrations\20201007040935_TestMigration.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007192439_Intial-Quorum-Setup.cs" />
+    <Compile Remove="Data\Migrations\20201007192439_Intial-Quorum-Setup.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007192707_Intial-Quorum-Setup.cs" />
+    <Compile Remove="Data\Migrations\20201007192707_Intial-Quorum-Setup.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007200627_ReplyContraint.cs" />
+    <Compile Remove="Data\Migrations\20201007200627_ReplyContraint.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007201429_foreignkey2.cs" />
+    <Compile Remove="Data\Migrations\20201007201429_foreignkey2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007210250_Foreignkeytest4.cs" />
+    <Compile Remove="Data\Migrations\20201007210250_Foreignkeytest4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007211638_ModforeignKey.cs" />
+    <Compile Remove="Data\Migrations\20201007211638_ModforeignKey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007212416_modkey.cs" />
+    <Compile Remove="Data\Migrations\20201007212416_modkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007232707_1.cs" />
+    <Compile Remove="Data\Migrations\20201007232707_1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007233310_abc.cs" />
+    <Compile Remove="Data\Migrations\20201007233310_abc.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201007235125_FinalStep.cs" />
+    <Compile Remove="Data\Migrations\20201007235125_FinalStep.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008002550_shadowkey.cs" />
+    <Compile Remove="Data\Migrations\20201008002550_shadowkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008002649_shadowkey.cs" />
+    <Compile Remove="Data\Migrations\20201008002649_shadowkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008002714_shadowkey.cs" />
+    <Compile Remove="Data\Migrations\20201008002714_shadowkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008002816_shadowkey.cs" />
+    <Compile Remove="Data\Migrations\20201008002816_shadowkey.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201008003256_shadowkey.cs" />
+    <Compile Remove="Data\Migrations\20201008003256_shadowkey.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

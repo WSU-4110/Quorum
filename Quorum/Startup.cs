@@ -16,6 +16,7 @@ using Microsoft.Extensions.Hosting;
 using Quorum.Areas.Identity;
 using Quorum.Data;
 using QuorumDB;
+using QuorumDB.Models;
 using Microsoft.IdentityModel.Logging;
 
 namespace Quorum
@@ -40,11 +41,13 @@ namespace Quorum
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("quorum")));
 
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddIdentity<AspNetUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddSingleton<WeatherForecastService>();
 
             services.AddSingleton<IDbAccess, DbAccess>();

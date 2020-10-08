@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quorum.Data;
 
 namespace Quorum.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201007211122_BasicSetup")]
+    partial class BasicSetup
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -150,7 +152,7 @@ namespace Quorum.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("QuorumDB.Models.AspNetUser", b =>
+            modelBuilder.Entity("QuorumDB.Models.AspNetUserModel", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -222,7 +224,7 @@ namespace Quorum.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("QuorumDB.Models.Forum", b =>
+            modelBuilder.Entity("QuorumDB.Models.ForumModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -235,7 +237,7 @@ namespace Quorum.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ForumId")
+                    b.Property<int?>("ForumModelId")
                         .HasColumnType("int");
 
                     b.Property<string>("Group")
@@ -255,38 +257,12 @@ namespace Quorum.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ForumId");
+                    b.HasIndex("ForumModelId");
 
                     b.ToTable("ForumModels");
                 });
 
-            modelBuilder.Entity("QuorumDB.Models.ForumMod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("ForumId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ForumModelId")
-                        .HasColumnType("int")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)")
-                        .HasMaxLength(450);
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ForumId");
-
-                    b.ToTable("Mod");
-                });
-
-            modelBuilder.Entity("QuorumDB.Models.ForumReply", b =>
+            modelBuilder.Entity("QuorumDB.Models.ForumReplyModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -299,19 +275,45 @@ namespace Quorum.Data.Migrations
                     b.Property<int>("ForumId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ForumModelId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LikeCount")
                         .HasColumnType("int")
                         .HasMaxLength(256);
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)")
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
                         .HasMaxLength(450);
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ForumId");
+                    b.HasIndex("ForumModelId");
 
                     b.ToTable("ForumReplies");
+                });
+
+            modelBuilder.Entity("QuorumDB.Models.ModModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ForumModelId")
+                        .HasColumnType("int")
+                        .HasMaxLength(256);
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(256)")
+                        .HasMaxLength(256);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ForumModelId");
+
+                    b.ToTable("Mod");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -325,7 +327,7 @@ namespace Quorum.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("QuorumDB.Models.AspNetUser", null)
+                    b.HasOne("QuorumDB.Models.AspNetUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -334,7 +336,7 @@ namespace Quorum.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("QuorumDB.Models.AspNetUser", null)
+                    b.HasOne("QuorumDB.Models.AspNetUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -349,7 +351,7 @@ namespace Quorum.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("QuorumDB.Models.AspNetUser", null)
+                    b.HasOne("QuorumDB.Models.AspNetUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -358,32 +360,32 @@ namespace Quorum.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("QuorumDB.Models.AspNetUser", null)
+                    b.HasOne("QuorumDB.Models.AspNetUserModel", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("QuorumDB.Models.Forum", b =>
+            modelBuilder.Entity("QuorumDB.Models.ForumModel", b =>
                 {
-                    b.HasOne("QuorumDB.Models.Forum", null)
+                    b.HasOne("QuorumDB.Models.ForumModel", null)
                         .WithMany("ChildForums")
-                        .HasForeignKey("ForumId");
+                        .HasForeignKey("ForumModelId");
                 });
 
-            modelBuilder.Entity("QuorumDB.Models.ForumMod", b =>
+            modelBuilder.Entity("QuorumDB.Models.ForumReplyModel", b =>
                 {
-                    b.HasOne("QuorumDB.Models.Forum", null)
-                        .WithMany("Mods")
-                        .HasForeignKey("ForumId");
-                });
-
-            modelBuilder.Entity("QuorumDB.Models.ForumReply", b =>
-                {
-                    b.HasOne("QuorumDB.Models.Forum", null)
+                    b.HasOne("QuorumDB.Models.ForumModel", null)
                         .WithMany("ForumReplies")
-                        .HasForeignKey("ForumId")
+                        .HasForeignKey("ForumModelId");
+                });
+
+            modelBuilder.Entity("QuorumDB.Models.ModModel", b =>
+                {
+                    b.HasOne("QuorumDB.Models.ForumModel", null)
+                        .WithMany("Mods")
+                        .HasForeignKey("ForumModelId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

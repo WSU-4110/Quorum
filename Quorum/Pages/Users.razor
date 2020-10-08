@@ -1,7 +1,8 @@
 ﻿@page "/users"
 
-@using  Microsoft.Extensions.Configuration
-@using  Microsoft.AspNetCore.Identity
+@using Microsoft.Extensions.Configuration
+@using Microsoft.AspNetCore.Identity
+@using QuorumDB.Models;
 
 @inject QuorumDB.IUserData _data
 <h1>People table</h1>
@@ -33,7 +34,7 @@ else
 
 
 @code {
-    private List<IdentityUser> userList;
+    private List<AspNetUser> userList;
     protected override async Task OnInitializedAsync()
     {
         userList = await _data.GetUsers();
