@@ -34,6 +34,6 @@ namespace QuorumDB.Models
         public List<ForumReply> ForumReplies { get; set; }
 
         [ForeignKey("UserId")]
-        public AspNetUser AspNetUserModel;
+        public AspNetUser AspNetUserModel { get; set; }
     }
 }

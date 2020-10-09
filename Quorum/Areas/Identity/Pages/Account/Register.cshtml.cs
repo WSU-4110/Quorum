@@ -80,7 +80,7 @@ namespace Quorum.Areas.Identity.Pages.Account
             //ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
-                var user = new AspNetUser { UserName = Input.UserName, Email = Input.Email };
+                var user = new AspNetUser { UserName = Input.UserName, Email = Input.Email , DateRegistered = DateTime.Now};
                 var result = await _userManager.CreateAsync(user, Input.Password);
                 if (result.Succeeded)
                 {

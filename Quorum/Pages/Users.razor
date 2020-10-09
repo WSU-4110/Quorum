@@ -5,33 +5,34 @@
 @using QuorumDB.Models;
 
 @inject QuorumDB.IUserData _data
-<h1>People table</h1>
+<h1>Users table</h1>
 
-@if (userList is null)
-{
-    <p>Loading.............</p>
-}
-else
-{   
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>User Name</th>
-            </tr>        
-        </thead>
-        <tbody>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>User Name</th>
+            <th>Date Registered</th>
+        </tr>        
+    </thead>
+    <tbody>
+        @if (userList is null)
+        {
+            <tr>Loading Data...</tr>
+        }
+        else
+        {
             @foreach (var user in userList)
             {
                 <tr>
                     <td>@user.Email</td>
                     <td>@user.UserName</td>
+                    <td>@user.DateRegistered</td>
                 </tr>
             }
-        </tbody>
-    </table>
-}
-
+        }
+    </tbody>
+</table>
 
 @code {
     private List<AspNetUser> userList;

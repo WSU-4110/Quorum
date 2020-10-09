@@ -40,6 +40,10 @@
     <Compile Remove="Data\Migrations\20201008003256_shadowkey.Designer.cs" />
     <Compile Remove="Data\Migrations\20201008203541_test1.cs" />
     <Compile Remove="Data\Migrations\20201008203541_test1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201009055343_ForeignKeyRestraints.cs" />
+    <Compile Remove="Data\Migrations\20201009055343_ForeignKeyRestraints.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201009055830_ForeignKeyRestraints.cs" />
+    <Compile Remove="Data\Migrations\20201009055830_ForeignKeyRestraints.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
