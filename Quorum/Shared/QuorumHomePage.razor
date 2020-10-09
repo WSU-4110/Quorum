@@ -1,0 +1,37 @@
+﻿@using Microsoft.Extensions.Configuration
+@using Microsoft.AspNetCore.Identity
+@using QuorumDB.Models;
+
+@inject QuorumDB.IUserData _data
+<h4>Child Component</h4>
+
+<table class="table table-dark col-md-8">
+    <thead>
+        <tr>
+            <th>Quorums</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (forums is null)
+        {
+            <tr>Loading Data...</tr>
+        }
+        else
+        {
+            @foreach (var forum in forums)
+            {
+                <tr>
+                    <td>@forum.Title</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<Forum> forums;
+    protected override async Task OnInitializedAsync()
+    {
+        forums = await _data.GetQuorumHomePage();
+    }
+}

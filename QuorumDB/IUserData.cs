@@ -8,5 +8,6 @@ namespace QuorumDB
     public interface IUserData
     {
         Task<List<AspNetUser>> GetUsers();
+        Task<List<Forum>> GetQuorumHomePage();
     }
 }
