@@ -257,9 +257,7 @@ namespace Quorum.Migrations
 
                     b.HasIndex("ForumId");
 
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Forums");
+                    b.ToTable("ForumModels");
                 });
 
             modelBuilder.Entity("QuorumDB.Models.ForumMod", b =>
@@ -284,8 +282,6 @@ namespace Quorum.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ForumId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Mod");
                 });
@@ -314,8 +310,6 @@ namespace Quorum.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ForumId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ForumReplies");
                 });
@@ -376,10 +370,6 @@ namespace Quorum.Migrations
                     b.HasOne("QuorumDB.Models.Forum", null)
                         .WithMany("ChildForums")
                         .HasForeignKey("ForumId");
-
-                    b.HasOne("QuorumDB.Models.AspNetUser", "AspNetUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("QuorumDB.Models.ForumMod", b =>
@@ -387,12 +377,6 @@ namespace Quorum.Migrations
                     b.HasOne("QuorumDB.Models.Forum", null)
                         .WithMany("Mods")
                         .HasForeignKey("ForumId");
-
-                    b.HasOne("QuorumDB.Models.AspNetUser", "AspNetUser")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("QuorumDB.Models.ForumReply", b =>
@@ -402,10 +386,6 @@ namespace Quorum.Migrations
                         .HasForeignKey("ForumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("QuorumDB.Models.AspNetUser", "AspNetUser")
-                        .WithMany()
-                        .HasForeignKey("UserId");
                 });
 #pragma warning restore 612, 618
         }

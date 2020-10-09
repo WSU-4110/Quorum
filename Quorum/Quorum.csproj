@@ -40,12 +40,6 @@
     <Compile Remove="Data\Migrations\20201008003256_shadowkey.Designer.cs" />
     <Compile Remove="Data\Migrations\20201008203541_test1.cs" />
     <Compile Remove="Data\Migrations\20201008203541_test1.Designer.cs" />
-    <Compile Remove="Data\Migrations\20201008232313_RenameModels.cs" />
-    <Compile Remove="Data\Migrations\20201008232313_RenameModels.Designer.cs" />
-    <Compile Remove="Data\Migrations\20201008232935_forumkey.cs" />
-    <Compile Remove="Data\Migrations\20201008232935_forumkey.Designer.cs" />
-    <Compile Remove="Data\Migrations\20201008233103_forumkey.cs" />
-    <Compile Remove="Data\Migrations\20201008233103_forumkey.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using QuorumDB.Models;
+﻿using QuorumDB.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -35,6 +34,6 @@ namespace QuorumDB.Models
         public List<ForumReply> ForumReplies { get; set; }
 
         [ForeignKey("UserId")]
-        public AspNetUser AspNetUser { get; set; }
+        public AspNetUser AspNetUserModel;
     }
 }

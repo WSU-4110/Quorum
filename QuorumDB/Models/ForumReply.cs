@@ -23,6 +23,6 @@ namespace QuorumDB.Models
         public DateTime CreatedTime { get; set; }
 
         [ForeignKey("UserId")]
-        public AspNetUser AspNetUser { get; set; }
+        public AspNetUser AspNetUserModel;
     }
 }

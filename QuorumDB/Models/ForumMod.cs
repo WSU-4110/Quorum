@@ -22,6 +22,6 @@ namespace QuorumDB.Models
         public int ForumModelId { get; set; }
 
         [ForeignKey("UserId")]
-        public AspNetUser AspNetUser { get; set; }
+        public IdentityUser IdentityUser;
     }
 }
