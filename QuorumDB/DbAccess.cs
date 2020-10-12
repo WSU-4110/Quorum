@@ -9,13 +9,13 @@ using System.Data.SqlClient;
 
 namespace QuorumDB
 {
-    public class DataAccess : IDataAccess
+    public class DbAccess : IDbAccess
     {
         private readonly IConfiguration _config;
 
-        public string ConnectionString { get; set; } = "quorumDB";
+        public string ConnectionString { get; set; } = "quorum";
 
-        public DataAccess(IConfiguration config)
+        public DbAccess(IConfiguration config)
         {
             _config = config;
         }

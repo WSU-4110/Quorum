@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using QuorumDB.Models;
 
 namespace Quorum.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<AspNetUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+        public DbSet<Forum> Forums { get; set; }
+        public DbSet<ForumReply> ForumReplies { get; set; }
+        public DbSet<ForumMod> Mod { get; set; }
+   
     }
 }
