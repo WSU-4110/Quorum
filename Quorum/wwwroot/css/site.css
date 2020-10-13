@@ -34,7 +34,9 @@ app {
     margin-right: 10rem;
     margin-left: 10rem;
 }
-
+.main .content{
+    margin-bottom: 2em;
+}
     .main .top-row {
         background-color: #e5e5e5;
         border-bottom: 1px solid #d6d5d5;
@@ -75,6 +77,11 @@ app {
 .main .top-row a:first-child {
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+footer{
+    text-align: center;
+    margin-bottom: 1em;
 }
 
 .sidebar {
@@ -167,7 +174,7 @@ app {
     top: 0.5rem;
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 1200px) {
     .main .top-row:not(.auth) {
         display: none;
     }
