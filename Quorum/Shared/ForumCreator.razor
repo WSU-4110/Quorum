@@ -1,0 +1,47 @@
+﻿
+@using QuorumDB.Models
+@inject Quorum.Data.ApplicationDbContext _context
+
+
+<div class="forum-form">
+    <EditForm Model=@forum OnValidSubmit=@HandleValidSubmit>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="ForumTitle">Forum Title:</label>
+            <InputText id="ForumTitle" class="form-control" @bind-Value="forum.Title" />
+        </div>
+
+        <div class="form-group">
+            <label for="Description">Description:</label>
+            <InputTextArea id="Description" class="form-control" @bind-Value="forum.Description" />
+        </div>
+
+        <div class="form-group">
+            <label for="IsPrivate">Private?</label>
+            <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forum.isPrivate" />
+        </div>
+
+        <button class="btn btn-primary" type="submit">Create Forum</button>
+    </EditForm>
+</div>
+
+@code {
+    private Forum forum = new Forum();
+
+    private async void HandleValidSubmit()
+    {
+        try
+        {
+            _context.Forums.Add(forum);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            base.StateHasChanged();
+        }
+        forum = new Forum();
+        base.StateHasChanged();
+    }
+}
