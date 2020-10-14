@@ -22,8 +22,8 @@ namespace QuorumDB.Models
         public string Description { get; set; }
                 
         public string Group { get; set; }
-        
-        public DateTime DateCreated { get; set; }
+
+        public DateTime DateCreated { get; set; } = DateTime.Now;
 
         public bool isPrivate { get; set; } = false;
 
