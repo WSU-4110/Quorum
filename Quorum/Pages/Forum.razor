@@ -1,0 +1,12 @@
+﻿@page "/q"
+@page "/q/{text}"
+@page "/q/{text}/{text2}"
+
+<h3>@text</h3>
+<h4>@text2</h4>
+
+@functions{ 
+    [Parameter]
+    public string text { get; set; } = "Quorum1";
+    [Parameter]
+    public string text2 { get; set; } = "Quorum2"; }
