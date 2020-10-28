@@ -14,6 +14,13 @@ namespace Quorum.Data
         public DbSet<Forum> Forums { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<ForumMod> Mod { get; set; }
-   
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Forum>()
+                .HasIndex(f => f.Url);
+        }
     }
 }
