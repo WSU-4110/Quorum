@@ -18,6 +18,8 @@ using Quorum.Data;
 using QuorumDB;
 using QuorumDB.Models;
 using Microsoft.IdentityModel.Logging;
+using Quorum.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace Quorum
 {
@@ -51,6 +53,10 @@ namespace Quorum
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
+
+            //This junk needs to be removed soon
             services.AddSingleton<WeatherForecastService>();
 
             services.AddSingleton<IDbAccess, DbAccess>();
