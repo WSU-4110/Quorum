@@ -4,52 +4,83 @@
 
 @inject QuorumDB.IUserData _data
 <div class="panel panel-default">
-    <table class="table col-md-8">
-        <thead>
-            <tr>
-                <th>Pages</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><a href="counter">Counter</a></td>
-            </tr>
-            <tr>
-                <td><a href="FetchData">Fetch Data</a></td>
-            </tr>
-            <tr>
-                <td><a href="Users">Users</a></td>
-            </tr>
-            <tr>
-                <td><a href="forumcreationpage">Forum Creation</a></td>
-            </tr>
-        </tbody>
-    </table>
-    <table class="table col-md-8">
-        <thead>
-            <tr>
-                <th>Quorums</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (forums is null)
-            {
-                <tr>
-                    <td >Loading data...</td>
-                </tr>
-            }
-            else
-            {
-                @foreach (var forum in forums)
-                {
+    <div class="row">
+        <div class="column">
+            <div class="leftside">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Quorums</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (forums is null)
+                        {
+                            <tr>
+                                <td >Loading data...</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var forum in forums)
+                            {
+                                <tr>
+                                    <td><a href="q/@forum.Title">@forum.Title</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pages2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="counter">Counter</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="FetchData">Fetch Data</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="Users">Users</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="forumcreationpage">Forum Creation</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+        <div class="column">
+            <table class="table">
+                <thead>
                     <tr>
-                        <td><a href="q/@forum.Title"></a>@forum.Title</td>
+                        <th>Pages1</th>
                     </tr>
-                }
-            }
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="counter">Counter</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="FetchData">Fetch Data</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="Users">Users</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="forumcreationpage">Forum Creation</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 @code {
     private List<Forum> forums;
     protected override async Task OnInitializedAsync()
