@@ -10,10 +10,6 @@
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
-                <p>@Auth.User.Identity.Name</p>
-                <p>@userName</p>
-                <p>@forum.UserId</p>
-
                 <div class="form-group">
                     <label for="ForumTitle">Forum Title:</label>
                     <InputText id="ForumTitle" class="form-control" @bind-Value="forum.Title" />
