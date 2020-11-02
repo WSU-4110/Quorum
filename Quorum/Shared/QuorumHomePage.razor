@@ -1,7 +1,7 @@
-﻿@using Microsoft.Extensions.Configuration
-@using Microsoft.AspNetCore.Identity
+﻿@using QuorumDB
 @using QuorumDB.Models;
-@inject QuorumDB.IForumData _data
+@using Quorum.Services;
+@inject IForumData _data
 
 <div class="panel panel-default">
     <div class="row">
@@ -17,7 +17,7 @@
                         @if (forums is null)
                         {
                             <tr>
-                                <td >Loading data...</td>
+                                <td>Loading data...</td>
                             </tr>
                         }
                         else
@@ -25,7 +25,6 @@
                             @foreach (var forum in forums)
                             {
                                 <tr>
-    
                                     <td><a href="@forum.Url">@forum.Title</a></td>
                                 </tr>
                             }
@@ -83,13 +82,14 @@
 
 @code {
     int currentID;
-    //Root has empty url
+
+    //Root has q url
     string url = "q";
     private List<Forum> forums;
     protected override async Task OnInitializedAsync()
     {
-        forums = await _data.GetQuorumHomePage();
         var idList = await _data.GetCurrentForumID(url);
         currentID = idList.FirstOrDefault();
+        forums = await _data.GetForumsByParentId(currentID);
     }
 }

@@ -8,7 +8,6 @@ namespace QuorumDB
     {
         Task<List<Forum>> GetAllForums();
         Task<List<Forum>> GetForumsByParentId(int Id);
-        Task<List<Forum>> GetQuorumHomePage();
         Task<List<Forum>> GetSearchQuorum(string input);
         Task<List<Forum>> GetSearchSection(string input);
         Task<List<Forum>> GetForumByURL(string input);
