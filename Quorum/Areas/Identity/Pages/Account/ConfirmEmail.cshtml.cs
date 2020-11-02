@@ -43,7 +43,7 @@ namespace Quorum.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 StatusMessage = "Thank you for confirming your email.";
-                return RedirectToPage("/Account/Login");
+                return RedirectToPage("/Account/Login" , new { succesfulRegistration = true });
             }
             else
             {
