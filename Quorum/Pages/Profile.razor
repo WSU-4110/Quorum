@@ -48,6 +48,7 @@
         {
             file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
             var imageFile = await file.ToImageFileAsync(file.Type, 800, 600);
+
             var ms = new MemoryStream();
             await imageFile.Data.CopyToAsync(ms);
 

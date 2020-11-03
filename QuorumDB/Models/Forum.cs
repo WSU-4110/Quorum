@@ -14,7 +14,7 @@ namespace QuorumDB.Models
     {
         public int Id { get; set; }
 
-        //[Required]
+        [Required]
         public string Url { get; set; } = "";
 
         [MaxLength(450)]

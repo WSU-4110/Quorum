@@ -5,28 +5,29 @@
 @inject Quorum.Data.ApplicationDbContext _context
 @inject QuorumDB.IForumData _fdata;
 @inject QuorumDB.IUserData _udata
+@inject NavigationManager _nav;
 
 <h3>Forum Creation Page</h3>
 <AuthorizeView>
     <Authorized Context="Auth">
         <div class="forum-form">
-            <EditForm Model=@forum OnValidSubmit=@HandleValidSubmit>
+            <EditForm Model=@forumView OnValidSubmit=@HandleValidSubmit>
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="form-group">
                     <label for="ForumTitle">Forum Title:</label>
-                    <InputText id="ForumTitle" class="form-control" @bind-Value="forum.Title" />
+                    <InputText id="ForumTitle" class="form-control" @bind-Value="forumView.Title" />
                 </div>
 
                 <div class="form-group">
                     <label for="Description">Description:</label>
-                    <InputTextArea id="Description" class="form-control" @bind-Value="forum.Description" />
+                    <InputTextArea id="Description" class="form-control" @bind-Value="forumView.Description" />
                 </div>
 
                 <div class="form-group">
                     <label for="IsPrivate">Private?</label>
-                    <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forum.IsPrivate" />
+                    <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forumView.IsPrivate" />
                 </div>
 
                 <div class="form-group">
@@ -41,6 +42,7 @@
 </AuthorizeView>
 
 @code {
+    ForumView forumView = new ForumView();
     Forum forum = new Forum();
     string userName = "none";
 
@@ -61,9 +63,14 @@
         System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
         userName = identity.Name;
 
+        forum.Title = forumView.Title;
+        forum.Description = forumView.Description;
+        forum.IsPrivate = forumView.IsPrivate;
+
         forum.ForumId = ForumParentID;
-        var parentUrl = await _fdata.GetForumURL(ForumParentID);
-        forum.Url = $"{parentUrl.FirstOrDefault()}/{forum.Title.Replace(" ", "-").ToLower()}";
+        var parentUrlList = await _fdata.GetForumURL(ForumParentID);
+        string parentUrl = parentUrlList.FirstOrDefault();
+        forum.Url = $"{parentUrl}/{forumView.Title.Replace(" ", "-").ToLower()}";
 
         //saves the Id associated with the UserName in the forum object under UserId
         foreach (var user in userList)
@@ -81,7 +88,11 @@
         {
             base.StateHasChanged();
         }
-        forum = new Forum();
-        base.StateHasChanged();
+
+        //q is home page btw
+        if (parentUrl == "q")
+            _nav.NavigateTo("/");
+        else
+            _nav.NavigateTo(parentUrl);
     }
 }

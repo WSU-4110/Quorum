@@ -53,12 +53,19 @@ namespace Quorum
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
-            services.AddRazorPages();
+
+            if (Env.IsDevelopment())
+                services.AddRazorPages().AddRazorRuntimeCompilation();
+            else
+                services.AddRazorPages();
+            
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-            services.AddSingleton<CircuitHandler, TrackingCircuitHandler>();
+            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
+
+            //services.AddSingleton<CircuitHandler, TrackingCircuitHandler>();
 
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();

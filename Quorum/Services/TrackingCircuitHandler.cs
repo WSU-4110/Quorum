@@ -12,12 +12,19 @@ namespace Quorum.Services
     {
         private HashSet<Circuit> circuits = new HashSet<Circuit>();
 
-        public override Task OnConnectionUpAsync(Circuit circuit,
-            CancellationToken cancellationToken)
+        public event EventHandler CircuitsChanged;
+
+        protected virtual void OnCircuitsChanged()
+        {
+            CircuitsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        public override Task OnConnectionUpAsync(Circuit circuit, CancellationToken cancellationToken)
         {
             try
             {
                 circuits.Add(circuit);
+                OnCircuitsChanged();
                 return Task.CompletedTask;
             }
             catch (Exception e)
@@ -27,15 +34,15 @@ namespace Quorum.Services
             }
         }
 
-        public override Task OnConnectionDownAsync(Circuit circuit,
-            CancellationToken cancellationToken)
+        public override Task OnConnectionDownAsync(Circuit circuit, CancellationToken cancellationToken)
         {
             try
             {
                 circuits.Remove(circuit);
+                OnCircuitsChanged();
                 return Task.CompletedTask;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 return Task.FromException(e);
