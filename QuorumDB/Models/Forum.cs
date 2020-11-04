@@ -25,7 +25,7 @@ namespace QuorumDB.Models
 
         public DateTime DateCreated { get; set; } = DateTime.Now;
 
-        public bool isPrivate { get; set; } = false;
+        public bool IsPrivate { get; set; } = false;
 
         public List<Forum> ChildForums { get; set; }
         
