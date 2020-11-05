@@ -20,7 +20,7 @@ namespace QuorumDB.Models
 
         public string UserId { get; set; }
 
-        public DateTime CreatedTime { get; set; }
+        public DateTime CreatedTime { get; set; } = DateTime.Now;
 
         [ForeignKey("ForumId")]
         public Forum ForumModel { get; set; }
