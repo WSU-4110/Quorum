@@ -1,29 +1,65 @@
 ﻿@using Microsoft.Extensions.Configuration
 @using Microsoft.AspNetCore.Identity
 @using QuorumDB.Models;
+@inject NavigationManager NavManager;
 @inject QuorumDB.IForumData _data;
 
-@page "/q"
-@page "/q/{text}"
-@page "/q/{text}/{text2}"
-@page "/q/{text}/{text2}/{text3}"
-@page "/q/{text}/{text2}/{text3}/{text4}"
-@page "/q/{text}/{text2}/{text3}/{text4}/{text5}"
+@page "/q/{forumUrl1}"
+@page "/q/{forumUrl1}/{text2}"
+@page "/q/{forumUrl1}/{text2}/{text3}"
+@page "/q/{forumUrl1}/{text2}/{text3}/{text4}"
+@page "/q/{forumUrl1}/{text2}/{text3}/{text4}/{text5}"
 
-<h3>@text</h3>
+<h1>@forumUrl</h1>
+<h3>@forumUrl1</h3>
 <h4>@text2</h4>
 
 <div class="panel panel-default">
     <div class="row">
         <div class="column">
             <div class="leftside">
-                <h1>sub-forum table should be here</h1>
-                <h1>threads table should be here</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Sub-Quorums</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (forums is null)
+                        {
+                            <tr>
+                                <td>Loading data...</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var forum in forums)
+                            {
+                                <tr>
+
+                                    <td><a href="@forum.Url">@forum.Title</a></td>
+                                </tr>
+                            }
+                            // Get all the threads below here
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="column">
             <div class="rightside">
-                <h1>forum details should be here</h1>
+                <p>
+                    @if (parentForum != null)
+                    {
+                        <h1>@parentForum.Description</h1>
+                    }
+                </p>
+                <div>
+                    @if (parentForum != null)
+                    {
+                        <a href="forumcreation/@parentForum.Id">Forum Creation</a>
+                    }
+                </div>
             </div>
         </div>
     </div>
@@ -31,19 +67,27 @@
 
 @functions{
     [Parameter]
-    public string text { get; set; } = "Quorum1";
+    public string forumUrl1 { get; set; }
     [Parameter]
-    public string text2 { get; set; } = "Quorum2";
+    public string text2 { get; set; } = "";
     [Parameter]
-    public string text3 { get; set; } = "Quorum3";
+    public string text3 { get; set; } = "";
     [Parameter]
-    public string text4 { get; set; } = "Quorum4";
+    public string text4 { get; set; } = "";
     [Parameter]
-    public string text5 { get; set; } = "Quorum5";
+    public string text5 { get; set; } = "";
 
     private List<Forum> forums;
+    private Forum parentForum;
+    string forumUrl;
     protected override async Task OnInitializedAsync()
     {
-        forums = await _data.GetQuorumHomePage();
+        //Gets the full url. Ex.) q/general/whydoesblazorsuck
+        forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        var forumParentList = await _data.GetForumByURL(forumUrl);
+        parentForum = forumParentList.FirstOrDefault();
+
+        forums = await _data.GetForumsByParentId(parentForum.Id);
     }
 }

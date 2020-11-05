@@ -47,7 +47,7 @@
     protected override async Task OnInitializedAsync()
     {
         userList = await _userData.GetUsers();
-        forumList = await _forumData.GetForums();
+        forumList = await _forumData.GetAllForums();
     }
 
 

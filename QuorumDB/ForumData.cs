@@ -17,9 +17,15 @@ namespace QuorumDB
             _db = db;
         }
 
-        public Task<List<Forum>> GetForums()
+        public Task<List<Forum>> GetAllForums()
         {
             string sql = "select * from dbo.Forums";
+            return _db.LoadData<Forum, dynamic>(sql, new { });
+        }
+
+        public Task<List<Forum>> GetForumsByParentId(int Id)
+        {
+            string sql = $"select * from dbo.Forums where ForumID = '{Id}'";
             return _db.LoadData<Forum, dynamic>(sql, new { });
         }
 
@@ -56,10 +62,10 @@ namespace QuorumDB
             return _db.LoadData<string, dynamic>(sql, new { });
         }
 
-        public Task< List<string> > GetCurrentForumID(string input)
+        public Task< List<int> > GetCurrentForumID(string input)
         {
             string sql = $"select Id from dbo.Forums where dbo.Forums.Url = '{input}'";
-            return _db.LoadData<string, dynamic>(sql, new { });
+            return _db.LoadData<int, dynamic>(sql, new { });
         }
 
         //HARD CODED

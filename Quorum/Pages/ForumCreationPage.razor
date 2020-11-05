@@ -63,7 +63,7 @@
 
         forum.ForumId = ForumParentID;
         var parentUrl = await _fdata.GetForumURL(ForumParentID);
-        forum.Url = parentUrl.FirstOrDefault() + forum.Title.Replace(" ", "-").ToLower();
+        forum.Url = $"{parentUrl.FirstOrDefault()}/{forum.Title.Replace(" ", "-").ToLower()}";
 
         //saves the Id associated with the UserName in the forum object under UserId
         foreach (var user in userList)

@@ -25,7 +25,8 @@
                             @foreach (var forum in forums)
                             {
                                 <tr>
-                                    <td><a href="q/@forum.Title">@forum.Title</a></td>
+    
+                                    <td><a href="@forum.Url">@forum.Title</a></td>
                                 </tr>
                             }
                         }
@@ -81,8 +82,9 @@
 </div>
 
 @code {
-    string currentID = string.Empty;
-    string url = "/";
+    int currentID;
+    //Root has empty url
+    string url = "q";
     private List<Forum> forums;
     protected override async Task OnInitializedAsync()
     {
