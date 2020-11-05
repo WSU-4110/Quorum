@@ -20,6 +20,8 @@ using QuorumDB.Models;
 using Microsoft.IdentityModel.Logging;
 using Quorum.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Quorum
 {
@@ -66,6 +68,13 @@ namespace Quorum
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+               Path.Combine(Directory.GetCurrentDirectory(), "Photos" )),
+                RequestPath = "/Photos"
+            });
+
             if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -90,7 +99,9 @@ namespace Quorum
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapBlazorHub();
+                endpoints.MapBlazorHub(options =>
+                    options.ApplicationMaxBufferSize = 10 * 1024 * 1024
+                );
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

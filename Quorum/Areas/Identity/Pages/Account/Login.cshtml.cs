@@ -56,7 +56,7 @@ namespace Quorum.Areas.Identity.Pages.Account
             public bool RememberMe { get; set; }
         }
 
-        public async Task OnGetAsync(bool successfulRegistration, string returnUrl = null)
+        public async Task OnGetAsync(bool successfulRegistration = false, string returnUrl = null)
         {
             if (!string.IsNullOrEmpty(ErrorMessage))
             {
@@ -65,7 +65,7 @@ namespace Quorum.Areas.Identity.Pages.Account
 
             returnUrl = returnUrl ?? Url.Content("~/");
             
-            if(successfulRegistration == false)
+            if(successfulRegistration != false)
             {
                 SuccessfulRegistration = successfulRegistration;
             }
