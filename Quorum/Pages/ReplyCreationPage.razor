@@ -1,53 +1,45 @@
-﻿@using QuorumDB.Models
+﻿@page "/replycreation/{ThreadID:int}"
+
+
+@using QuorumDB.Models
 @inject Quorum.Data.ApplicationDbContext _context
 @inject QuorumDB.IUserData _userData
-@inject QuorumDB.IForumData _forumData 
 @inject AuthenticationStateProvider _AuthenticationStateProvider
 
-    <h3>ThreadCreator</h3>
+<h3>ReplyCreator</h3>
 
 <AuthorizeView>
     <Authorized Context="Auth">
-        <div class="thread-form">
-            <EditForm Model=@thread OnValidSubmit=@HandleValidSubmit>
+        <div class="reply-form">
+            <EditForm Model=@reply OnValidSubmit=@HandleValidSubmit>
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="form-group">
-                    <label for="ThreadTitle">Thread Title:</label>
-                    <InputText id="ThreadTitle" class="form-control" @bind-Value="thread.Title" />
+                    <label for="ReplyText">Thread Title:</label>
+                    <InputText id="ReplyText" class="form-control" @bind-Value="reply.Text" />
                 </div>
 
-                <div class="form-group">
-                    <label for="Description">Description:</label>
-                    <InputTextArea id="Description" class="form-control" @bind-Value="thread.Description" />
-                </div>
-
-                <div class="form-group">
-                    <label for="ParentForumTitle">Parent Forum Title:</label>
-                    <InputText id="ParentForumTitle" class="form-control" @bind-Value="forumTitle" />
-                </div>
-
-                <button class="btn btn-primary" type="submit">Create Forum</button>
+                <button class="btn btn-primary" type="submit">Create Reply</button>
             </EditForm>
         </div>
     </Authorized>
     <NotAuthorized>
-        <h1>Must be a valid user to create a forum</h1>
+        <h1>Must be a valid user to create a reply</h1>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    ForumThread thread = new ForumThread();
+    ForumReply reply = new ForumReply();
     string userName = "none";
-    string forumTitle = "none";
+
+    [Parameter]
+    public int ThreadID { get; set; }
 
     private List<AspNetUser> userList;
-    private List<Forum> forumList;
     protected override async Task OnInitializedAsync()
     {
         userList = await _userData.GetUsers();
-        forumList = await _forumData.GetAllForums();
     }
 
 
@@ -60,29 +52,25 @@
         System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
         userName = identity.Name;
 
+        reply.ThreadId = ThreadID;
+
         //saves the Id associated with the UserName in the forum object under UserId
         foreach (var user in userList)
         {
             if (userName == user.UserName)
-                thread.UserId = user.Id;
-        }
-
-        foreach (var forum in forumList)
-        {
-            if (forumTitle == forum.Title)
-                thread.ForumId = forum.Id;
+                reply.UserId = user.Id;
         }
 
         try
         {
-            _context.ForumThreads.Add(thread);
+            _context.ForumReplies.Add(reply);
             await _context.SaveChangesAsync();
         }
         catch
         {
             base.StateHasChanged();
         }
-        thread = new ForumThread();
+        reply = new ForumReply();
         base.StateHasChanged();
     }
 }
