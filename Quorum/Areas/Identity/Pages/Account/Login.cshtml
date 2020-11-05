@@ -5,6 +5,16 @@
     ViewData["Title"] = "Log in";
 }
 
+<div class="col-md-5 mx-auto">
+    @if (Model.SuccessfulRegistration)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            <strong>Success!</strong> Your email has been confirmed.
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+        </div>
+    }
+</div>
+
 <div class="row">
     <dziv class="col-md-5 mx-auto">
         <h1>@ViewData["Title"]</h1>

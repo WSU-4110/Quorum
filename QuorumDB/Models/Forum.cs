@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace QuorumDB.Models
@@ -12,12 +13,17 @@ namespace QuorumDB.Models
     {
         public int Id { get; set; }
 
+        [Required]
+        public string Url { get; set; } = "";
+
         [MaxLength(450)]
         public string UserId { get; set; }
 
         [Required]
         [MaxLength(256)]
         public string Title { get; set; }
+
+        public int ViewCount { get; set; }
 
         public string Description { get; set; }
                 
@@ -35,5 +41,7 @@ namespace QuorumDB.Models
 
         [ForeignKey("UserId")]
         public AspNetUser AspNetUserModel { get; set; }
+
+
     }
 }
