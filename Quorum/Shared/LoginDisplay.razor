@@ -1,12 +1,47 @@
-﻿<AuthorizeView>
+﻿@inject AuthenticationStateProvider _auth;
+@using System.IO;
+
+<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage" class="btn">@context.User.Identity.Name</a>
-        <form method="post" action="Identity/Account/LogOut">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
-        </form>
+        <a href="profile" class="btn">@context.User.Identity.Name</a>
+        <div class="nav-item dropdown col-md-2">
+            <div class="nav-link dropdown-toggle" id="navdrop" role="button" data-toggle="dropdown" data-hover="dropdown">
+                    @if (imgUrl != String.Empty)
+                    {
+                        <img src="@imgUrl" class="rounded-circle" width="48" height="48">
+                    }
+                    else
+                    {
+                        <span class="text-avatar" width="48" height="48">@context.User.Identity.Name.ToUpper()[0]</span>
+                    }
+                    <a></a> @*Drop down arrow*@
+            </div>
+            <div class="dropdown-menu" aria-labelledby="navdrop">
+                <a href="Identity/Account/manage" class="dropdown-item">Settings</a>
+                <form method="post" action="Identity/Account/LogOut">
+                    <button type="submit" class="dropdown-item">Log out</button>
+                </form>
+            </div>
+        </div>
     </Authorized>
     <NotAuthorized>
         <a href="Identity/Account/Register">Register</a>
         <a href="Identity/Account/Login">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
+
+@code {
+    string imgUrl = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authstate = await _auth.GetAuthenticationStateAsync();
+        string username = authstate.User.Identity.Name;
+        string searchTerm = $"{username}*";
+        var img =  Directory.GetFiles("Photos", searchTerm);
+        if (img.Length > 0)
+        {
+            imgUrl = img[0];
+        }       
+    }
+}

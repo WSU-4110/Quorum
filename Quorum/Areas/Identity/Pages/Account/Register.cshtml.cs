@@ -95,7 +95,8 @@ namespace Quorum.Areas.Identity.Pages.Account
                         protocol: Request.Scheme);
 
                     await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                        $"Please confirm your Quorum account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.\n" +
+                        $"The link will expire in one day.");
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {

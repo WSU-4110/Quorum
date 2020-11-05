@@ -181,6 +181,22 @@ footer{
     color: red;
 }
 
+span.text-avatar {
+    background: #010101;
+    border-radius: 50%;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    color: #f1f1f1;
+    display: inline-block;
+    font-weight: bold;
+    line-height: 30px;
+    margin-right: 5px;
+    text-align: center;
+    font-size: 30px;
+    width: 30px;
+    vertical-align: middle;
+}
+
 #blazor-error-ui {
     background: lightyellow;
     bottom: 0;
