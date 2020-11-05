@@ -1,4 +1,4 @@
-﻿window.croppie = () => {
+﻿function croppie () {
     //initialize Croppie
     var basic = $('#main-cropper').croppie
         ({
@@ -26,11 +26,11 @@
     $('#select').on('change', function () { readFile(this); });
 };
 
-window.getCroppie = () => {
+function getCroppie() {
     var result;
-    async function getResult (){
-        return await $('#main-cropper').croppie('result', 'canvas');
-    }
-    result = getResult();
-    return result.data;
-};
+    async function getResult() {
+        result =  await $('#main-cropper').croppie('result', 'base64');
+    };
+    getResult();
+    return result;
+}
