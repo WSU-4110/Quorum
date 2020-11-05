@@ -1,0 +1,88 @@
+﻿@using QuorumDB.Models
+@inject Quorum.Data.ApplicationDbContext _context
+@inject QuorumDB.IUserData _userData
+@inject QuorumDB.IForumData _forumData 
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+
+    <h3>ThreadCreator</h3>
+
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <div class="thread-form">
+            <EditForm Model=@thread OnValidSubmit=@HandleValidSubmit>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group">
+                    <label for="ThreadTitle">Thread Title:</label>
+                    <InputText id="ThreadTitle" class="form-control" @bind-Value="thread.Title" />
+                </div>
+
+                <div class="form-group">
+                    <label for="Description">Description:</label>
+                    <InputTextArea id="Description" class="form-control" @bind-Value="thread.Description" />
+                </div>
+
+                <div class="form-group">
+                    <label for="ParentForumTitle">Parent Forum Title:</label>
+                    <InputText id="ParentForumTitle" class="form-control" @bind-Value="forumTitle" />
+                </div>
+
+                <button class="btn btn-primary" type="submit">Create Forum</button>
+            </EditForm>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Must be a valid user to create a forum</h1>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    ForumThread thread = new ForumThread();
+    string userName = "none";
+    string forumTitle = "none";
+
+    private List<AspNetUser> userList;
+    private List<Forum> forumList;
+    protected override async Task OnInitializedAsync()
+    {
+        userList = await _userData.GetUsers();
+        forumList = await _forumData.GetForums();
+    }
+
+
+    private async void HandleValidSubmit()
+    {
+
+        //gets the current user's UserName
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        System.Security.Claims.ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
+        userName = identity.Name;
+
+        //saves the Id associated with the UserName in the forum object under UserId
+        foreach (var user in userList)
+        {
+            if (userName == user.UserName)
+                thread.UserId = user.Id;
+        }
+
+        foreach (var forum in forumList)
+        {
+            if (forumTitle == forum.Title)
+                thread.ForumId = forum.Id;
+        }
+
+        try
+        {
+            _context.ForumThreads.Add(thread);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            base.StateHasChanged();
+        }
+        thread = new ForumThread();
+        base.StateHasChanged();
+    }
+}

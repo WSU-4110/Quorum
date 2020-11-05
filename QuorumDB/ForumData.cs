@@ -17,6 +17,12 @@ namespace QuorumDB
             _db = db;
         }
 
+        public Task<List<Forum>> GetForums()
+        {
+            string sql = "select * from dbo.Forums";
+            return _db.LoadData<Forum, dynamic>(sql, new { });
+        }
+
         //HARD CODED 
         public Task<List<Forum>> GetQuorumHomePage()
         {
