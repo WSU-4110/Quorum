@@ -7,19 +7,19 @@ using QuorumDB.Models;
 
 namespace QuorumDB
 {
-    public class UserData : IUserData
+    public class ThreadData : IThreadData
     {
         private readonly IDbAccess _db;
 
-        public UserData(IDbAccess db)
+        public ThreadData(IDbAccess db)
         {
             _db = db;
         }
 
-        public Task<List<AspNetUser>> GetUsers()
+        public Task<List<ForumThread>> GetForumThreads()
         {
             string sql = "select * from dbo.AspNetUsers";
-            return _db.LoadData<AspNetUser, dynamic>(sql, new { });
+            return _db.LoadData<ForumThread, dynamic>(sql, new { });
         }
     }
 }
