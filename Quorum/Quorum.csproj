@@ -52,6 +52,8 @@
     <Compile Remove="Data\Migrations\20201105052834_test.Designer.cs" />
     <Compile Remove="Data\Migrations\20201105053231_test.cs" />
     <Compile Remove="Data\Migrations\20201105053231_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105174949_newClasses.cs" />
+    <Compile Remove="Data\Migrations\20201105174949_newClasses.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
