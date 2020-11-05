@@ -11,7 +11,8 @@ namespace QuorumDB.Models
         public int Id { get; set; }
 
         [Required]
-        public int ThreadId { get; set; }
+        [ForeignKey("ForumId")]
+        public int ForumId { get; set; }
         
         [MaxLength(450)]
         public string UserId { get; set; }
@@ -19,15 +20,9 @@ namespace QuorumDB.Models
         [MaxLength(256)]
         public int LikeCount{ get; set; }
 
-        [Required]
-        public string Text { get; set; }
-
-        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        public DateTime CreatedTime { get; set; }
 
         [ForeignKey("UserId")]
         public AspNetUser AspNetUserModel { get; set; }
-
-        [ForeignKey("ThreadId")]
-        public ForumThread ParentThread { get; set; }
     }
 }

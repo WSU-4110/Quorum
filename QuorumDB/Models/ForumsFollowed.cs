@@ -23,7 +23,7 @@ namespace QuorumDB.Models
         public AspNetUser AspNetUserModel { get; set; }
 
         [ForeignKey("ForumId")]
-        public Forum ParentForum { get; set; }
+        public Forum parentForum { get; set; }
 
     }
 }
