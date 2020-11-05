@@ -1,7 +1,87 @@
-﻿@page "/forumcreationpage"
+﻿@page "/forumcreation/{ForumParentID:int}"
+
+@using QuorumDB.Models
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject Quorum.Data.ApplicationDbContext _context
+@inject QuorumDB.IForumData _fdata;
+@inject QuorumDB.IUserData _udata
 
 <h3>Forum Creation Page</h3>
+<AuthorizeView>
+    <Authorized Context="Auth">
+        <div class="forum-form">
+            <EditForm Model=@forum OnValidSubmit=@HandleValidSubmit>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
+                <div class="form-group">
+                    <label for="ForumTitle">Forum Title:</label>
+                    <InputText id="ForumTitle" class="form-control" @bind-Value="forum.Title" />
+                </div>
 
-@*Add Shared Component Into home page*@
-<ForumCreator></ForumCreator>
+                <div class="form-group">
+                    <label for="Description">Description:</label>
+                    <InputTextArea id="Description" class="form-control" @bind-Value="forum.Description" />
+                </div>
+
+                <div class="form-group">
+                    <label for="IsPrivate">Private?</label>
+                    <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forum.IsPrivate" />
+                </div>
+
+                <div class="form-group">
+                    <button class="btn btn-primary" type="submit">Create Forum</button>
+                </div>
+            </EditForm>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Must be a valid user to create a forum</h1>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    Forum forum = new Forum();
+    string userName = "none";
+
+    [Parameter]
+    public int ForumParentID { get; set; }
+
+    private List<AspNetUser> userList;
+    protected override async Task OnInitializedAsync()
+    {
+        userList = await _udata.GetUsers();
+    }
+
+    private async void HandleValidSubmit()
+    {
+        //gets the current user's UserName
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        System.Security.Claims.ClaimsPrincipal claimsPrincipal = authenticationState.User;
+        System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
+        userName = identity.Name;
+
+        forum.ForumId = ForumParentID;
+        var parentUrl = await _fdata.GetForumURL(ForumParentID);
+        forum.Url = parentUrl.FirstOrDefault() + forum.Title.Replace(" ", "-").ToLower();
+
+        //saves the Id associated with the UserName in the forum object under UserId
+        foreach (var user in userList)
+        {
+            if (userName == user.UserName)
+                forum.UserId = user.Id;
+        }
+
+        try
+        {
+            _context.Forums.Add(forum);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            base.StateHasChanged();
+        }
+        forum = new Forum();
+        base.StateHasChanged();
+    }
+}

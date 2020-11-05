@@ -72,7 +72,7 @@
                         <td><a href="Users">Users</a></td>
                     </tr>
                     <tr>
-                        <td><a href="forumcreationpage">Forum Creation</a></td>
+                        <td><a href="forumcreation/@currentID">Forum Creation</a></td>
                     </tr>
                 </tbody>
             </table>
@@ -81,9 +81,13 @@
 </div>
 
 @code {
+    string currentID = string.Empty;
+    string url = "/";
     private List<Forum> forums;
     protected override async Task OnInitializedAsync()
     {
         forums = await _data.GetQuorumHomePage();
+        var idList = await _data.GetCurrentForumID(url);
+        currentID = idList.FirstOrDefault();
     }
 }

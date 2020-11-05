@@ -46,6 +46,12 @@
     <Compile Remove="Data\Migrations\20201009055830_ForeignKeyRestraints.Designer.cs" />
     <Compile Remove="Data\Migrations\20201022210418_UrlsAndViewCount.cs" />
     <Compile Remove="Data\Migrations\20201022210418_UrlsAndViewCount.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105052502_test.cs" />
+    <Compile Remove="Data\Migrations\20201105052502_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105052834_test.cs" />
+    <Compile Remove="Data\Migrations\20201105052834_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105053231_test.cs" />
+    <Compile Remove="Data\Migrations\20201105053231_test.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

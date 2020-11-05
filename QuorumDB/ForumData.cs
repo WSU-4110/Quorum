@@ -44,10 +44,22 @@ namespace QuorumDB
             return _db.LoadData<Forum, dynamic>(sql, new { });
         }
 
-        public Task<List<Forum>> GetSearchURL(string input)
+        public Task<List<Forum>> GetForumByURL(string input)
         {
             string sql = "select * from dbo.Forums where dbo.Forums.Url = '" + input + "';";
             return _db.LoadData<Forum, dynamic>(sql, new { });
+        }
+
+        public Task<List<string>> GetForumURL(int Id)
+        {
+            string sql = $"select Url from dbo.Forums where dbo.Forums.Id = '{Id}'";
+            return _db.LoadData<string, dynamic>(sql, new { });
+        }
+
+        public Task< List<string> > GetCurrentForumID(string input)
+        {
+            string sql = $"select Id from dbo.Forums where dbo.Forums.Url = '{input}'";
+            return _db.LoadData<string, dynamic>(sql, new { });
         }
 
         //HARD CODED
