@@ -90,4 +90,15 @@
 
         forums = await _data.GetForumsByParentId(parentForum.Id);
     }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        //Gets the full url. Ex.) q/general/whydoesblazorsuck
+        forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
+
+        var forumParentList = await _data.GetForumByURL(forumUrl);
+        parentForum = forumParentList.FirstOrDefault();
+
+        forums = await _data.GetForumsByParentId(parentForum.Id);
+    }
 }
