@@ -1,0 +1,38 @@
+﻿@page "/q"
+@page "/q/{text}"
+@page "/q/{text}/{text2}"
+@page "/q/{text}/{text2}/{text3}"
+@page "/q/{text}/{text2}/{text3}/{text4}"
+@page "/q/{text}/{text2}/{text3}/{text4}/{text5}"
+
+<h3>@text</h3>
+<h4>@text2</h4>
+
+<div class="panel panel-default">
+    <div class="row">
+        <div class="column">
+            <div class="leftside">
+                <h1>sub-forum table should be here</h1>
+                <h1>threads table should be here</h1>
+            </div>
+        </div>
+        <div class="column">
+            <div class="rightside">
+                <h1>forum details should be here</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions{ 
+    [Parameter]
+    public string text { get; set; } = "Quorum1";
+    [Parameter]
+    public string text2 { get; set; } = "Quorum2";
+    [Parameter]
+    public string text3 { get; set; } = "Quorum3";
+    [Parameter]
+    public string text4 { get; set; } = "Quorum4";
+    [Parameter]
+    public string text5 { get; set; } = "Quorum5";
+}
