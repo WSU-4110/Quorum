@@ -14,6 +14,9 @@ namespace Quorum.Data
         public DbSet<Forum> Forums { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }
         public DbSet<ForumMod> Mod { get; set; }
+        public DbSet<ForumThread> ForumThreads { get; set; }
+        public DbSet<ForumsFollowed> ForumsFollowed { get; set; }
+        public DbSet<UsersFollowed> UsersFollowed { get; set; }
    
     }
 }
