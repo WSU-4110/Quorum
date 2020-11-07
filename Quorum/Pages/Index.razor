@@ -1,10 +1,4 @@
 ﻿@page "/"
-
-<div class="h1">
-    Welcome to Quorum
-    <div class="h5 float-right">Currently online: <span class="oi oi-wifi"></span> @onlineUsers</div>
-</div>
-
 @using QuorumDB
 @using QuorumDB.Models;
 @using Quorum.Services;
@@ -12,8 +6,17 @@
 @inject CircuitHandler _circuit;
 @inject IForumData _data
 
-
 <div class="panel panel-default">
+    <div class="row">
+        <div class="h1 col-12">
+            Welcome
+            <div class="h5 float-right ">
+                <span class="d-none d-sm-inline-block">Currently online:</span>
+                <span class="d-inline-block d-sm-none">Online:</span>
+                <span class="oi oi-wifi"></span> @onlineUsers
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="column">
             <div class="leftside">
