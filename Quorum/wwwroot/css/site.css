@@ -80,7 +80,6 @@ app {
     
     .main .navbar .login-display > a, .main .navbar .login-display .btn-link {
         color: #5c5c5c;
-        padding-left: 1em;
         font-size:1.25em;
     }
 
@@ -181,6 +180,14 @@ footer{
     color: red;
 }
 
+.avatar {
+    padding: 0px;
+}
+
+.avatar-icon {
+    padding-right: 0px;
+}
+
 span.text-avatar {
     background: #010101;
     border-radius: 50%;
@@ -237,13 +244,8 @@ span.text-avatar {
         justify-content: space-between;
     }
 
-    .main .navbar .login-display {
-        margin-right: 1rem;
-    }
-
     .main .navbar .login-display > a, .main .navbar .login-display .btn-link {
         color: #757575;
-        padding-left: 1em;
     }
 
     .main .navbar > a, .main .navbar .btn-link {
@@ -272,5 +274,13 @@ span.text-avatar {
     .main > div {
         padding-left: 2rem !important;
         padding-right: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .main .navbar .login-display {
+        padding: 0px;
+        padding-left: 5px;
+        margin-right: 0px;
     }
 }

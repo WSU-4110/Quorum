@@ -3,9 +3,9 @@
 
 <AuthorizeView>
     <Authorized>
-        <a href="profile" class="btn">@context.User.Identity.Name</a>
-        <div class="nav-item dropdown col-md-2">
-            <div class="nav-link dropdown-toggle" id="navdrop" role="button" data-toggle="dropdown" data-hover="dropdown">
+        <a href="profile" class="avatar btn">@context.User.Identity.Name</a>
+        <div class="avatar nav-item dropdown col-md-2">
+            <div class="avatar-icon nav-link dropdown-toggle" id="navdrop" role="button" data-toggle="dropdown" data-hover="dropdown">
                     @if (imgUrl != String.Empty)
                     {
                         <img src="@imgUrl" class="rounded-circle" width="48" height="48">
@@ -25,8 +25,8 @@
         </div>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <a href="Identity/Account/Register" class="btn">Register</a>
+        <a href="Identity/Account/Login" class="btn">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
 
