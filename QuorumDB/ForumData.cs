@@ -29,6 +29,12 @@ namespace QuorumDB
             return _db.LoadData<Forum, dynamic>(sql, new { });
         }
 
+        public Task<List<Forum>> GetForumById(int id)
+        {
+            string sql = $"select * from dbo.Forums where Id = @Id";
+            return _db.LoadData<Forum, dynamic>(sql, new { Id = id});
+        }
+
         //HARD CODED
         public Task<List<Forum>> GetSearchQuorum(string input)
         {

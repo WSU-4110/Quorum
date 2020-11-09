@@ -1,20 +1,43 @@
-﻿@using Microsoft.Extensions.Configuration
-@using Microsoft.AspNetCore.Identity
-@using QuorumDB.Models;
+﻿@using QuorumDB.Models;
+@using Quorum.Data.ViewModels;
+@using System.Text;
 @inject NavigationManager NavManager;
 @inject QuorumDB.IForumData _data;
 
-@page "/q/{forumUrl1}"
-@page "/q/{forumUrl1}/{text2}"
-@page "/q/{forumUrl1}/{text2}/{text3}"
-@page "/q/{forumUrl1}/{text2}/{text3}/{text4}"
-@page "/q/{forumUrl1}/{text2}/{text3}/{text4}/{text5}"
+@page "/q/{forum1}"
+@page "/q/{forum1}/{forum2}"
+@page "/q/{forum1}/{forum2}/{forum3}"
+@page "/q/{forum1}/{forum2}/{forum3}/{forum4}"
 
-<h3>@forumUrl1 @text2 @text3 @text4 @text5</h3>
+<h2>
+    @lastBreadCrumb.Title
+</h2>
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        @foreach (var breadcrumb in BreadCrumbs)
+        {
+            if (!breadcrumb.Equals(lastBreadCrumb))
+            {
+                <li class="breadcrumb-item"><a href="@breadcrumb.Url">@breadcrumb.Title</a></li>
+            }
+            else
+            {
+                <li class="breadcrumb-item active" aria-current="page">@breadcrumb.Title</li>
+            }
+        }
+    </ol>
+</nav>
 
 <div class="forumcontrols">
     <a class="btn btn-outline-dark" href="#" role="button">New Section</a>
     <a class="btn btn-outline-dark" href="#" role="button">New Thread</a>
+    @*Insure that there can't be more than four layers*@
+    @if (parentForum != null && BreadCrumbs.Count < 4)
+    {
+        <a class="btn btn-outline-dark" href="forumcreation/@parentForum.Id" role="button">Create SubQuorum</a>
+    }
 </div>
 
 <div class="panel panel-default">
@@ -36,12 +59,21 @@
                         }
                         else
                         {
-                            @foreach (var forum in forums)
+
+                            @if (forums.Count == 0)
                             {
                                 <tr>
-
-                                    <td><a href="@forum.Url">@forum.Title</a></td>
+                                    <td>Currently no Quorums</td>
                                 </tr>
+                            }
+                            else
+                            {
+                                @foreach (var forum in forums)
+                                {
+                                    <tr>
+                                        <td><a href="@forum.Url">@forum.Title</a></td>
+                                    </tr>
+                                }
                             }
                             // Get all the threads below here
                         }
@@ -51,18 +83,12 @@
         </div>
         <div class="column">
             <div class="rightside">
-                <p>
-                    @if (parentForum != null)
-                    {
+                @if (parentForum != null)
+                {
+                    <p>
                         <h1>@parentForum.Description</h1>
-                    }
-                </p>
-                <div>
-                    @if (parentForum != null)
-                    {
-                        <a href="forumcreation/@parentForum.Id">Forum Creation</a>
-                    }
-                </div>
+                    </p>
+                 }
             </div>
         </div>
     </div>
@@ -70,38 +96,76 @@
 
 @functions{
     [Parameter]
-    public string forumUrl1 { get; set; }
+    public string forum1 { get; set; }
     [Parameter]
-    public string text2 { get; set; } = "";
+    public string forum2 { get; set; } = "";
     [Parameter]
-    public string text3 { get; set; } = "";
+    public string forum3 { get; set; } = "";
     [Parameter]
-    public string text4 { get; set; } = "";
-    [Parameter]
-    public string text5 { get; set; } = "";
+    public string forum4 { get; set; } = "";
 
     private List<Forum> forums;
     private Forum parentForum;
-    string forumUrl;
-    protected override async Task OnInitializedAsync()
+    private List<BreadCrumb> BreadCrumbs = new List<BreadCrumb>();
+    private BreadCrumb lastBreadCrumb = new BreadCrumb();
+
+    private async Task FetchData()
     {
         //Gets the full url. Ex.) q/general/whydoesblazorsuck
-        forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
+        string forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
 
         var forumParentList = await _data.GetForumByURL(forumUrl);
-        parentForum = forumParentList.FirstOrDefault();
 
-        forums = await _data.GetForumsByParentId(parentForum.Id);
+        //Only fetch information if the url is valid
+        if (forumParentList.Count != 0)
+        {
+            parentForum = forumParentList.FirstOrDefault();
+            forums = await _data.GetForumsByParentId(parentForum.Id);
+
+            //Breadcrumbs logic
+            BreadCrumbs.Clear();
+
+            List<string> breadCrumbTitle = forumUrl.Split('/').ToList();
+            breadCrumbTitle.Remove("q"); //Remove default homepage directory
+            for (int i = 0; i < breadCrumbTitle.Count; i++)
+            {
+                var title = new StringBuilder(breadCrumbTitle[i]);
+                title.Replace('-', ' ');
+                //Capatalize the first letter
+                title[0] = char.ToUpper(title[0]);
+                breadCrumbTitle[i] = title.ToString();
+            }
+
+            List<string> breadCrumbUrls = new List<string>();
+            var forumUrlCopy = forumUrl;
+
+            breadCrumbUrls.Add(forumUrlCopy);
+            for (int i = 0; i < breadCrumbTitle.Count - 1; i++)
+            {
+                var lastSlashIndex = forumUrlCopy.LastIndexOf('/');
+                forumUrlCopy = forumUrlCopy.Remove(lastSlashIndex);
+                breadCrumbUrls.Add(forumUrlCopy);
+            }
+            breadCrumbUrls.Reverse();
+            //Add the parts into UrlPart container
+            for (int i = 0; i < breadCrumbTitle.Count; i++)
+                BreadCrumbs.Add(new BreadCrumb() { Title = breadCrumbTitle[i], Url = breadCrumbUrls[i] });
+            lastBreadCrumb = BreadCrumbs.LastOrDefault();
+        }
+        else
+        {
+            //tell them to screw off
+            NavManager.NavigateTo("404");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        //Gets the full url. Ex.) q/general/whydoesblazorsuck
-        forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
-
-        var forumParentList = await _data.GetForumByURL(forumUrl);
-        parentForum = forumParentList.FirstOrDefault();
-
-        forums = await _data.GetForumsByParentId(parentForum.Id);
+        await FetchData();
     }
 }

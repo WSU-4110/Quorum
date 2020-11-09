@@ -10,7 +10,7 @@
 <h3>Forum Creation Page</h3>
 <AuthorizeView>
     <Authorized Context="Auth">
-        <div class="forum-form">
+        <div class="forum-form col-8">
             <EditForm Model=@forumView OnValidSubmit=@HandleValidSubmit>
                 <DataAnnotationsValidator />
                 <ValidationSummary />
@@ -44,40 +44,46 @@
 @code {
     ForumView forumView = new ForumView();
     Forum forum = new Forum();
-    string userName = "none";
+    Forum parentForum;
+    AspNetUser user;
 
     [Parameter]
     public int ForumParentID { get; set; }
 
-    private List<AspNetUser> userList;
     protected override async Task OnInitializedAsync()
     {
-        userList = await _udata.GetUsers();
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var claimsPrincipal = authenticationState.User;
+        string userName = claimsPrincipal.Identity.Name;
+
+        var parentForumList = await _fdata.GetForumById(ForumParentID);
+        parentForum = parentForumList.FirstOrDefault();
+        string parentUrl = parentForum.Url;
+
+        int count = 0;
+        foreach (char c in parentUrl)
+            if (c == '/') count++;
+        if (count > 4)
+        {
+            //reached maximum layers
+            _nav.NavigateTo("404");
+        }
+
+        //Get user by username which contains GUID. We can do authentication later down the line
+        var userList = await _udata.GetUserByUserName(userName);
+        user = userList.FirstOrDefault();
     }
 
     private async void HandleValidSubmit()
     {
-        //gets the current user's UserName
-        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
-        System.Security.Claims.ClaimsPrincipal claimsPrincipal = authenticationState.User;
-        System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
-        userName = identity.Name;
-
+        //Assign the view model to the database model
         forum.Title = forumView.Title;
         forum.Description = forumView.Description;
         forum.IsPrivate = forumView.IsPrivate;
-
         forum.ForumId = ForumParentID;
-        var parentUrlList = await _fdata.GetForumURL(ForumParentID);
-        string parentUrl = parentUrlList.FirstOrDefault();
-        forum.Url = $"{parentUrl}/{forumView.Title.Replace(" ", "-").ToLower()}";
 
-        //saves the Id associated with the UserName in the forum object under UserId
-        foreach (var user in userList)
-        {
-            if (userName == user.UserName)
-                forum.UserId = user.Id;
-        }
+        forum.Url = $"{parentForum.Url}/{forumView.Title.Replace(" ", "-").ToLower()}";
+        forum.UserId = user.Id;
 
         try
         {
@@ -90,9 +96,9 @@
         }
 
         //q is home page btw
-        if (parentUrl == "q")
+        if (parentForum.Url == "q")
             _nav.NavigateTo("/");
         else
-            _nav.NavigateTo(parentUrl);
+            _nav.NavigateTo(parentForum.Url);
     }
 }
