@@ -53,25 +53,33 @@
     protected override async Task OnInitializedAsync()
     {
         AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var claimsPrincipal = authenticationState.User;
-        string userName = claimsPrincipal.Identity.Name;
+        var userState = authenticationState.User;
+        string userName = userState.Identity.Name;
 
-        var parentForumList = await _fdata.GetForumById(ForumParentID);
-        parentForum = parentForumList.FirstOrDefault();
-        string parentUrl = parentForum.Url;
-
-        int count = 0;
-        foreach (char c in parentUrl)
-            if (c == '/') count++;
-        if (count > 4)
+        if (userState.Identity.IsAuthenticated)
         {
-            //reached maximum layers
-            _nav.NavigateTo("404");
-        }
+            var parentForumList = await _fdata.GetForumById(ForumParentID);
 
-        //Get user by username which contains GUID. We can do authentication later down the line
-        var userList = await _udata.GetUserByUserName(userName);
-        user = userList.FirstOrDefault();
+            //If there are no forums by that id, then boot them out
+            if (parentForumList.Count == 0)
+                _nav.NavigateTo("404");
+
+            parentForum = parentForumList.FirstOrDefault();
+            string parentUrl = parentForum.Url;
+
+            int count = 0;
+            foreach (char c in parentUrl)
+                if (c == '/') count++;
+            if (count > 3)
+            {
+                //reached maximum layers
+                _nav.NavigateTo("404");
+            }
+
+            //Get user by username which contains GUID. We can do authentication later down the line
+            var userList = await _udata.GetUserByUserName(userName);
+            user = userList.FirstOrDefault();
+        }
     }
 
     private async void HandleValidSubmit()
