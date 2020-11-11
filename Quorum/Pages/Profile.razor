@@ -3,40 +3,31 @@
 @using System.IO;
 @inject AuthenticationStateProvider _auth;
 @inject IJSRuntime _js;
-<h1>Profile picture upload</h1>
+<h3>Profile picture upload</h3>
 
-<h1>Drag/drop file viewer</h1>
 
 @*<img id="demo" src="Photos\khalid4747.png" />*@
 
 <div class="card-body">
     <div id="main-cropper"></div>
-    <InputFile OnChange="GetFile" class="form-control" accept="image/*"/>
+    <BlazorInputFile.InputFile OnChange="GetFile" class="form-control" accept="image/png,image/jpeg" />
     @if (file != null)
     {
         <span>Loaded @((100.0 * file.Data.Position / file.Size).ToString("0"))%</span>
+    }
+
+    @if (!string.IsNullOrEmpty(imageDataUri))
+    {
+        <img class="my-image" style="max-width:600px; max-height:600px;" src="@imageDataUri" />
     }
 </div>
 
-@*<div>
-    <InputFile OnChange="ViewFile" />
-    @status
-    @if (file != null)
-    {
-        <span>Loaded @((100.0 * file.Data.Position / file.Size).ToString("0"))%</span>
-    }
-</div>*@
-
-@if (!string.IsNullOrEmpty(imageDataUri))
-{
-    <img class="my-image" style="max-width:600px; max-height:600px;" src="@imageDataUri" />
-}
 
 @code {
 
     const string DefaultStatus = "Drop a file here or click choose a file";
-    const int MaxFileSizeHumanReadable = 10; // 10MB
-    const int MaxFileSize = MaxFileSizeHumanReadable * 1024 * 1024; //To bytes
+    const int MaxFileSizeMB= 10; // 10MB
+    const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; //To bytes
 
     string status = DefaultStatus;
     private IFileListEntry file;
@@ -55,12 +46,13 @@
         file = files.FirstOrDefault();
         if (file != null)
         {
-            var imageFile = await file.ToImageFileAsync(file.Type, 2560, 2560);
+            file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
+            var imageFile = await file.ToImageFileAsync(file.Type, 800, 600);
+
             var ms = new MemoryStream();
             await imageFile.Data.CopyToAsync(ms);
 
             imageDataUri = $"data:{file.Type};base64,{Convert.ToBase64String(ms.ToArray())}";
-
 
             //If a profile pic already exists, delete it
             string searchTerm = $"{username}*";
