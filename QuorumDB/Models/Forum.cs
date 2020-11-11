@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
@@ -33,11 +34,14 @@ namespace QuorumDB.Models
 
         public bool IsPrivate { get; set; } = false;
 
-        public List<Forum> ChildForums { get; set; }
-        
+        public int ForumId { get; set; }
+
         public List<ForumMod> Mods { get; set; }
         
         public List<ForumReply> ForumReplies { get; set; }
+
+        [ForeignKey("ForumId")]
+        public Forum ForumModel { get; set; }
 
         [ForeignKey("UserId")]
         public AspNetUser AspNetUserModel { get; set; }

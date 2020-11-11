@@ -17,17 +17,22 @@ namespace QuorumDB
             _db = db;
         }
 
-        public Task<List<Forum>> GetForums()
+        public Task<List<Forum>> GetAllForums()
         {
             string sql = "select * from dbo.Forums";
             return _db.LoadData<Forum, dynamic>(sql, new { });
         }
 
-        //HARD CODED 
-        public Task<List<Forum>> GetQuorumHomePage()
+        public Task<List<Forum>> GetForumsByParentId(int Id)
         {
-            string sql = "select * from dbo.Forums where ForumID = 3";
+            string sql = $"select * from dbo.Forums where ForumID = '{Id}'";
             return _db.LoadData<Forum, dynamic>(sql, new { });
+        }
+
+        public Task<List<Forum>> GetForumById(int id)
+        {
+            string sql = $"select * from dbo.Forums where Id = @Id";
+            return _db.LoadData<Forum, dynamic>(sql, new { Id = id});
         }
 
         //HARD CODED
@@ -44,10 +49,22 @@ namespace QuorumDB
             return _db.LoadData<Forum, dynamic>(sql, new { });
         }
 
-        public Task<List<Forum>> GetSearchURL(string input)
+        public Task<List<Forum>> GetForumByURL(string input)
         {
             string sql = "select * from dbo.Forums where dbo.Forums.Url = '" + input + "';";
             return _db.LoadData<Forum, dynamic>(sql, new { });
+        }
+
+        public Task<List<string>> GetForumURL(int Id)
+        {
+            string sql = $"select Url from dbo.Forums where dbo.Forums.Id = '{Id}'";
+            return _db.LoadData<string, dynamic>(sql, new { });
+        }
+
+        public Task< List<int> > GetCurrentForumID(string input)
+        {
+            string sql = $"select Id from dbo.Forums where dbo.Forums.Url = '{input}'";
+            return _db.LoadData<int, dynamic>(sql, new { });
         }
 
         //HARD CODED

@@ -1,50 +1,51 @@
-﻿@using QuorumDB.Models
+﻿@page "/threadcreation/{ForumParentID:int}"
+
+
+@using QuorumDB.Models
 @inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IUserData _data
+@inject QuorumDB.IUserData _userData
+@inject QuorumDB.IForumData _forumData
 @inject AuthenticationStateProvider _AuthenticationStateProvider
+
+<h3>ThreadCreator</h3>
 
 <AuthorizeView>
     <Authorized Context="Auth">
-        <div class="forum-form">
-            <EditForm Model=@forum OnValidSubmit=@HandleValidSubmit>
+        <div class="thread-form">
+            <EditForm Model=@thread OnValidSubmit=@HandleValidSubmit>
                 <DataAnnotationsValidator />
                 <ValidationSummary />
 
                 <div class="form-group">
-                    <label for="ForumTitle">Forum Title:</label>
-                    <InputText id="ForumTitle" class="form-control" @bind-Value="forum.Title" />
+                    <label for="ThreadTitle">Thread Title:</label>
+                    <InputText id="ThreadTitle" class="form-control" @bind-Value="thread.Title" />
                 </div>
 
                 <div class="form-group">
                     <label for="Description">Description:</label>
-                    <InputTextArea id="Description" class="form-control" @bind-Value="forum.Description" />
+                    <InputTextArea id="Description" class="form-control" @bind-Value="thread.Description" />
                 </div>
 
-                <div class="form-group">
-                    <label for="IsPrivate">Private?</label>
-                    <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forum.IsPrivate" />
-                </div>
-
-        <div class="form-group">
-            <label for="IsPrivate">Private?</label>
-            <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forum.IsPrivate" />
-                <button class="btn btn-primary" type="submit">Create Forum</button>
+                <button class="btn btn-primary" type="submit">Create Thread</button>
             </EditForm>
         </div>
     </Authorized>
     <NotAuthorized>
-        <h1>Must be a valid user to create a forum</h1>
+        <h1>Must be a valid user to create a thread</h1>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    Forum forum = new Forum();
+    ForumThread thread = new ForumThread();
     string userName = "none";
+
+    [Parameter]
+    public int ForumParentID { get; set; }
 
     private List<AspNetUser> userList;
     protected override async Task OnInitializedAsync()
     {
-        userList = await _data.GetUsers();
+        userList = await _userData.GetUsers();
     }
 
 
@@ -57,23 +58,25 @@
         System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
         userName = identity.Name;
 
+        thread.ForumId = ForumParentID;
+
         //saves the Id associated with the UserName in the forum object under UserId
-        foreach(var user in userList)
+        foreach (var user in userList)
         {
             if (userName == user.UserName)
-                forum.UserId = user.Id;
+                thread.UserId = user.Id;
         }
 
         try
         {
-            _context.Forums.Add(forum);
+            _context.ForumThreads.Add(thread);
             await _context.SaveChangesAsync();
         }
         catch
         {
             base.StateHasChanged();
         }
-        forum = new Forum();
+        thread = new ForumThread();
         base.StateHasChanged();
     }
 }

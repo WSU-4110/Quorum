@@ -46,6 +46,14 @@
     <Compile Remove="Data\Migrations\20201009055830_ForeignKeyRestraints.Designer.cs" />
     <Compile Remove="Data\Migrations\20201022210418_UrlsAndViewCount.cs" />
     <Compile Remove="Data\Migrations\20201022210418_UrlsAndViewCount.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105052502_test.cs" />
+    <Compile Remove="Data\Migrations\20201105052502_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105052834_test.cs" />
+    <Compile Remove="Data\Migrations\20201105052834_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105053231_test.cs" />
+    <Compile Remove="Data\Migrations\20201105053231_test.Designer.cs" />
+    <Compile Remove="Data\Migrations\20201105174949_newClasses.cs" />
+    <Compile Remove="Data\Migrations\20201105174949_newClasses.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -54,6 +62,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.9" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.9" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.6.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.9">
@@ -61,7 +70,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
-    <PackageReference Include="SendGrid" Version="9.21.0" />
+    <PackageReference Include="SendGrid" Version="9.21.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 

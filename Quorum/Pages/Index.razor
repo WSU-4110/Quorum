@@ -1,6 +1,124 @@
 ﻿@page "/"
+@using QuorumDB
+@using QuorumDB.Models;
+@using Quorum.Services;
+@using Microsoft.AspNetCore.Components.Server.Circuits;
+@inject CircuitHandler _circuit;
+@inject IForumData _data
 
-<h1>Welcome to Quorum</h1>
+<div class="panel panel-default">
+    <div class="row">
+        <div class="h1 col-12">
+            Welcome
+            <div class="h5 float-right ">
+                <span class="d-none d-sm-inline-block">Currently online:</span>
+                <span class="d-inline-block d-sm-none">Online:</span>
+                <span class="oi oi-wifi"></span> @onlineUsers
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="column">
+            <div class="leftside">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Quorums</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (forums is null)
+                        {
+                            <tr>
+                                <td>Loading data...</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var forum in forums)
+                            {
+                                <tr>
+                                    <td><a href="@forum.Url">@forum.Title</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Pages2</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="counter">Counter</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="FetchData">Fetch Data</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="Users">Users</a></td>
+                        </tr>
+                        <tr>
+                            <td><a href="forumcreationpage">Forum Creation</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="column">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Pages1</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="counter">Counter</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="FetchData">Fetch Data</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="Users">Users</a></td>
+                    </tr>
+                    <tr>
+                        <td><a href="forumcreation/@currentID">Forum Creation</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
-@*Add Shared Component Into home page*@
-<QuorumHomePage></QuorumHomePage>
+@code {
+    int currentID;
+    int onlineUsers;
+
+    //Root has q url
+    string url = "q";
+    private List<Forum> forums;
+    protected override async Task OnInitializedAsync()
+    {
+        var idList = await _data.GetCurrentForumID(url);
+        currentID = idList.FirstOrDefault();
+        forums = await _data.GetForumsByParentId(currentID);
+        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        (_circuit as TrackingCircuitHandler).CircuitsChanged += HandleCircuitsChanged;
+    }
+
+    public void Dispose()
+    {
+        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
+    }
+
+    public void HandleCircuitsChanged(object sender, EventArgs args)
+    {
+        // notify the component that its state has changed
+        // Important: You must use InvokeAsync
+        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        InvokeAsync(StateHasChanged);
+    }
+}

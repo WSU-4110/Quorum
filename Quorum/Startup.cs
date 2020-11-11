@@ -22,6 +22,7 @@ using Quorum.Services;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 namespace Quorum
 {
@@ -52,14 +53,19 @@ namespace Quorum
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultUI()
                 .AddDefaultTokenProviders();
-            services.AddRazorPages();
+
+            if (Env.IsDevelopment())
+                services.AddRazorPages().AddRazorRuntimeCompilation();
+            else
+                services.AddRazorPages();
+            
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
+            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
 
-            //This junk needs to be removed soon
-            services.AddSingleton<WeatherForecastService>();
+            //services.AddSingleton<CircuitHandler, TrackingCircuitHandler>();
 
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();

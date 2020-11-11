@@ -21,5 +21,17 @@ namespace QuorumDB
             string sql = "select * from dbo.AspNetUsers";
             return _db.LoadData<AspNetUser, dynamic>(sql, new { });
         }
+
+        public Task<List<AspNetUser>> GetUserById(int Id)
+        {
+            string sql = "Select * from dbo.AspNetUsers where Id=@Id";
+            return _db.LoadData<AspNetUser, dynamic>(sql, new { Id = Id });
+        }
+
+        public Task<List<AspNetUser>> GetUserByUserName(string userName)
+        {
+            string sql = "Select * from dbo.AspNetUsers where UserName=@UserName";
+            return _db.LoadData<AspNetUser, dynamic>(sql, new { UserName = userName });
+        }
     }
 }

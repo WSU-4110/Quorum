@@ -1,12 +1,9 @@
-﻿@page "/q"
-@page "/q/{text}"
-@page "/q/{text}/{text2}"
-@page "/q/{text}/{text2}/{text3}"
-@page "/q/{text}/{text2}/{text3}/{text4}"
-@page "/q/{text}/{text2}/{text3}/{text4}/{text5}"
+﻿@using Microsoft.Extensions.Configuration
+@using Microsoft.AspNetCore.Identity
+@using QuorumDB.Models;
+@inject QuorumDB.IForumData _data;
 
 <h3>@text</h3>
-<h4>@text2</h4>
 
 <div class="panel panel-default">
     <div class="row">
@@ -25,6 +22,8 @@
 </div>
 
 @functions{ 
+    [Parameter]
+    public string threadid { get; set; } = "threadid";
     [Parameter]
     public string text { get; set; } = "Quorum1";
     [Parameter]
