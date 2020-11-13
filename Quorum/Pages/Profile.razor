@@ -23,14 +23,27 @@
 </div>
 
 
-@code {
-
+@code 
+{
+    //start of added code
+    interface Command 
+    { 
+    public void execute(); 
+    } 
+    class FileDelete implements Command
+    {
+        private IFileListEntry file;
+        public deleter(var [] x)
+        {
+            file.Delete(x[0]);
+        }
+    }
+    //end of added code
     const string DefaultStatus = "Drop a file here or click choose a file";
     const int MaxFileSizeMB= 10; // 10MB
     const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; //To bytes
 
     string status = DefaultStatus;
-    private IFileListEntry file;
     string imageDataUri;
 
     private string username;
@@ -40,10 +53,10 @@
         var authstate = await _auth.GetAuthenticationStateAsync();
         username = authstate.User.Identity.Name;
     }
-
     async Task GetFile(IFileListEntry[] files)
     {
-        file = files.FirstOrDefault();
+        Filedelete filer=new Filedelete;
+        filer.file = files.FirstOrDefault();
         if (file != null)
         {
             file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
@@ -59,7 +72,7 @@
             var img = Directory.GetFiles("Photos", searchTerm);
             if (img.Length > 0)
             {
-                File.Delete(img[0]);
+                filer.deleter(img); //changed to be command design
             }
 
             var path = Path.Combine("Photos", username + "." + file.Type.Split('/')[1]);
