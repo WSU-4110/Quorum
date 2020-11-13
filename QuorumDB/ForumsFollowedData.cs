@@ -11,6 +11,7 @@ namespace QuorumDB
     {
         private readonly DbAccess _db = DbAccess.GetInstance();
 
+
         public ForumsFollowedData()
         { }
 

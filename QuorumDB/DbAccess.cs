@@ -13,7 +13,7 @@ namespace QuorumDB
     {
         private readonly IConfiguration _config;
 
-        private static DbAccess instance = new DbAccess();
+        private static DbAccess Instance = new DbAccess();
 
         public string ConnectionString { get; set; } = "quorum";
 
@@ -23,7 +23,7 @@ namespace QuorumDB
 
         public static DbAccess GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
         public async Task<List<T>> LoadData<T, U>(string sql, U parameters)

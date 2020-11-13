@@ -12,11 +12,11 @@ namespace QuorumDB
     {
         private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public static ForumData instance = new ForumData();
+        private static ForumData Instance = new ForumData();
 
         public static ForumData GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
         public ForumData() { }

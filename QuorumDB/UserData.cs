@@ -11,11 +11,11 @@ namespace QuorumDB
     {
         private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public static UserData instance = new UserData();
+        private static UserData Instance = new UserData();
 
         public static UserData GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
 

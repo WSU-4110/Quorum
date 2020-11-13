@@ -9,13 +9,13 @@ namespace Quorum.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AspNetUser>
     {
-        public static ApplicationDbContext instance = new ApplicationDbContext();
+        private static ApplicationDbContext Instance = new ApplicationDbContext();
 
         private ApplicationDbContext() : base() { }
 
         public static ApplicationDbContext GetInstance()
         {
-            return instance;
+            return Instance;
         }
 
         public DbSet<Forum> Forums { get; set; }
