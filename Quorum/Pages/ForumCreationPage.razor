@@ -1,10 +1,9 @@
 ﻿@page "/forumcreation/{ForumParentID:int}"
 
 @using QuorumDB.Models
+@using Quorum.Data
+@using QuorumDB
 @inject AuthenticationStateProvider _AuthenticationStateProvider
-@inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IForumData _fdata;
-@inject QuorumDB.IUserData _udata
 @inject NavigationManager _nav;
 
 <h3>Forum Creation Page</h3>
@@ -46,6 +45,9 @@
     Forum forum = new Forum();
     Forum parentForum;
     AspNetUser user;
+    ApplicationDbContext _context = ApplicationDbContext.GetInstance();
+    ForumData _fdata = ForumData.GetInstance();
+    UserData _udata = UserData.GetInstance();
 
     [Parameter]
     public int ForumParentID { get; set; }

@@ -9,11 +9,10 @@ namespace QuorumDB
 {
     public class UsersFollowedData : IUsersFollowedData
     {
-        private readonly IDbAccess _db;
+        private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public UsersFollowedData(IDbAccess db)
+        public UsersFollowedData()
         {
-            _db = db;
         }
 
         public Task<List<UsersFollowed>> GetUsersFollowed()

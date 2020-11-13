@@ -9,7 +9,14 @@ namespace Quorum.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AspNetUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+        public static ApplicationDbContext instance = new ApplicationDbContext();
+
+        private ApplicationDbContext() : base() { }
+
+        public static ApplicationDbContext GetInstance()
+        {
+            return instance;
+        }
 
         public DbSet<Forum> Forums { get; set; }
         public DbSet<ForumReply> ForumReplies { get; set; }

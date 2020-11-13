@@ -9,15 +9,21 @@ using System.Data.SqlClient;
 
 namespace QuorumDB
 {
-    public class DbAccess : IDbAccess
+    public class DbAccess
     {
         private readonly IConfiguration _config;
 
+        private static DbAccess instance = new DbAccess();
+
         public string ConnectionString { get; set; } = "quorum";
 
-        public DbAccess(IConfiguration config)
+        private DbAccess()
         {
-            _config = config;
+        }
+
+        public static DbAccess GetInstance()
+        {
+            return instance;
         }
 
         public async Task<List<T>> LoadData<T, U>(string sql, U parameters)

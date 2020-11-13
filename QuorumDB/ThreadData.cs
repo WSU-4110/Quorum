@@ -9,11 +9,10 @@ namespace QuorumDB
 {
     public class ThreadData : IThreadData
     {
-        private readonly IDbAccess _db;
+        private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public ThreadData(IDbAccess db)
+        public ThreadData()
         {
-            _db = db;
         }
 
         public Task<List<ForumThread>> GetForumThreads()

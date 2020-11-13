@@ -7,13 +7,20 @@ using QuorumDB.Models;
 
 namespace QuorumDB
 {
-    public class UserData : IUserData
+    public class UserData
     {
-        private readonly IDbAccess _db;
+        private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public UserData(IDbAccess db)
+        public static UserData instance = new UserData();
+
+        public static UserData GetInstance()
         {
-            _db = db;
+            return instance;
+        }
+
+
+        public UserData()
+        {
         }
 
         public Task<List<AspNetUser>> GetUsers()

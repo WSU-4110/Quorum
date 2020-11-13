@@ -8,14 +8,18 @@ using Microsoft.AspNetCore.Identity;
 
 namespace QuorumDB
 {
-    public class ForumData : IForumData
+    public class ForumData
     {
-        private readonly IDbAccess _db;
+        private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public ForumData(IDbAccess db)
+        public static ForumData instance = new ForumData();
+
+        public static ForumData GetInstance()
         {
-            _db = db;
+            return instance;
         }
+
+        public ForumData() { }
 
         public Task<List<Forum>> GetAllForums()
         {

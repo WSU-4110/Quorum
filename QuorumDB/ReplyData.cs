@@ -9,11 +9,10 @@ namespace QuorumDB
 {
     public class ReplyData : IReplyData
     {
-        private readonly IDbAccess _db;
+        private readonly DbAccess _db = DbAccess.GetInstance();
 
-        public ReplyData(IDbAccess db)
+        public ReplyData()
         {
-            _db = db;
         }
 
         public Task<List<ForumReply>> GetForumReplies()
