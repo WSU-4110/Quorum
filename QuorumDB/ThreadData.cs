@@ -22,4 +22,16 @@ namespace QuorumDB
             return _db.LoadData<ForumThread, dynamic>(sql, new { });
         }
     }
+
+    public class GetThreadCommand : ICommand {
+        ThreadData threaddata;
+
+        public GetThreadCommand(ThreadData threaddata) {
+            this.threaddata = threaddata;
+        }
+
+        public void Execute() {
+            threaddata.GetForumThreads();
+        }
+    }
 }

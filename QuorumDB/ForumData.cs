@@ -75,4 +75,124 @@ namespace QuorumDB
             return _db.LoadData<AspNetUser, dynamic>(sql, new { });
         }*/
     }
+
+    public class GetAllForumsCommand : ICommand {
+        ForumData forumdata;
+
+        public void Execute()
+        {
+            forumdata.GetAllForums();
+        }
+    }
+
+    public class GetForumsByParentIdCommand : ICommand {
+        ForumData forumdata;
+        int id;
+
+        public GetForumsByParentIdCommand(ForumData forumdata, int id) {
+            this.forumdata = forumdata;
+            this.id = id;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetForumsByParentId(id);
+        }
+    }
+
+    public class GetForumByIdCommand : ICommand {
+        ForumData forumdata;
+        int id;
+
+        public GetForumByIdCommand(ForumData forumdata, int id)
+        {
+            this.forumdata = forumdata;
+            this.id = id;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetForumById(id);
+        }
+    }
+
+    public class GetSearchQuorumCommand : ICommand {
+        ForumData forumdata;
+        string stringInp;
+
+        public GetSearchQuorumCommand(ForumData forumdata, string stringInp)
+        {
+            this.forumdata = forumdata;
+            this.stringInp = stringInp;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetSearchQuorum(stringInp);
+        }
+    }
+
+    public class GetSearchSectionCommand : ICommand {
+        ForumData forumdata;
+        string stringInp;
+
+        public GetSearchSectionCommand(ForumData forumdata, string stringInp)
+        {
+            this.forumdata = forumdata;
+            this.stringInp = stringInp;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetSearchSection(stringInp);
+        }
+    }
+
+    public class GetForumByURLCommand : ICommand {
+        ForumData forumdata;
+        string stringInp;
+
+        public GetForumByURLCommand(ForumData forumdata, string stringInp)
+        {
+            this.forumdata = forumdata;
+            this.stringInp = stringInp;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetForumByURL(stringInp);
+        }
+    }
+
+    public class GetForumURLCommand : ICommand {
+        ForumData forumdata;
+        int id;
+
+        public GetForumURLCommand(ForumData forumdata, int id)
+        {
+            this.forumdata = forumdata;
+            this.id = id;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetForumURL(id);
+        }
+    }
+
+    public class GetCurrentForumIDCommand : ICommand {
+        ForumData forumdata;
+        string stringInp;
+
+        public GetCurrentForumIDCommand(ForumData forumdata, string stringInp)
+        {
+            this.forumdata = forumdata;
+            this.stringInp = stringInp;
+        }
+
+        public void Execute()
+        {
+            forumdata.GetCurrentForumID(stringInp);
+        }
+    }
 }

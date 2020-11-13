@@ -22,4 +22,19 @@ namespace QuorumDB
             return _db.LoadData<ForumReply, dynamic>(sql, new { });
         }
     }
+
+    public class GetRepliesCommand : ICommand
+    {
+        ReplyData replydata;
+
+        public GetRepliesCommand(ReplyData replydata)
+        {
+            this.replydata = replydata;
+        }
+
+        public void Execute()
+        {
+            replydata.GetForumReplies();
+        }
+    }
 }

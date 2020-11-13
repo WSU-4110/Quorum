@@ -22,4 +22,19 @@ namespace QuorumDB
             return _db.LoadData<ForumsFollowed, dynamic>(sql, new { });
         }
     }
+
+    public class GetFollowedCommand : ICommand
+    {
+        ForumsFollowedData followeddata;
+
+        public GetFollowedCommand(ForumsFollowedData followeddata)
+        {
+            this.followeddata = followeddata;
+        }
+
+        public void Execute()
+        {
+            followeddata.GetForumsFollowed();
+        }
+    }
 }

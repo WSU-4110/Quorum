@@ -34,4 +34,51 @@ namespace QuorumDB
             return _db.LoadData<AspNetUser, dynamic>(sql, new { UserName = userName });
         }
     }
+
+    public class GetUserDataCommand : ICommand {
+        UserData userdata;
+
+        public GetUserDataCommand(UserData userdata) {
+            this.userdata = userdata;
+        }
+
+        public void Execute()
+        {
+            userdata.GetUsers();
+        }
+    }
+
+    public class GetUserIDCommand : ICommand
+    {
+        UserData userdata;
+        int id;
+
+        public GetUserIDCommand(UserData userdata, int id)
+        {
+            this.userdata = userdata;
+            this.id = id;
+        }
+
+        public void Execute()
+        {
+            userdata.GetUserById(id);
+        }
+    }
+
+    public class GetUsernameCommand : ICommand
+    {
+        UserData userdata;
+        string username;
+
+        public GetUsernameCommand(UserData userdata, string username)
+        {
+            this.userdata = userdata;
+            this.username = username;
+        }
+
+        public void Execute()
+        {
+            userdata.GetUserByUserName(username);
+        }
+    }
 }
