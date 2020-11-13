@@ -119,7 +119,7 @@
             parentForum = forumParentList.FirstOrDefault();
             forums = await _data.GetForumsByParentId(parentForum.Id);
 
-            BreadCrumbData breadCrumbData = new BreadCrumbData();
+            IBreadCrumbData breadCrumbData = new BreadCrumbData();
             breadCrumbData.GetBreadCrumbs(ref BreadCrumbs, forumUrl);
 
             lastBreadCrumb = BreadCrumbs.LastOrDefault();
