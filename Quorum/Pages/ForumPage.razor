@@ -102,8 +102,8 @@
     public string forum4 { get; set; } = "";
 
     private List<Forum> forums;
-    private Forum parentForum = new Forum();
-    private List<BreadCrumb> BreadCrumbs = new List<BreadCrumb>();
+    private Forum parentForum;
+    private List<BreadCrumb> BreadCrumbs;
     private BreadCrumb lastBreadCrumb = new BreadCrumb();
 
     private async Task FetchData()
@@ -119,34 +119,9 @@
             parentForum = forumParentList.FirstOrDefault();
             forums = await _data.GetForumsByParentId(parentForum.Id);
 
-            //Breadcrumbs logic
-            BreadCrumbs.Clear();
+            BreadCrumbData breadCrumbData = new BreadCrumbData();
+            breadCrumbData.GetBreadCrumbs(ref BreadCrumbs, forumUrl);
 
-            List<string> breadCrumbTitle = forumUrl.Split('/').ToList();
-            breadCrumbTitle.Remove("q"); //Remove default homepage directory
-            for (int i = 0; i < breadCrumbTitle.Count; i++)
-            {
-                var title = new StringBuilder(breadCrumbTitle[i]);
-                title.Replace('-', ' ');
-                //Capatalize the first letter
-                title[0] = char.ToUpper(title[0]);
-                breadCrumbTitle[i] = title.ToString();
-            }
-
-            List<string> breadCrumbUrls = new List<string>();
-            var forumUrlCopy = forumUrl;
-
-            breadCrumbUrls.Add(forumUrlCopy);
-            for (int i = 0; i < breadCrumbTitle.Count - 1; i++)
-            {
-                var lastSlashIndex = forumUrlCopy.LastIndexOf('/');
-                forumUrlCopy = forumUrlCopy.Remove(lastSlashIndex);
-                breadCrumbUrls.Add(forumUrlCopy);
-            }
-            breadCrumbUrls.Reverse();
-            //Add the parts into UrlPart container
-            for (int i = 0; i < breadCrumbTitle.Count; i++)
-                BreadCrumbs.Add(new BreadCrumb() { Title = breadCrumbTitle[i], Url = breadCrumbUrls[i] });
             lastBreadCrumb = BreadCrumbs.LastOrDefault();
         }
         else
@@ -158,6 +133,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        parentForum = new Forum(); 
+        BreadCrumbs = new List<BreadCrumb>();
         await FetchData();
     }
 
