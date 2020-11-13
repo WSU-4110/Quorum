@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Quorum.Data.ViewModels
 {
-    public interface IBreadCrumb
+    public interface IBreadCrumbData
     {
         void GetBreadCrumbs(ref List<BreadCrumb> breadCrumb, string forumUrl);
     }
