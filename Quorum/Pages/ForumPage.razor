@@ -10,7 +10,7 @@
 @page "/q/{forum1}/{forum2}/{forum3}/{forum4}"
 
 <h2>
-    @lastBreadCrumb.Title
+    @parentForum.Title
 </h2>
 
 <nav aria-label="breadcrumb">
@@ -83,12 +83,9 @@
         </div>
         <div class="column">
             <div class="rightside">
-                @if (parentForum != null)
-                {
-                    <p>
-                        <h1>@parentForum.Description</h1>
-                    </p>
-                 }
+                <p>
+                    <h1>@parentForum.Description</h1>
+                </p>
             </div>
         </div>
     </div>
@@ -105,7 +102,7 @@
     public string forum4 { get; set; } = "";
 
     private List<Forum> forums;
-    private Forum parentForum;
+    private Forum parentForum = new Forum();
     private List<BreadCrumb> BreadCrumbs = new List<BreadCrumb>();
     private BreadCrumb lastBreadCrumb = new BreadCrumb();
 

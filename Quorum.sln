@@ -4,8 +4,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Quorum", "Quorum\Quorum.csproj", "{BE842086-D2E8-4506-A63C-88C59D376263}"
+	ProjectSection(ProjectDependencies) = postProject
+		{97F99E8F-3311-42D9-9B8E-96650E83AE55} = {97F99E8F-3311-42D9-9B8E-96650E83AE55}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuorumDB", "QuorumDB\QuorumDB.csproj", "{0BFF7794-7992-4BC3-9DD2-B40C6F6BC8A8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{97F99E8F-3311-42D9-9B8E-96650E83AE55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{0BFF7794-7992-4BC3-9DD2-B40C6F6BC8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BFF7794-7992-4BC3-9DD2-B40C6F6BC8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BFF7794-7992-4BC3-9DD2-B40C6F6BC8A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
