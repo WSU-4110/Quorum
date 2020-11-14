@@ -1,37 +1,35 @@
 ﻿@page "/profile"
-@using BlazorInputFile
 @using System.IO;
 @inject AuthenticationStateProvider _auth;
 @inject IJSRuntime _js;
 <h3>Profile picture upload</h3>
 
-
-@*<img id="demo" src="Photos\khalid4747.png" />*@
-
 <div class="card-body">
     <div id="main-cropper"></div>
-    <BlazorInputFile.InputFile OnChange="GetFile" class="form-control" accept="image/png,image/jpeg" />
-    @if (file != null)
+    <BlazorInputFile.InputFile OnChange="HandleSelection" id="select" accept="image/*" />
+    @*<input type="file" class="form-control" value="Choose Image" accept="image/*">*@
+    @if (submittedImage)
     {
-        <span>Loaded @((100.0 * file.Data.Position / file.Size).ToString("0"))%</span>
+        <button @onclick="Submit" name="btnupload" class="btn btn-success">Submit</button>
+    }
+    @if (imageFile != null){
+        <div>Loaded @((100.0 * imageFile.Data.Position / imageFile.Size).ToString("0"))%</div>
     }
 
-    @if (!string.IsNullOrEmpty(imageDataUri))
-    {
-        <img class="my-image" style="max-width:600px; max-height:600px;" src="@imageDataUri" />
-    }
+    <p>@status</p>
 </div>
 
 
 @code {
 
     const string DefaultStatus = "Drop a file here or click choose a file";
-    const int MaxFileSizeMB= 10; // 10MB
+    const int MaxFileSizeMB= 15; // 15MB
     const int MaxFileSize = MaxFileSizeMB * 1024 * 1024; //To bytes
 
     string status = DefaultStatus;
-    private IFileListEntry file;
-    string imageDataUri;
+    IFileListEntry[] selectedFiles;
+    IFileListEntry imageFile;
+    bool submittedImage;
 
     private string username;
 
@@ -41,18 +39,42 @@
         username = authstate.User.Identity.Name;
     }
 
-    async Task GetFile(IFileListEntry[] files)
+    protected override Task OnAfterRenderAsync(bool firstRender)
     {
-        file = files.FirstOrDefault();
-        if (file != null)
+        if (firstRender)
         {
-            file.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
-            var imageFile = await file.ToImageFileAsync(file.Type, 800, 600);
+            _js.InvokeVoidAsync("croppieFunctions.init");
+        }
+        firstRender = false;
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    void HandleSelection(IFileListEntry[] files)
+    {
+        selectedFiles = files;
+        submittedImage = true;
+    }
+
+    async Task Submit()
+    {
+        //Set the croppie file and
+        var uncroppedImage = selectedFiles.FirstOrDefault();
+
+        if (uncroppedImage != null)
+        {
+            // Load as an image file in memory
+            var format = uncroppedImage.Type;
+            imageFile = await uncroppedImage.ConvertCroppieToImageFileAsync(format);
+
+            //Event listener for data change
+            imageFile.OnDataRead += (sender, eventArgs) => InvokeAsync(StateHasChanged);
 
             var ms = new MemoryStream();
             await imageFile.Data.CopyToAsync(ms);
 
-            imageDataUri = $"data:{file.Type};base64,{Convert.ToBase64String(ms.ToArray())}";
+            // Make a data URL so we can display it
+
+            status = $"Finished loading {ms.Length} bytes from {imageFile.Name}";
 
             //If a profile pic already exists, delete it
             string searchTerm = $"{username}*";
@@ -61,16 +83,11 @@
             {
                 File.Delete(img[0]);
             }
+            string imageName = $"{username}-{DateTime.Now.ToString("yyyyMMdd-HHmmss")}.{imageFile.Type.Split('/')[1]}";
+            var path = Path.Combine("Photos", imageName);
 
-            var path = Path.Combine("Photos", username + "." + file.Type.Split('/')[1]);
-
-            using (var stream = new FileStream(path, FileMode.Create))
-            {
-                await file.Data.CopyToAsync(stream);
-            }
-
-            status = DefaultStatus;
+            await File.WriteAllBytesAsync(path, ms.ToArray());
+            await _js.InvokeVoidAsync("croppieFunctions.updateAvatarImage", $"Photos/{imageName}");
         }
-
     }
 }

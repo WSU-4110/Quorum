@@ -86,7 +86,6 @@ namespace Quorum
             if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
                 IdentityModelEventSource.ShowPII = true;
             }
             else
