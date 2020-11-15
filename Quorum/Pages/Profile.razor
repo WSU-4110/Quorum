@@ -1,7 +1,9 @@
 ﻿@page "/profile"
-@using System.IO;
-@inject AuthenticationStateProvider _auth;
-@inject IJSRuntime _js;
+@using System.IO
+@inject AuthenticationStateProvider _auth
+@inject IJSRuntime _js
+@inject UserState _userState
+
 <h3>Profile picture upload</h3>
 
 <div class="card-body">
@@ -15,7 +17,6 @@
     @if (imageFile != null){
         <div>Loaded @((100.0 * imageFile.Data.Position / imageFile.Size).ToString("0"))%</div>
     }
-
     <p>@status</p>
 </div>
 
@@ -87,7 +88,8 @@
             var path = Path.Combine("Photos", imageName);
 
             await File.WriteAllBytesAsync(path, ms.ToArray());
-            await _js.InvokeVoidAsync("croppieFunctions.updateAvatarImage", $"Photos/{imageName}");
+            //await _js.InvokeVoidAsync("croppieFunctions.updateAvatarImage", $"Photos/{imageName}");
+            _userState.NotifyAvatarUpdate();
         }
     }
 }

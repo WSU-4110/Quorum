@@ -39,8 +39,5 @@ window.croppieFunctions = {
         }
         // Change Event to Read file content from File input
         $('#select').on('change', function () { readFile(this); });
-    },
-    updateAvatarImage: function (newImgUrl) {
-        $("#avatar-image").attr("src", newImgUrl);
     }
 };

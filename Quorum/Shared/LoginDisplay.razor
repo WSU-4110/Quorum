@@ -1,20 +1,21 @@
-﻿@inject AuthenticationStateProvider _auth;
-@using System.IO;
+﻿@inject AuthenticationStateProvider _auth
+@inject UserState _userState
+@using System.IO
 
 <AuthorizeView>
     <Authorized>
         <a href="profile" class="avatar btn">@context.User.Identity.Name</a>
         <div class="avatar nav-item dropdown col-md-2">
             <div class="avatar-icon nav-link dropdown-toggle" id="navdrop" role="button" data-toggle="dropdown" data-hover="dropdown">
-                    @if (imgUrl != String.Empty)
-                    {
-                        <img src="@imgUrl" class="rounded-circle" id="avatar-image" width="48" height="48">
-                    }
-                    else
-                    {
-                        <span class="text-avatar" width="48" height="48">@context.User.Identity.Name.ToUpper()[0]</span>
-                    }
-                    <a></a> @*Drop down arrow*@
+                @if (imgUrl != String.Empty)
+                {
+                    <img src="@imgUrl" class="rounded-circle" id="avatar-icon" width="48" height="48">
+                }
+                else
+                {
+                    <span class="text-avatar" id="avatar-icon" width="48" height="48">@context.User.Identity.Name.ToUpper()[0]</span>
+                }
+                <a></a> @*Drop down arrow*@
             </div>
             <div class="dropdown-menu" aria-labelledby="navdrop">
                 <a href="Identity/Account/manage" class="dropdown-item">Settings</a>
@@ -31,17 +32,40 @@
 </AuthorizeView>
 
 @code {
+    string username;
+
     string imgUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         var authstate = await _auth.GetAuthenticationStateAsync();
         string username = authstate.User.Identity.Name;
+        loadImage();
+    }
+
+    protected void loadImage()
+    {
         string searchTerm = $"{username}*";
-        var img =  Directory.GetFiles("Photos", searchTerm);
+        var img = Directory.GetFiles("Photos", searchTerm);
         if (img.Length > 0)
         {
             imgUrl = img[0];
-        }       
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        _userState.OnChange += HandleChange;
+    }
+
+    public void HandleChange(object sender, EventArgs args)
+    {
+        loadImage();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _userState.OnChange -= HandleChange;
     }
 }
