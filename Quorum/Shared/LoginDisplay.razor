@@ -32,19 +32,17 @@
 </AuthorizeView>
 
 @code {
-    string username;
-
     string imgUrl = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        var authstate = await _auth.GetAuthenticationStateAsync();
-        string username = authstate.User.Identity.Name;
-        loadImage();
+        await loadImage();
     }
 
-    protected void loadImage()
+    protected async Task loadImage()
     {
+        var authstate = await _auth.GetAuthenticationStateAsync();
+        string username = authstate.User.Identity.Name;
         string searchTerm = $"{username}*";
         var img = Directory.GetFiles("Photos", searchTerm);
         if (img.Length > 0)
@@ -60,7 +58,7 @@
 
     public void HandleChange(object sender, EventArgs args)
     {
-        loadImage();
+        Task.FromResult(loadImage());
         StateHasChanged();
     }
 
