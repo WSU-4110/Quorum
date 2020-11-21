@@ -42,13 +42,13 @@
 </AuthorizeView>
 
 @code {
-    ForumView forumView = new ForumView();
-    Forum forum = new Forum();
-    Forum parentForum;
-    AspNetUser user;
+        ForumView forumView = new ForumView();
+        Forum forum = new Forum();
+        Forum parentForum;
+        AspNetUser user;
 
-    [Parameter]
-    public int ForumParentID { get; set; }
+        [Parameter]
+        public int ForumParentID { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -75,6 +75,8 @@
                 //reached maximum layers
                 _nav.NavigateTo("404");
             }
+
+            forumView.ParentForumTitle = parentForum.Title;
 
             //Get user by username which contains GUID. We can do authentication later down the line
             var userList = await _udata.GetUserByUserName(userName);

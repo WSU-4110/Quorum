@@ -64,8 +64,7 @@ namespace Quorum
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
-
-            //services.AddSingleton<CircuitHandler, TrackingCircuitHandler>();
+            services.AddScoped<UserState>();
 
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
@@ -86,7 +85,6 @@ namespace Quorum
             if (Env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseDatabaseErrorPage();
                 IdentityModelEventSource.ShowPII = true;
             }
             else

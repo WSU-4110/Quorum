@@ -12,6 +12,6 @@ namespace QuorumDB.Models
         [MaxLength(512)]
         public string AvatarUrl { get; set; }
 
-        public DateTime DateRegistered { get; set; }
+        public DateTimeOffset DateRegistered { get; set; }
     } 
 }
