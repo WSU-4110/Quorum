@@ -10,7 +10,12 @@ new MutationObserver((mutations, observer) => {
         attemptReload();
         setInterval(attemptReload, 10000);
     }
-}).observe(document.body, {childList: true, subtree: true });
+}).observe(document.body, { childList: true, subtree: true });
+
+
+function getTimeZoneOffset() {
+    return new Date().getTimezoneOffset();
+}
 
 //Croppie js functions
 window.croppieFunctions = {
@@ -39,8 +44,5 @@ window.croppieFunctions = {
         }
         // Change Event to Read file content from File input
         $('#select').on('change', function () { readFile(this); });
-    },
-    updateAvatarImage: function (newImgUrl) {
-        $("#avatar-image").attr("src", newImgUrl);
     }
 };

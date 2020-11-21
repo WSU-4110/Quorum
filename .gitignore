@@ -12,6 +12,7 @@
 *.userprefs
 appsettings.Development.json
 appsettings.json
+Quorum/Photos
 
 # Build results
 [Dd]ebug/
