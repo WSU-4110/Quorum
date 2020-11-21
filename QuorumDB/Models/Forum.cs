@@ -30,7 +30,7 @@ namespace QuorumDB.Models
                 
         public string Group { get; set; }
 
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        public DateTimeOffset DateCreated { get; set; } = DateTime.UtcNow;
 
         public bool IsPrivate { get; set; } = false;
 

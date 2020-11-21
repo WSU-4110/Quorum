@@ -10,7 +10,12 @@ new MutationObserver((mutations, observer) => {
         attemptReload();
         setInterval(attemptReload, 10000);
     }
-}).observe(document.body, {childList: true, subtree: true });
+}).observe(document.body, { childList: true, subtree: true });
+
+
+function getTimeZoneOffset() {
+    return new Date().getTimezoneOffset();
+}
 
 //Croppie js functions
 window.croppieFunctions = {
