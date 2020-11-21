@@ -1,5 +1,4 @@
-﻿@page "/profile"
-@page "/profile/{UserName}"
+﻿
 @using System.IO
 @inject AuthenticationStateProvider _auth
 @inject IJSRuntime _js
@@ -14,8 +13,6 @@
         <h1>@UserName</h1>
         <h4>@searchUserName.UserName</h4>
         <h4>@searchUserName.AvatarUrl</h4>
-        <h4>@searchUserName.DateRegistered</h4>
-        <h4>@registeredTime.ToString("F")</h4>
     }
     else
     {
@@ -46,7 +43,6 @@
     public string UserName { get; set; }
     bool searchForUser = false;
     AspNetUser searchUserName;
-    DateTimeOffset registeredTime;
 
     const string DefaultStatus = "Drop a file here or click choose a file";
     const int MaxFileSizeMB = 15; // 15MB
@@ -71,7 +67,6 @@
             if (userList.Count > 0)
             {
                 searchUserName = userList.FirstOrDefault();
-                registeredTime = await _userState.GetLocalDateTime(searchUserName.DateRegistered);
                 searchForUser = true;
             }
         }

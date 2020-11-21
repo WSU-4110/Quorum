@@ -22,7 +22,7 @@ namespace QuorumDB.Models
         [Required]
         public string Text { get; set; }
 
-        public DateTime CreatedTime { get; set; } = DateTime.Now;
+        public DateTimeOffset CreatedTime { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("UserId")]
         public AspNetUser AspNetUserModel { get; set; }
