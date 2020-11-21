@@ -1,3 +1,39 @@
-﻿@page "/p/{threadid}"
+﻿@using QuorumDB.Models;
+@using Quorum.Data.ViewModels;
+@using System.Text;
+@inject NavigationManager NavManager;
+@inject QuorumDB.IForumData _data;
 
-<ThreadLayout></ThreadLayout>
+@page "/p/{threadid}"
+
+<h3>@threadid</h3>
+
+<div class="panel panel-default">
+    <div class="posts">
+        <ul>
+            <li id="postnum1" class="postwrapper">
+                <div class="postdata">Profile Pic Here | Username Here | Time Here</div>
+                <div class="postmessage">This is a post</div>
+            </li>
+            <li id="postnum2" class="postwrapper">
+                <div class="postdata">Profile Pic Here | Username Here | Time Here</div>
+                <div class="postmessage">This is another post</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+@functions{ 
+    [Parameter]
+    public string threadid { get; set; } = "threadid";
+    [Parameter]
+    public string text { get; set; } = "Quorum1";
+    [Parameter]
+    public string text2 { get; set; } = "Quorum2";
+    [Parameter]
+    public string text3 { get; set; } = "Quorum3";
+    [Parameter]
+    public string text4 { get; set; } = "Quorum4";
+    [Parameter]
+    public string text5 { get; set; } = "Quorum5";
+}
