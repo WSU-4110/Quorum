@@ -25,8 +25,15 @@
             }
             else
             {
-                foreach (var thread in threads)
+                
+                foreach (var thread in threadsList)
                 {
+                    <li id="title"><h2>@thread.Title</h2></li>
+                    <li id="replybutton">
+                        <div class="threadcontrols">
+                            <a class="btn btn-outline-dark" href="#" role="button" data-toggle="modal" data-target="#createReply">Reply</a>
+                        </div>
+                    </li>
                     <li id="description" class="postwrapper">
                         <div class="postdata">Profile Pic | @thread.UserName | @thread.CreatedTime</div>
                         <div class="postmessage">@thread.Description</div>
@@ -61,27 +68,74 @@
     </div>
 </div>
 
+<AuthorizeView>
+    <Authorized>
+        <div class="modal fade" id="createReply" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create Reply</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Text</label>
+                                <textarea class="form-control" id="message-text" placeholder="Message" @bind="replyView.Text"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" data-dismiss="modal" @onclick="@HandleValidSubmit">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="modal fade" id="createThread" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create Thread</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Not an authorized user, cannot create a thread</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
 @functions{
     [Parameter]
     public string threadid { get; set; } = "threadid";
 
     private List<ForumReply> replies;
-    private List<ForumThread> threads;
-    private List<AspNetUser> user;
+    private List<ForumThread> threadsList;
+    private ForumThread thread;
+    private ReplyView replyView = new ReplyView();
+    private ForumReply reply = new ForumReply();
+    private AspNetUser user;
 
     private async Task FetchData()
     {
-        threads = await _tdata.GetThreadById(int.Parse(threadid));
+        threadsList = await _tdata.GetThreadById(int.Parse(threadid));
 
         //Only fetch information if the url is valid
-        if (threads.Count != 0)
+        if (threadsList.Count != 0)
         {
             replies = await _rdata.GetRepliesByThreadId(int.Parse(threadid));
-
-            foreach (var thread in threads)
-            {
-                user = await _udata.GetUserById(thread.UserId);
-            }
         }
         else
         {
@@ -98,5 +152,36 @@
     protected override async Task OnParametersSetAsync()
     {
         await FetchData();
+    }
+
+    private async void HandleValidSubmit()
+    {
+        //get current user
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userState = authenticationState.User;
+        string userName = userState.Identity.Name;
+        var userList = await _udata.GetUserByUserName(userName);
+        user = userList.FirstOrDefault();
+
+        thread = threadsList.FirstOrDefault();
+
+        //Assign the view model to the database model
+        reply.Text = replyView.Text;
+        reply.ThreadId = thread.Id;
+        reply.UserId = user.Id;
+        reply.UserName = user.UserName;
+
+        try
+        {
+            _context.ForumReplies.Add(reply);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            base.StateHasChanged();
+        }
+
+        NavManager.NavigateTo(NavManager.Uri, true);
+
     }
 }
