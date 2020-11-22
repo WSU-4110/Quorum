@@ -3,9 +3,9 @@
 
 @using Microsoft.Extensions.Configuration
 @using Microsoft.AspNetCore.Identity
-@using QuorumDB.Models;
 
-@inject QuorumDB.IUserData _data
+@inject IUserData _data
+@inject UserState _ustate
 <h1>Users table</h1>
 
 <table class="table table-striped">
@@ -19,7 +19,7 @@
     <tbody>
         @if (userList is null)
         {
-            <tr colspan="3">Loading Data...</tr>
+            <tr><td colspan="3">Loading Data...</td></tr>
         }
         else
         {
@@ -28,7 +28,7 @@
                 <tr>
                     <td>@user.Email</td>
                     <td><a href="/profile/@user.UserName">@user.UserName</a></td>
-                    <td>@user.DateRegistered</td>
+                    <td>@user.DateRegistered.ToString("G")</td>
                 </tr>
             }
         }
@@ -40,5 +40,9 @@
     protected override async Task OnInitializedAsync()
     {
         userList = await _data.GetUsers();
+        foreach(var user in userList)
+        {
+            user.DateRegistered = await _ustate.GetLocalDateTime(user.DateRegistered); 
+        }
     }
 }

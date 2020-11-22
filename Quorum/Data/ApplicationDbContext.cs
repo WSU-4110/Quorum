@@ -24,6 +24,9 @@ namespace Quorum.Data
             base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Forum>()
                 .HasIndex(f => f.Url);
+            modelBuilder.Entity<UsersFollowed>()
+                .HasKey(k => new { k.UserId, k.FollowedUserId });
         }
+                
     }
 }

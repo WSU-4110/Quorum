@@ -4,7 +4,7 @@
 @inject AuthenticationStateProvider _auth
 @inject IJSRuntime _js
 @inject UserState _userState
-@inject QuorumDB.IUserData _uData
+@inject IUserData _uData
 @inject NavigationManager _nav;
 
 @if (searchForUser)
@@ -16,6 +16,9 @@
         <h4>@searchUserName.AvatarUrl</h4>
         <h4>@searchUserName.DateRegistered</h4>
         <h4>@registeredTime.ToString("F")</h4>
+        <h4>Time ago <span class="oi oi-clock"></span>: @timeAgo</h4>
+        <time class="timeago" datetime="2011-12-17T09:24:17Z">December 17, 2011</time>
+        <time class="timeago" datetime="@registeredTime.ToString("u")"></time>
     }
     else
     {
@@ -47,6 +50,7 @@
     bool searchForUser = false;
     AspNetUser searchUserName;
     DateTimeOffset registeredTime;
+    string timeAgo = string.Empty;
 
     const string DefaultStatus = "Drop a file here or click choose a file";
     const int MaxFileSizeMB = 15; // 15MB
@@ -72,6 +76,7 @@
             {
                 searchUserName = userList.FirstOrDefault();
                 registeredTime = await _userState.GetLocalDateTime(searchUserName.DateRegistered);
+                timeAgo = TimeAgo.getTimeAgo(registeredTime);
                 searchForUser = true;
             }
         }
@@ -82,6 +87,7 @@
         if (firstRender)
         {
             _js.InvokeVoidAsync("croppieFunctions.init");
+            _js.InvokeVoidAsync("general.initTimeAgo");
         }
         firstRender = false;
         return base.OnAfterRenderAsync(firstRender);

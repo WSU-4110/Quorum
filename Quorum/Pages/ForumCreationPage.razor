@@ -1,10 +1,9 @@
 ﻿@page "/forumcreation/{ForumParentID:int}"
 
-@using QuorumDB.Models
 @inject AuthenticationStateProvider _AuthenticationStateProvider
 @inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IForumData _fdata;
-@inject QuorumDB.IUserData _udata
+@inject IForumData _fdata;
+@inject IUserData _udata
 @inject NavigationManager _nav;
 
 <h3>Forum Creation Page</h3>
@@ -42,13 +41,13 @@
 </AuthorizeView>
 
 @code {
-        ForumView forumView = new ForumView();
-        Forum forum = new Forum();
-        Forum parentForum;
-        AspNetUser user;
+    ForumView forumView = new ForumView();
+    Forum forum = new Forum();
+    Forum parentForum;
+    AspNetUser user;
 
-        [Parameter]
-        public int ForumParentID { get; set; }
+    [Parameter]
+    public int ForumParentID { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
