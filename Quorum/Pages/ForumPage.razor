@@ -3,6 +3,13 @@
 @using System.Text;
 @inject NavigationManager NavManager;
 @inject QuorumDB.IForumData _data;
+@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject Quorum.Data.ApplicationDbContext _context
+@inject QuorumDB.IUserData _udata
+@inject QuorumDB.IThreadData _tdata
+
+
+
 
 @page "/q/{forum1}"
 @page "/q/{forum1}/{forum2}"
@@ -40,34 +47,58 @@
     }
 </div>
 
-<div class="modal fade" id="createThread" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Create Thread</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" placeholder="Title">
+<AuthorizeView>
+    <Authorized>
+        <div class="modal fade" id="createThread" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create Thread</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">Message</label>
-                        <textarea class="form-control" id="message-text" placeholder="Message"></textarea>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" placeholder="Title" @bind="threadView.Title">
+                            </div>
+                            <div class="form-group">
+                                <label for="message-text" class="col-form-label">Description</label>
+                                <textarea class="form-control" id="message-text" placeholder="Message" @bind="threadView.Description"></textarea>
+                            </div>
+                        </form>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary">Submit</button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" data-dismiss="modal" @onclick="@HandleValidSubmit">Submit</button>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="modal fade" id="createThread" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Create Thread</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Not an authorized user, cannot create a thread</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
 
 <div class="panel panel-default">
     <div class="row">
@@ -108,6 +139,30 @@
                         }
                     </tbody>
                 </table>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Threads</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (threads is null)
+                        {
+                            <tr>
+                                <td>Loading Data...</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var thread in threads)
+                            {
+                                <tr>
+                                    <td><a href="/p/@thread.Id">@thread.Title</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="column">
@@ -121,19 +176,25 @@
 </div>
 
 @functions{
-    [Parameter]
-    public string forum1 { get; set; }
-    [Parameter]
-    public string forum2 { get; set; } = "";
-    [Parameter]
-    public string forum3 { get; set; } = "";
-    [Parameter]
-    public string forum4 { get; set; } = "";
+        [Parameter]
+        public string forum1 { get; set; }
+        [Parameter]
+        public string forum2 { get; set; } = "";
+        [Parameter]
+        public string forum3 { get; set; } = "";
+        [Parameter]
+        public string forum4 { get; set; } = "";
 
     private List<Forum> forums;
     private Forum parentForum = new Forum();
     private List<BreadCrumb> BreadCrumbs = new List<BreadCrumb>();
     private BreadCrumb lastBreadCrumb = new BreadCrumb();
+
+    private ThreadView threadView = new ThreadView();
+    private ForumThread thread = new ForumThread();
+    private AspNetUser user;
+
+    private List<ForumThread> threads;
 
     private async Task FetchData()
     {
@@ -147,6 +208,11 @@
         {
             parentForum = forumParentList.FirstOrDefault();
             forums = await _data.GetForumsByParentId(parentForum.Id);
+
+            foreach (var forum in forums)
+            {
+                threads = await _tdata.GetThreadsByForumId(forum.ForumId);
+            }
 
             //Breadcrumbs logic
             BreadCrumbs.Clear();
@@ -187,11 +253,46 @@
 
     protected override async Task OnInitializedAsync()
     {
+        //get current user
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userState = authenticationState.User;
+        string userName = userState.Identity.Name;
+        var userList = await _udata.GetUserByUserName(userName);
+        user = userList.FirstOrDefault();
+
         await FetchData();
     }
 
     protected override async Task OnParametersSetAsync()
     {
+        //get current user
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userState = authenticationState.User;
+        string userName = userState.Identity.Name;
+        var userList = await _udata.GetUserByUserName(userName);
+        user = userList.FirstOrDefault();
+
         await FetchData();
+    }
+
+
+    private async void HandleValidSubmit()
+    {
+        //Assign the view model to the database model
+        thread.Title = threadView.Title;
+        thread.Description = threadView.Description;
+        thread.ForumId = parentForum.Id;
+        thread.UserName = user.UserName;
+        thread.UserId = user.Id;
+
+        try
+        {
+            _context.ForumThreads.Add(thread);
+            await _context.SaveChangesAsync();
+        }
+        catch
+        {
+            base.StateHasChanged();
+        }
     }
 }
