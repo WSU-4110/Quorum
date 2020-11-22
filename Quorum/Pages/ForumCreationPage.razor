@@ -41,15 +41,14 @@
     </NotAuthorized>
 </AuthorizeView>
 
-@code 
-{
-    ForumView forumView = new ForumView();
-    Forum forum = new Forum();
-    Forum parentForum;
-    AspNetUser user;
+@code {
+        ForumView forumView = new ForumView();
+        Forum forum = new Forum();
+        Forum parentForum;
+        AspNetUser user;
 
-    [Parameter]
-    public int ForumParentID { get; set; }
+        [Parameter]
+        public int ForumParentID { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

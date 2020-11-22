@@ -1,54 +1,22 @@
 ﻿@page "/p/{threadid}"
 
 @using Microsoft.Extensions.Configuration;
-@using Microsoft.AspNetCore.Identity
-@using QuorumDB.Models
-@using Quorum.Data.ViewModels
-@using System.Text
-@inject AuthenticationStateProvider _AuthenticationStateProvider
-@inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IForumData _fdata
-@inject QuorumDB.IThreadData _tdata
-@inject QuorumDB.IReplyData _rdata
-@inject QuorumDB.IUserData _udata
-@inject NavigationManager NavManager
+@using Microsoft.AspNetCore.Identity;
+@using QuorumDB.Models;
+@using Quorum.Data.ViewModels;
+@using System.Text;
+@inject AuthenticationStateProvider _AuthenticationStateProvider;
+@inject Quorum.Data.ApplicationDbContext _context;
+@inject QuorumDB.IForumData _fdata;
+@inject QuorumDB.IThreadData _tdata;
+@inject QuorumDB.IReplyData _rdata;
+@inject QuorumDB.IUserData _udata;
+@inject NavigationManager NavManager;
 
 
 <div class="panel panel-default">
     <div class="posts">
         <ul>
-            @if (replies is null)
-            {
-                <li id="loading" class="postwrapper">
-                    <div class="postmessage">Loading Data...</div>
-                </li>
-            }
-            else
-            {
-                foreach (var thread in threads)
-                {
-                    <li id="description" class="postwrapper">
-                        <div class="postdata">Profile Pic | @thread.UserName | @thread.CreatedTime</div>
-                        <div class="postmessage">@thread.Description</div>
-                    </li>
-                }
-                @if (replies.Count() == 0)
-                {
-                    <li id="noposts" class="postwrapper">
-                        <div class="postmessage">Currently no replies</div>
-                    </li>
-                }
-                else
-                {
-                    foreach (var reply in replies)
-                    {
-                        <li id="threadreply" class="postwrapper">
-                            <div class="postdata">Profile Pic Here | @reply.UserName | @reply.CreatedTime</div>
-                            <div class="postmessage">@reply.Text</div>
-                        </li>
-                    }
-                }
-            }
             <li id="postnum1" class="postwrapper">
                 <div class="postdata">Profile Pic Here | Username Here | Time Here</div>
                 <div class="postmessage">This is a post</div>
@@ -66,22 +34,15 @@
     public string threadid { get; set; } = "threadid";
 
     private List<ForumReply> replies;
-    private List<ForumThread> threads;
-    private List<AspNetUser> user;
-
+    
     private async Task FetchData()
     {
-        threads = await _tdata.GetThreadById(int.Parse(threadid));
+        var threadList = await _tdata.GetThreadById(int.Parse(threadid));
 
         //Only fetch information if the url is valid
-        if (threads.Count != 0)
+        if (threadList.Count != 0)
         {
             replies = await _rdata.GetRepliesByThreadId(int.Parse(threadid));
-
-            foreach (var thread in threads)
-            {
-                user = await _udata.GetUserById(int.Parse(thread.UserId));
-            }
         }
         else
         {

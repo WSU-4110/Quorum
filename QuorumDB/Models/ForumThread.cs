@@ -20,9 +20,6 @@ namespace QuorumDB.Models
 
         public string UserId { get; set; }
 
-        [MaxLength(450)] 
-        public string UserName { get; set; }
-
         public DateTimeOffset CreatedTime { get; set; } = DateTime.UtcNow;
 
         [ForeignKey("ForumId")]
