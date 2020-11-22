@@ -3,9 +3,11 @@
 
 @using QuorumDB.Models
 @inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IUserData _userData
-@inject QuorumDB.IForumData _forumData
+@inject QuorumDB.IUserData _udata
+@inject QuorumDB.IForumData _fdata
 @inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject NavigationManager _nav
+
 
 <h3>ThreadCreator</h3>
 
@@ -36,36 +38,33 @@
 </AuthorizeView>
 
 @code {
+    ThreadView threadView = new ThreadView();
     ForumThread thread = new ForumThread();
-    string userName = "none";
+    Forum parentForum;
+    AspNetUser user;
 
     [Parameter]
     public int ForumParentID { get; set; }
 
-    private List<AspNetUser> userList;
     protected override async Task OnInitializedAsync()
     {
-        userList = await _userData.GetUsers();
-    }
+        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userState = authenticationState.User;
+        string userName = userState.Identity.Name;
 
+        if (userState.Identity.IsAuthenticated)
+        {
+            
+        }
+    }
 
     private async void HandleValidSubmit()
     {
-
-        //gets the current user's UserName
-        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
-        System.Security.Claims.ClaimsPrincipal claimsPrincipal = authenticationState.User;
-        System.Security.Principal.IIdentity identity = claimsPrincipal.Identity;
-        userName = identity.Name;
-
+        //Assign the view model to the database model
+        thread.Title = threadView.Title;
+        thread.Description = threadView.Description;
         thread.ForumId = ForumParentID;
-
-        //saves the Id associated with the UserName in the forum object under UserId
-        foreach (var user in userList)
-        {
-            if (userName == user.UserName)
-                thread.UserId = user.Id;
-        }
+        thread.UserId = user.Id;
 
         try
         {
@@ -76,7 +75,11 @@
         {
             base.StateHasChanged();
         }
-        thread = new ForumThread();
-        base.StateHasChanged();
+
+        //q is home page btw
+        if (parentForum.Url == "q")
+            _nav.NavigateTo("/");
+        else
+            _nav.NavigateTo(parentForum.Url);
     }
 }

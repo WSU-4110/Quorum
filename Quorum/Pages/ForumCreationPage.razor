@@ -41,14 +41,15 @@
     </NotAuthorized>
 </AuthorizeView>
 
-@code {
-        ForumView forumView = new ForumView();
-        Forum forum = new Forum();
-        Forum parentForum;
-        AspNetUser user;
+@code 
+{
+    ForumView forumView = new ForumView();
+    Forum forum = new Forum();
+    Forum parentForum;
+    AspNetUser user;
 
-        [Parameter]
-        public int ForumParentID { get; set; }
+    [Parameter]
+    public int ForumParentID { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -105,7 +106,7 @@
             base.StateHasChanged();
         }
 
-        //q is home page btw
+        //q is home page
         if (parentForum.Url == "q")
             _nav.NavigateTo("/");
         else
