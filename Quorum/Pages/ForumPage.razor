@@ -209,10 +209,8 @@
             parentForum = forumParentList.FirstOrDefault();
             forums = await _data.GetForumsByParentId(parentForum.Id);
 
-            foreach (var forum in forums)
-            {
-                threads = await _tdata.GetThreadsByForumId(forum.ForumId);
-            }
+            threads = await _tdata.GetThreadsByForumId(parentForum.Id);
+
 
             //Breadcrumbs logic
             BreadCrumbs.Clear();
