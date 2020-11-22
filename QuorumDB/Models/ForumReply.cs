@@ -16,6 +16,9 @@ namespace QuorumDB.Models
         [MaxLength(450)]
         public string UserId { get; set; }
 
+        [MaxLength(450)]
+        public string UserName { get; set; }
+
         [MaxLength(256)]
         public int LikeCount{ get; set; }
 
