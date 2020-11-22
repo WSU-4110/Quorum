@@ -7,7 +7,7 @@ namespace QuorumDB
     public interface IUserData
     {
         Task<List<AspNetUser>> GetUsers();
-        Task<List<AspNetUser>> GetUserById(int Id);
+        Task<List<AspNetUser>> GetUserById(string Id);
         Task<List<AspNetUser>> GetUserByUserName(string userName);
     }
 }

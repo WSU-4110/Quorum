@@ -69,7 +69,10 @@ namespace Quorum
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
             services.AddTransient<IForumData, ForumData>();
-            services.AddTransient<IUserData, UserData>();
+            services.AddTransient<IThreadData, ThreadData>();
+            services.AddTransient<IReplyData, ReplyData>();
+            services.AddTransient<IForumsFollowedData, ForumsFollowedData>();
+            services.AddTransient<IUsersFollowedData, UsersFollowedData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

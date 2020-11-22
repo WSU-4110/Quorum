@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Quorum.Data;
 
 namespace Quorum.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201122033303_usernames")]
+    partial class usernames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -401,18 +403,22 @@ namespace Quorum.Migrations
 
             modelBuilder.Entity("QuorumDB.Models.UsersFollowed", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
 
                     b.Property<string>("FollowedUserId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("UserId", "FollowedUserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("FollowedUserId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("UsersFollowed");
                 });
@@ -559,15 +565,11 @@ namespace Quorum.Migrations
                 {
                     b.HasOne("QuorumDB.Models.AspNetUser", "AspNetFollowedUserModel")
                         .WithMany()
-                        .HasForeignKey("FollowedUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FollowedUserId");
 
                     b.HasOne("QuorumDB.Models.AspNetUser", "AspNetUserModel")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("AspNetFollowedUserModel");
 
