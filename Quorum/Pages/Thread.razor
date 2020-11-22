@@ -80,7 +80,7 @@
 
             foreach (var thread in threads)
             {
-                user = await _udata.GetUserById(int.Parse(thread.UserId));
+                user = await _udata.GetUserById(thread.UserId);
             }
         }
         else
