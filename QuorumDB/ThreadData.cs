@@ -18,8 +18,20 @@ namespace QuorumDB
 
         public Task<List<ForumThread>> GetForumThreads()
         {
-            string sql = "select * from dbo.AspNetUsers";
+            string sql = "select * from dbo.ForumThreads";
             return _db.LoadData<ForumThread, dynamic>(sql, new { });
+        }
+
+        public Task<List<ForumThread>> GetThreadById(int id)
+        {
+            string sql = $"select * from dbo.ForumThreads where Id = @Id";
+            return _db.LoadData<ForumThread, dynamic>(sql, new { Id = id });
+        }
+
+        public Task<List<ForumThread>> GetThreadByForumId(int id)
+        {
+            string sql = $"select * from dbo.ForumThreads where ForumId = @Id";
+            return _db.LoadData<ForumThread, dynamic>(sql, new { Id = id });
         }
     }
 }

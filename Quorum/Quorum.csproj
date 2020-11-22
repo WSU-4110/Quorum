@@ -27,4 +27,8 @@
     <ProjectReference Include="..\BlazorInputFile\BlazorInputFile.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Photos\" />
+  </ItemGroup>
+
 </Project>

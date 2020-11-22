@@ -1,3 +1,64 @@
 ﻿@page "/p/{threadid}"
 
-<ThreadLayout></ThreadLayout>
+@using Microsoft.Extensions.Configuration;
+@using Microsoft.AspNetCore.Identity;
+@using QuorumDB.Models;
+@using Quorum.Data.ViewModels;
+@using System.Text;
+@inject AuthenticationStateProvider _AuthenticationStateProvider;
+@inject Quorum.Data.ApplicationDbContext _context;
+@inject QuorumDB.IForumData _fdata;
+@inject QuorumDB.IThreadData _tdata;
+@inject QuorumDB.IReplyData _rdata;
+@inject QuorumDB.IUserData _udata;
+@inject NavigationManager NavManager;
+
+
+<div class="panel panel-default">
+    <div class="row">
+        <div class="column">
+            <div class="leftside">
+                <h1>sub-forum table should be here</h1>
+                <h1>threads table should be here</h1>
+            </div>
+        </div>
+        <div class="column">
+            <div class="rightside">
+                <h1>forum details should be here</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+@functions{
+    [Parameter]
+    public string threadid { get; set; } = "threadid";
+
+    private List<ForumReply> replies;
+    
+    private async Task FetchData()
+    {
+        var threadList = await _tdata.GetThreadById(int.Parse(threadid));
+
+        //Only fetch information if the url is valid
+        if (threadList.Count != 0)
+        {
+            replies = await _rdata.GetRepliesByThreadId(int.Parse(threadid));
+        }
+        else
+        {
+            //tell them to screw off
+            NavManager.NavigateTo("404");
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await FetchData();
+    }
+}
