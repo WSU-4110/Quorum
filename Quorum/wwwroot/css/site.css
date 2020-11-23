@@ -50,12 +50,16 @@ app {
         width: 100%;
     }
 }
-
+@media screen and (min-width: 1201px){
+    .main {
+        max-width: 75em;
+        margin: 0 auto !important;
+        float: none !important;
+    }
+}
 .main {
     flex: 1;
     background-color: #e5e5e5;
-    margin-right: 10rem;
-    margin-left: 10rem;
 }
 .main .content{
     margin-bottom: 2em;
@@ -275,8 +279,8 @@ span.text-avatar {
         margin-left: 0;
     }
     .main {
-        margin-left:0;
-        margin-right:0;
+        margin-left: 0;
+        margin-right: 0;
     }
     .main .navbar {
         background-color: #e5e5e5;
