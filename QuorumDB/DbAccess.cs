@@ -31,13 +31,13 @@ namespace QuorumDB
             }
         }
 
-        public Task Execute<U>(string sql, U parameters)
+        public async Task Execute<U>(string sql, U parameters)
         {
             string connectionString = _config.GetConnectionString(ConnectionString);
 
             using (IDbConnection dbConnection = new SqlConnection(connectionString))
             {
-                return dbConnection.ExecuteAsync(sql, parameters);
+                await dbConnection.ExecuteAsync(sql, parameters);
             }
         }
     }

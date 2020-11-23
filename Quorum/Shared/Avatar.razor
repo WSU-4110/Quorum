@@ -1,0 +1,23 @@
+﻿@inject IUserData _uData
+
+<div class="avatar-icon">
+    @if (ImgUrl != null && ImgUrl != String.Empty)
+    {
+        <img src="@ImgUrl" class="rounded-circle" id="avatar-icon" width="48" height="48">
+    }
+    else
+    {
+        <span class="text-avatar" id="avatar-icon" width="48" height="48">@UserName.ToUpper()[0]</span>
+    }
+</div>
+
+@code {
+    public string ImgUrl { get; set; } = "";
+    [Parameter]
+    public string UserName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        ImgUrl = await _uData.GetUserAvatar(UserName);
+    }
+}

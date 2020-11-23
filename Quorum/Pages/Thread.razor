@@ -1,18 +1,15 @@
-﻿@page "/p/{threadid}"
+﻿@page "/p/{threadId:int}"
 
-@using Microsoft.Extensions.Configuration;
-@using Microsoft.AspNetCore.Identity
 @using QuorumDB.Models
-@using Quorum.Data.ViewModels
-@using System.Text
-@inject AuthenticationStateProvider _AuthenticationStateProvider
+@inject AuthenticationStateProvider _auth
 @inject Quorum.Data.ApplicationDbContext _context
-@inject QuorumDB.IForumData _fdata
-@inject QuorumDB.IThreadData _tdata
-@inject QuorumDB.IReplyData _rdata
-@inject QuorumDB.IUserData _udata
+@inject IForumData _fdata
+@inject IThreadData _tdata
+@inject IReplyData _rdata
+@inject IUserData _udata
+@inject UserState _ustate
+@inject IJSRuntime _js 
 @inject NavigationManager NavManager
-
 
 <div class="panel panel-default">
     <div class="posts">
@@ -25,20 +22,22 @@
             }
             else
             {
-                
-                foreach (var thread in threadsList)
-                {
-                    <li id="title"><h2>@thread.Title</h2></li>
-                    <li id="replybutton">
-                        <div class="threadcontrols">
-                            <a class="btn btn-outline-dark" href="#" role="button" data-toggle="modal" data-target="#createReply">Reply</a>
-                        </div>
-                    </li>
-                    <li id="description" class="postwrapper">
-                        <div class="postdata">Profile Pic | @thread.UserName | @thread.CreatedTime</div>
+                <li id="title"><h2>@thread.Title</h2></li>
+                <li id="replybutton">
+                    <div class="threadcontrols">
+                        <a class="btn btn-outline-dark" role="button" data-toggle="modal" data-target="#createReply">Reply</a>
+                    </div>
+                </li>
+                <li id="description" class="postwrapper d-flex">
+                    <div class="pr-3">
+                        <Avatar UserName="@thread.UserName" />
+                    </div>
+                    <div>
+                        <div class="postdata">@thread.UserName | Created on @thread.CreatedTime.ToString("G")</div>
                         <div class="postmessage">@thread.Description</div>
-                    </li>
-                }
+                    </div>
+                </li>
+                
                 @if (replies.Count() == 0)
                 {
                     <li id="noposts" class="postwrapper">
@@ -49,9 +48,14 @@
                 {
                     foreach (var reply in replies)
                     {
-                        <li id="threadreply" class="postwrapper">
-                            <div class="postdata">Profile Pic Here | @reply.UserName | @reply.CreatedTime</div>
-                            <div class="postmessage">@reply.Text</div>
+                        <li id="threadreply" class="postwrapper d-flex">
+                            <div class="pr-3">
+                                <Avatar UserName="@reply.UserName" />
+                            </div>
+                            <div>
+                                <div class="postdata">@reply.UserName | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time></div>
+                                <div class="postmessage">@reply.Text</div>
+                            </div>
                         </li>
                     }
                 }
@@ -60,6 +64,7 @@
     </div>
 </div>
 
+@*This is the modal section*@
 <AuthorizeView>
     <Authorized>
         <div class="modal fade" id="createReply" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -88,7 +93,7 @@
         </div>
     </Authorized>
     <NotAuthorized>
-        <div class="modal fade" id="createThread" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal fade" id="createReply" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -101,7 +106,7 @@
                         <p>Not an authorized user, cannot create a thread</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
                     </div>
                 </div>
             </div>
@@ -111,23 +116,47 @@
 
 @functions{
     [Parameter]
-    public string threadid { get; set; } = "threadid";
+    public int threadId { get; set; }
 
-    private List<ForumReply> replies;
-    private List<ForumThread> threadsList;
-    private ForumThread thread;
-    private ReplyView replyView = new ReplyView();
-    private ForumReply reply = new ForumReply();
-    private AspNetUser user;
+    List<ForumReply> replies;
+    ForumThread thread;
+    ReplyView replyView = new ReplyView();
+    ForumReply reply = new ForumReply();
+    AspNetUser user;
+    bool convertedDate = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await FetchData();
+    }
+
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender && !convertedDate)
+        {
+            thread.CreatedTime = await _ustate.GetLocalDateTime(thread.CreatedTime);
+
+            foreach (var r in replies)
+            {
+                r.CreatedTime = await _ustate.GetLocalDateTime(r.CreatedTime);
+            }
+            await _js.InvokeVoidAsync("general.initTimeAgo");
+            convertedDate = true;
+            StateHasChanged();
+        }
+
+        base.OnAfterRender(firstRender);
+    }
 
     private async Task FetchData()
     {
-        threadsList = await _tdata.GetThreadById(int.Parse(threadid));
+        var threadsList = await _tdata.GetThreadById(threadId);
+        thread = threadsList.FirstOrDefault();
 
         //Only fetch information if the url is valid
         if (threadsList.Count != 0)
         {
-            replies = await _rdata.GetRepliesByThreadId(int.Parse(threadid));
+            replies = await _rdata.GetRepliesByThreadId(threadId);
         }
         else
         {
@@ -136,30 +165,18 @@
         }
     }
 
-    protected override async Task OnInitializedAsync()
-    {
-        await FetchData();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await FetchData();
-    }
-
     private async void HandleValidSubmit()
     {
         //get current user
-        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var authenticationState = await _auth.GetAuthenticationStateAsync();
         var userState = authenticationState.User;
         string userName = userState.Identity.Name;
         var userList = await _udata.GetUserByUserName(userName);
         user = userList.FirstOrDefault();
 
-        thread = threadsList.FirstOrDefault();
-
         //Assign the view model to the database model
         reply.Text = replyView.Text;
-        reply.ThreadId = thread.Id;
+        reply.ThreadId = threadId;
         reply.UserId = user.Id;
         reply.UserName = user.UserName;
 
@@ -167,13 +184,15 @@
         {
             _context.ForumReplies.Add(reply);
             await _context.SaveChangesAsync();
+            replies = await _rdata.GetRepliesByThreadId(threadId);
+            replyView = new ReplyView();
+            StateHasChanged();
+            await _js.InvokeVoidAsync("general.initTimeAgo");
         }
         catch
         {
-            base.StateHasChanged();
+            //Suppose to log stuff but we'll do that later
+            StateHasChanged();
         }
-
-        NavManager.NavigateTo(NavManager.Uri, true);
-
     }
 }

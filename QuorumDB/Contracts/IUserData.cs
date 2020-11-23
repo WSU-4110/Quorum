@@ -6,8 +6,10 @@ namespace QuorumDB
 {
     public interface IUserData
     {
-        Task<List<AspNetUser>> GetUsers();
-        Task<List<AspNetUser>> GetUserById(string Id);
+        Task<string> GetUserAvatar(string userName);
+        Task<List<AspNetUser>> GetUserById(string id);
         Task<List<AspNetUser>> GetUserByUserName(string userName);
+        Task<List<AspNetUser>> GetUsers();
+        Task SetUserAvatar(string userName, string url);
     }
 }

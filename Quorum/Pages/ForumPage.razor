@@ -9,8 +9,6 @@
 @inject QuorumDB.IThreadData _tdata
 
 
-
-
 @page "/q/{forum1}"
 @page "/q/{forum1}/{forum2}"
 @page "/q/{forum1}/{forum2}/{forum3}"
@@ -135,10 +133,10 @@
                                     </tr>
                                 }
                             }
-                            // Get all the threads below here
                         }
                     </tbody>
                 </table>
+                @*Get all the threads below here*@
                 <table class="table">
                     <thead>
                         <tr>
@@ -211,7 +209,6 @@
             forums = await _data.GetForumsByParentId(parentForum.Id);
 
             threads = await _tdata.GetThreadsByForumId(parentForum.Id);
-
 
             //Breadcrumbs logic
             BreadCrumbs.Clear();

@@ -26,7 +26,7 @@ namespace Quorum.Services
         {
             if (_userOffset == null)
             {
-                int offsetInMinutes = await _jsRuntime.InvokeAsync<int>("getTimeZoneOffset");
+                int offsetInMinutes = await _jsRuntime.InvokeAsync<int>("general.getTimeZoneOffset");
                 _userOffset = TimeSpan.FromMinutes(-offsetInMinutes);
             }
 
