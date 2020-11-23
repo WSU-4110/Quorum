@@ -16,9 +16,9 @@
         <h4>@searchUserName.AvatarUrl</h4>
         <h4>@searchUserName.DateRegistered</h4>
         <h4>@registeredTime.ToString("F")</h4>
-        <h4>Time ago <span class="oi oi-clock"></span>: @timeAgo</h4>
-        <time class="timeago" datetime="2011-12-17T09:24:17Z">December 17, 2011</time>
-        <time class="timeago" datetime="@registeredTime.ToString("u")"></time>
+        <h4>
+            Time ago <span class="oi oi-clock"></span>: <time class="timeago" datetime="@registeredTime.ToString("u")"></time>
+        </h4>
     }
     else
     {
@@ -132,7 +132,11 @@
 
             await File.WriteAllBytesAsync(path, ms.ToArray());
             //await _js.InvokeVoidAsync("croppieFunctions.updateAvatarImage", $"Photos/{imageName}");
-            _userState.NotifyAvatarUpdate();
+
+            //Update userprofile with the correct image path
+            //When using configure await = false it doesnt wait for the process
+            await _uData.SetUserAvatar(localUserName, $"Photos/{imageName}").ConfigureAwait(false);
+            await InvokeAsync(_userState.NotifyAvatarUpdate).ConfigureAwait(false);
         }
     }
 }

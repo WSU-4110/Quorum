@@ -33,5 +33,22 @@ namespace QuorumDB
             string sql = "Select * from dbo.AspNetUsers where UserName = @UserName";
             return _db.LoadData<AspNetUser, dynamic>(sql, new { UserName = userName });
         }
+
+        public Task SetUserAvatar(string userName, string url)
+        {
+            string sql = "update dbo.AspNetUsers set AvatarUrl = @Url where UserName = @UserName";
+            return _db.Execute<dynamic>(sql, new { Url = url, UserName = userName });
+        }
+
+        public async Task<string> GetUserAvatar(string userName)
+        {
+            string sql = "Select AvatarUrl from dbo.AspNetUsers where UserName = @UserName";
+            var list = await _db.LoadData<string, dynamic>(sql, new { UserName = userName });
+            if (list.Count > 0)
+            {
+                return list[0];
+            }
+            return "";
+        }
     }
 }
