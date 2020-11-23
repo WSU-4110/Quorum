@@ -25,6 +25,8 @@ namespace QuorumDB.Models
 
         public DateTimeOffset CreatedTime { get; set; } = DateTime.UtcNow;
 
+        public DateTimeOffset LastActivity { get; set; } = DateTime.UtcNow;
+
         [ForeignKey("ForumId")]
         public Forum ForumModel { get; set; }
 

@@ -12,9 +12,15 @@ new MutationObserver((mutations, observer) => {
     }
 }).observe(document.body, { childList: true, subtree: true });
 
-
-function getTimeZoneOffset() {
-    return new Date().getTimezoneOffset();
+window.general = {
+    getTimeZoneOffset: function () {
+        return new Date().getTimezoneOffset();
+    },
+    initTimeAgo: function () {
+        jQuery(document).ready(function () {
+            $("time.timeago").timeago();
+        });
+    }
 }
 
 //Croppie js functions
