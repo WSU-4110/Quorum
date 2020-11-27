@@ -33,7 +33,7 @@
                         <Avatar UserName="@thread.UserName" />
                     </div>
                     <div>
-                        <div class="postdata">@thread.UserName | Created on @thread.CreatedTime.ToString("G")</div>
+                        <div class="postdata"> <a href="profile/@thread.UserName">@thread.UserName</a> | Created on @thread.CreatedTime.ToString("G")</div>
                         <div class="postmessage">@thread.Description</div>
                     </div>
                 </li>
@@ -53,7 +53,7 @@
                                 <Avatar UserName="@reply.UserName" />
                             </div>
                             <div>
-                                <div class="postdata">@reply.UserName | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time></div>
+                                <div class="postdata"> <a href="profile/@reply.UserName">@reply.UserName</a> | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time></div>
                                 <div class="postmessage">@reply.Text</div>
                             </div>
                         </li>
@@ -140,9 +140,9 @@
             {
                 r.CreatedTime = await _ustate.GetLocalDateTime(r.CreatedTime);
             }
-            await _js.InvokeVoidAsync("general.initTimeAgo");
             convertedDate = true;
             StateHasChanged();
+            await _js.InvokeVoidAsync("general.initTimeAgo");
         }
 
         base.OnAfterRender(firstRender);
@@ -189,9 +189,10 @@
             StateHasChanged();
             await _js.InvokeVoidAsync("general.initTimeAgo");
         }
-        catch
+        catch (Exception e)
         {
             //Suppose to log stuff but we'll do that later
+            Console.WriteLine(e.Message);
             StateHasChanged();
         }
     }
