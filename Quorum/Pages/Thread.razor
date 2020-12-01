@@ -37,7 +37,7 @@
                         <div class="postmessage">@thread.Description</div>
                     </div>
                 </li>
-                
+
                 @if (replies.Count() == 0)
                 {
                     <li id="noposts" class="postwrapper">
@@ -52,8 +52,16 @@
                             <div class="pr-3">
                                 <Avatar UserName="@reply.UserName" />
                             </div>
-                            <div>
-                                <div class="postdata"> <a href="profile/@reply.UserName">@reply.UserName</a> | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time></div>
+                            <div class="container p-0">
+                                <div class="postdata pt-1">
+                                    <a href="profile/@reply.UserName">@reply.UserName</a> | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time>
+                                    <AuthorizeView >
+                                        @if(context.User.Identity.Name == reply.UserName)
+                                        {
+                                            <span class="oi oi-circle-x btn float-right p-0" @onclick="() => deleteReply(reply.Id)"></span>   
+                                        }
+                                    </AuthorizeView>
+                                </div>
                                 <div class="postmessage">@reply.Text</div>
                             </div>
                         </li>
@@ -66,28 +74,37 @@
 
 @*This is the modal section*@
 <AuthorizeView>
-    <Authorized>
+    <Authorized Context="Auth">
         <div class="modal fade" id="createReply" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Create Reply</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form>
+                    <EditForm EditContext="EC">
+                        <DataAnnotationsValidator />
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Create Reply</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
                             <div class="form-group">
+                                <ValidationSummary/>
                                 <label for="message-text" class="col-form-label">Text</label>
-                                <textarea class="form-control" id="message-text" placeholder="Message" @bind="replyView.Text"></textarea>
+                                <LiveInputText id="message-text" placeholder="Message" class="form-control" @bind-Value="replyView.Text" />
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" data-dismiss="modal" @onclick="@HandleValidSubmit">Submit</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            @if (string.IsNullOrEmpty(replyView.Text) == false && EC.Validate())
+                            {
+                                <button type="button" @onclick="HandleValidSubmit" class="btn btn-primary" data-dismiss="modal">Submit</button>
+                            }
+                            else
+                            {
+                                <button type="button" class="btn btn-primary">Submit</button>
+                            }
+                        </div>
+                    </EditForm>
                 </div>
             </div>
         </div>
@@ -125,8 +142,11 @@
     AspNetUser user;
     bool convertedDate = false;
 
+    public EditContext EC { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        EC = new EditContext(replyView);
         await FetchData();
     }
 
@@ -165,7 +185,7 @@
         }
     }
 
-    private async void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
         //get current user
         var authenticationState = await _auth.GetAuthenticationStateAsync();
@@ -186,6 +206,7 @@
             await _context.SaveChangesAsync();
             replies = await _rdata.GetRepliesByThreadId(threadId);
             replyView = new ReplyView();
+            EC = new EditContext(replyView);
             StateHasChanged();
             await _js.InvokeVoidAsync("general.initTimeAgo");
         }
@@ -195,5 +216,12 @@
             Console.WriteLine(e.Message);
             StateHasChanged();
         }
+    }
+
+    private async Task deleteReply(int replyId)
+    {
+        await _rdata.DeleteReplyById(replyId);
+        replies = await _rdata.GetRepliesByThreadId(threadId);
+        StateHasChanged();
     }
 }

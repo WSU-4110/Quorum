@@ -33,5 +33,11 @@ namespace QuorumDB
             string sql = "select * from dbo.ForumReplies where ThreadId = @Id";
             return _db.LoadData<ForumReply, dynamic>(sql, new { Id = id });
         }
+
+        public async Task DeleteReplyById(int id)
+        {
+            string sql = "delete from dbo.ForumReplies where id = @Id;";
+            await _db.Execute<dynamic>(sql, new { Id = id });
+        }
     }
 }

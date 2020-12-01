@@ -10,5 +10,6 @@ namespace QuorumDB
         Task<List<ForumReply>> GetForumReplies();
         Task<List<ForumReply>> GetReplyById(int id);
         Task<List<ForumReply>> GetRepliesByThreadId(int id);
+        Task DeleteReplyById(int id);
     }
 }
