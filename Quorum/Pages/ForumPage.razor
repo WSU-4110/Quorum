@@ -155,7 +155,12 @@
                             @foreach (var thread in threads)
                             {
                                 <tr>
-                                    <td><a href="/p/@thread.Id">@thread.Title</a></td>
+                                    <td>
+                                        <a href="/p/@thread.Id">@thread.Title</a>
+                                        <div class="float-right">
+                                            @thread.LastActivity.ToString("G")
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         }

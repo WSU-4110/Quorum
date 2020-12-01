@@ -209,6 +209,7 @@
             EC = new EditContext(replyView);
             StateHasChanged();
             await _js.InvokeVoidAsync("general.initTimeAgo");
+            await _rdata.UpdateLastActivity(threadId).ConfigureAwait(false);
         }
         catch (Exception e)
         {
