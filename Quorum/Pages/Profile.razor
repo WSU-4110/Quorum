@@ -86,7 +86,7 @@ else
         {
             await _js.InvokeVoidAsync("croppieFunctions.init");
         }
-        else if(converteDate == false)
+        else if(searchForUser == true && converteDate == false)
         {
             converteDate = true;
             searchUserName.DateRegistered = await _userState.GetLocalDateTime(searchUserName.DateRegistered);

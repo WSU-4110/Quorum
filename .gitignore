@@ -6,13 +6,13 @@
 *.user
 *.userosscache
 *.sln.docstates
-
+Quorum/Photos/*
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 appsettings.Development.json
 appsettings.json
-Quorum/Photos
+
 
 # Build results
 [Dd]ebug/
