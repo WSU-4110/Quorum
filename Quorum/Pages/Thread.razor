@@ -58,7 +58,7 @@
                                 <div class="postdata pt-1">
                                     <a href="profile/@replies[i].UserName">@replies[i].UserName</a> | <time class="timeago" datetime="@replies[i].CreatedTime.ToString("u")">@replies[i].CreatedTime.ToString("G")</time>
                                     <AuthorizeView >
-                                        @if(context.User.Identity.Name == reply.UserName)
+                                        @if(context.User.Identity.Name == replies[i].UserName)
                                         {
                                             <span class="oi oi-circle-x btn float-right p-0" @onclick="() => deleteReply(replies[i].Id)"></span>   
                                         }
