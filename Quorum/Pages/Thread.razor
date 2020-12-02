@@ -34,7 +34,9 @@
                     </div>
                     <div>
                         <div class="postdata"> <a href="profile/@thread.UserName">@thread.UserName</a> | Created on @thread.CreatedTime.ToString("G")</div>
-                        <div class="postmessage">@thread.Description</div>
+                        <div class="postmessage">
+                            <Markdown InputText="@thread.Description" />
+                        </div>
                     </div>
                 </li>
 
@@ -62,7 +64,9 @@
                                         }
                                     </AuthorizeView>
                                 </div>
-                                <div class="postmessage">@reply.Text</div>
+                                <div class="postmessage">
+                                    <Markdown InputText="@reply.Text"/>
+                                </div>
                             </div>
                         </li>
                     }
@@ -138,7 +142,6 @@
     List<ForumReply> replies;
     ForumThread thread;
     ReplyView replyView = new ReplyView();
-    ForumReply reply = new ForumReply();
     AspNetUser user;
     bool convertedDate = false;
 
@@ -194,6 +197,8 @@
         var userList = await _udata.GetUserByUserName(userName);
         user = userList.FirstOrDefault();
 
+        ForumReply reply = new ForumReply();
+
         //Assign the view model to the database model
         reply.Text = replyView.Text;
         reply.ThreadId = threadId;
@@ -204,10 +209,12 @@
         {
             _context.ForumReplies.Add(reply);
             await _context.SaveChangesAsync();
+
             replies = await _rdata.GetRepliesByThreadId(threadId);
             replyView = new ReplyView();
             EC = new EditContext(replyView);
             StateHasChanged();
+
             await _js.InvokeVoidAsync("general.initTimeAgo");
             await _rdata.UpdateLastActivity(threadId).ConfigureAwait(false);
         }
