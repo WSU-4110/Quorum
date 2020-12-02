@@ -33,5 +33,15 @@ namespace QuorumDB
             string sql = $"select * from dbo.ForumThreads where ForumId = '{id}'";
             return _db.LoadData<ForumThread, dynamic>(sql, new { });
         }
+
+        public Task<List<ForumThread>> GetRecentActivity()
+        {
+            string sql = $"select top 10 * from dbo.ForumThreads where ID in(" +
+                            "select ThreadID " +
+                            "from dbo.ForumReplies " +
+                            "group by ThreadID " +
+                            "order by max(CreatedTime) DESC offset 0 rows);";
+            return _db.LoadData<ForumThread, dynamic>(sql, new { });
+        }
     }
 }

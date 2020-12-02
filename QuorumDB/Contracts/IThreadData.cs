@@ -10,6 +10,6 @@ namespace QuorumDB
         Task<List<ForumThread>> GetForumThreads();
         Task<List<ForumThread>> GetThreadById(int id);
         Task<List<ForumThread>> GetThreadsByForumId(int id);
-
+        Task<List<ForumThread>> GetRecentActivity();
     }
 }

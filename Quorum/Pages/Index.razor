@@ -5,6 +5,7 @@
 @using Microsoft.AspNetCore.Components.Server.Circuits;
 @inject CircuitHandler _circuit;
 @inject IForumData _data
+@inject IThreadData _tdata
 @inject UserState _user 
 @inject IJSRuntime _js
 
@@ -71,26 +72,29 @@
         </div>
         <div class="column">
             <table class="table">
-                <thead>
-                    <tr>
-                        <th>Pages1</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><a href="counter">Counter</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="FetchData">Fetch Data</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="Users">Users</a></td>
-                    </tr>
-                    <tr>
-                        <td><a href="forumcreation/@currentID">Forum Creation</a></td>
-                    </tr>
-                </tbody>
-            </table>
+                    <thead>
+                        <tr>
+                            <th>Recent Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (threads is null)
+                        {
+                            <tr>
+                                <td>Loading data...</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var thread in threads)
+                            {
+                                <tr>
+                                    <td><a href="p/@thread.Id">@thread.Title</a></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
         </div>
     </div>
 </div>
@@ -102,10 +106,12 @@
     //Root has q url
     string url = "q";
     private List<Forum> forums;
+    private List<ForumThread> threads;
     //DateTimeOffset currentTimeStamp = DateTime.UtcNow;
     protected override async Task OnInitializedAsync()
     {
         var idList = await _data.GetCurrentForumID(url);
+        threads = await _tdata.GetRecentActivity();
         currentID = idList.FirstOrDefault();
         forums = await _data.GetForumsByParentId(currentID);
         onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
