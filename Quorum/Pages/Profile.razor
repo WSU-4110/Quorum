@@ -12,45 +12,44 @@
     if (searchUserName != null)
     {
         <h1>@UserName</h1>
-        <h4>@searchUserName.UserName</h4>
-        <h4>@searchUserName.AvatarUrl</h4>
         <h4>@searchUserName.DateRegistered</h4>
         <h4>@registeredTime.ToString("F")</h4>
         <h4>
             Time ago <span class="oi oi-clock"></span>: <time class="timeago" datetime="@registeredTime.ToString("u")"></time>
         </h4>
+        <img src="@searchUserName.AvatarUrl"/>
     }
     else
     {
         <h2>User: @UserName not found</h2>
     }
 }
+else
+{
+    <h3>Profile picture upload</h3>
 
-<h3>Profile picture upload</h3>
-
-<div class="card-body">
-    <div id="main-cropper"></div>
-    <BlazorInputFile.InputFile OnChange="HandleSelection" id="select" accept="image/*" />
-    @*<input type="file" class="form-control" value="Choose Image" accept="image/*">*@
-    @if (submittedImage)
-    {
-        <button @onclick="Submit" name="btnupload" class="btn btn-success">Submit</button>
-    }
-    @if (imageFile != null)
-    {
-        <div>Loaded @((100.0 * imageFile.Data.Position / imageFile.Size).ToString("0"))%</div>
-    }
-    <p>@status</p>
-</div>
+    <div class="card-body">
+        <div id="main-cropper"></div>
+        <BlazorInputFile.InputFile OnChange="HandleSelection" id="select" accept="image/*" />
+        @*<input type="file" class="form-control" value="Choose Image" accept="image/*">*@
+        @if (submittedImage)
+        {
+            <button @onclick="Submit" name="btnupload" class="btn btn-success">Submit</button>
+        }
+        @if (imageFile != null)
+        {
+            <div>Loaded @((100.0 * imageFile.Data.Position / imageFile.Size).ToString("0"))%</div>
+        }
+        <p>@status</p>
+    </div>
+}
 
 
 @code {
     [Parameter]
     public string UserName { get; set; }
-    bool searchForUser = false;
     AspNetUser searchUserName;
     DateTimeOffset registeredTime;
-    string timeAgo = string.Empty;
 
     const string DefaultStatus = "Drop a file here or click choose a file";
     const int MaxFileSizeMB = 15; // 15MB
@@ -60,6 +59,8 @@
     IFileListEntry[] selectedFiles;
     IFileListEntry imageFile;
     bool submittedImage;
+    bool searchForUser = false;
+    bool converteDate = false;
 
     private string localUserName;
 
@@ -75,22 +76,25 @@
             if (userList.Count > 0)
             {
                 searchUserName = userList.FirstOrDefault();
-                registeredTime = await _userState.GetLocalDateTime(searchUserName.DateRegistered);
-                timeAgo = TimeAgo.getTimeAgo(registeredTime);
-                searchForUser = true;
             }
         }
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            _js.InvokeVoidAsync("croppieFunctions.init");
-            _js.InvokeVoidAsync("general.initTimeAgo");
+            await _js.InvokeVoidAsync("croppieFunctions.init");
         }
-        firstRender = false;
-        return base.OnAfterRenderAsync(firstRender);
+        else if(searchForUser == true && converteDate == false)
+        {
+            converteDate = true;
+            searchUserName.DateRegistered = await _userState.GetLocalDateTime(searchUserName.DateRegistered);
+            registeredTime = await _userState.GetLocalDateTime(searchUserName.DateRegistered);
+            StateHasChanged();
+            await _js.InvokeVoidAsync("general.initTimeAgo");
+        }
+        base.OnAfterRender(firstRender);
     }
 
     void HandleSelection(IFileListEntry[] files)

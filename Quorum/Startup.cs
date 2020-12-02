@@ -23,6 +23,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Components.Server.Circuits;
+using Ganss.XSS;
 
 namespace Quorum
 {
@@ -58,7 +59,9 @@ namespace Quorum
                 services.AddRazorPages().AddRazorRuntimeCompilation();
             else
                 services.AddRazorPages();
-            
+
+            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
+
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();

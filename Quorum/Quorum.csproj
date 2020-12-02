@@ -4,14 +4,23 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-Quorum-FAE143CC-E94B-45E5-B189-D3F635D45B39</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Photos\**" />
+    <Content Remove="Photos\**" />
+    <EmbeddedResource Remove="Photos\**" />
+    <None Remove="Photos\**" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="HtmlSanitizer" Version="5.0.355" />
+    <PackageReference Include="Markdig" Version="0.22.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.0" />
-    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.6.0" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.6.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
@@ -25,10 +34,6 @@
   <ItemGroup>
     <ProjectReference Include="..\QuorumDB\QuorumDB.csproj" />
     <ProjectReference Include="..\BlazorInputFile\BlazorInputFile.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Photos\" />
   </ItemGroup>
 
 </Project>

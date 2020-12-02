@@ -8,8 +8,8 @@ namespace Quorum.Data.UserModels
 {
     public class ReplyView
     {
-        [Required(ErrorMessage = "Must enter a description")]
-        [MaxLength(256)]
+        [Required(ErrorMessage = "Must enter a message")]
+        [MaxLength(500, ErrorMessage = "Please enter less than 500 characters")]
         public string Text { get; set; }
     }
 }

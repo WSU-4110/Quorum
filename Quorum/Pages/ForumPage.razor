@@ -2,7 +2,7 @@
 @using Quorum.Data.ViewModels;
 @using System.Text;
 @inject NavigationManager NavManager;
-@inject QuorumDB.IForumData _data;
+@inject QuorumDB.IForumData _fdata;
 @inject AuthenticationStateProvider _AuthenticationStateProvider
 @inject Quorum.Data.ApplicationDbContext _context
 @inject QuorumDB.IUserData _udata
@@ -90,7 +90,7 @@
                         <p>Not an authorized user, cannot create a thread</p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Dismiss</button>
                     </div>
                 </div>
             </div>
@@ -155,8 +155,12 @@
                             @for (int i = 0 + ((pageNum - 1) * 10); i < (pageNum * 10) && i < threads.Count(); i++)
                             {
                                 <tr>
-                                    @*links to first reply page in thread*@
-                                    <td><a href="/p/@threads[i].Id">@threads[i].Title</a></td>
+                                    <td>
+                                        <a href="/p/@threads[i].Id">@threads[i].Title</a>
+                                        <div class="float-right">
+                                            @thread.LastActivity.ToString("G")
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -244,13 +248,13 @@
         //Gets the full url. Ex.) q/general/whydoesblazorsuck
         string forumUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
 
-        var forumParentList = await _data.GetForumByURL(forumUrl);
+        var forumParentList = await _fdata.GetForumByURL(forumUrl);
 
         //Only fetch information if the url is valid
         if (forumParentList.Count != 0)
         {
             parentForum = forumParentList.FirstOrDefault();
-            forums = await _data.GetForumsByParentId(parentForum.Id);
+            forums = await _fdata.GetForumsByParentId(parentForum.Id);
 
             threads = await _tdata.GetThreadsByForumId(parentForum.Id);
 
@@ -310,18 +314,10 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        //get current user
-        AuthenticationState authenticationState = await _AuthenticationStateProvider.GetAuthenticationStateAsync();
-        var userState = authenticationState.User;
-        string userName = userState.Identity.Name;
-        var userList = await _udata.GetUserByUserName(userName);
-        user = userList.FirstOrDefault();
-
         await FetchData();
     }
 
-
-    private async void HandleValidSubmit()
+    private async Task HandleValidSubmit()
     {
         //Assign the view model to the database model
         thread.Title = threadView.Title;
@@ -334,18 +330,20 @@
         {
             _context.ForumThreads.Add(thread);
             await _context.SaveChangesAsync();
+      
+            threads = await _tdata.GetThreadsByForumId(parentForum.Id);
+            threadView = new ThreadView();
 
             numOfPages = threads.Count() / 10;
             if (threads.Count() % 10 != 0)
                 numOfPages++;
+            StateHasChanged();
+
         }
-        catch
+        catch (Exception e)
         {
-            base.StateHasChanged();
+            Console.WriteLine(e.Message);
         }
-
-        NavManager.NavigateTo(NavManager.Uri, true);
-
     }
 
     private void FirstPage()
