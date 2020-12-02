@@ -1,0 +1,31 @@
+﻿@using Ganss.XSS
+@using Markdig
+@inject IHtmlSanitizer _sanatize
+
+@HtmlContent
+
+@code{
+    [Parameter]
+    public string InputText { get; set; }
+
+    public MarkupString HtmlContent => ConvertStringToMarkupString(InputText);
+
+    private MarkupString ConvertStringToMarkupString(string value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            // Sanitize HTML before anything
+            var sanitizedHtml = _sanatize.Sanitize(value);
+
+
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            // Convert markdown string to HTML
+            var html = Markdig.Markdown.ToHtml(sanitizedHtml, pipeline);
+
+            // Return sanitized HTML as a MarkupString that Blazor can render
+            return new MarkupString(html);
+        }
+
+        return new MarkupString();
+    }
+}
