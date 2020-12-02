@@ -92,9 +92,21 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group">
-                                <ValidationSummary/>
-                                <label for="message-text" class="col-form-label">Text</label>
-                                <LiveInputText id="message-text" placeholder="Message" class="form-control" @bind-Value="replyView.Text" />
+                                <ValidationSummary />
+                                <nav>
+                                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                        <a class="nav-item nav-link active" id="nav-text-tab" data-toggle="tab" href="#nav-text" role="tab" aria-controls="nav-text" aria-selected="true">Text</a>
+                                        <a class="nav-item nav-link" id="nav-preview-tab" data-toggle="tab" href="#nav-preview" role="tab" aria-controls="nav-preview" aria-selected="false">Preview</a>
+                                    </div>
+                                </nav>
+                                <div class="tab-content" id="nav-tabContent">
+                                    <div class="tab-pane fade show active" id="nav-text" role="tabpanel" aria-labelledby="nav-text-tab">
+                                        <LiveInputText rows="5" id="message-text" placeholder="Message" class="form-control" @bind-Value="replyView.Text" />
+                                    </div>
+                                    <div class="tab-pane fade" id="nav-preview" role="tabpanel" aria-labelledby="nav-preview-tab">
+                                        <Markdown InputText="@replyView.Text" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
