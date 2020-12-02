@@ -152,15 +152,56 @@
                         }
                         else
                         {
-                            @foreach (var thread in threads)
+                            @for (int i = 0 + ((pageNum - 1) * 10); i < (pageNum * 10) && i < threads.Count(); i++)
                             {
                                 <tr>
-                                    <td><a href="/p/@thread.Id">@thread.Title</a></td>
+                                    @*links to first reply page in thread*@
+                                    <td><a href="/p/@threads[i].Id">@threads[i].Title</a></td>
                                 </tr>
                             }
                         }
                     </tbody>
                 </table>
+                <ul class="list-group list-group-horizontal">
+                    @if (numOfPages > 0)
+                    {
+                        @if (pageNum != 1)
+                        {
+                            <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPage">Prev</button></li>
+                            <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@FirstPage">1</button></li>
+                            @if (pageNum - 1 > 3)
+                            {
+                                <li id="replypagination" class="list-group-item">...</li>
+                            }
+                            @if (pageNum - 1 > 2)
+                            {
+                                <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageBeforePrev">@(pageNum - 2)</button></li>
+                            }
+                            @if (pageNum > 2)
+                            {
+                                <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPage">@(pageNum - 1)</button></li>
+                            }
+                        }
+                        <li id="replypagination" class="list-group-item"><b>@pageNum</b></li>
+                        @if (pageNum != numOfPages)
+                        {
+                            <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPage">@(pageNum + 1)</button></li>
+                            @if (numOfPages - pageNum > 2)
+                            {
+                                <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageAfterNext">@(pageNum + 2)</button></li>
+                            }
+                            @if (numOfPages - pageNum > 3)
+                            {
+                                <li id="replypagination" class="list-group-item">...</li>
+                            }
+                            @if (numOfPages - pageNum > 1)
+                            {
+                                <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@LastPage">@numOfPages</button></li>
+                            }
+                            <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPage">Next</button></li>
+                        }
+                    }
+                </ul>
             </div>
         </div>
         <div class="column">
@@ -183,6 +224,9 @@
     public string forum3 { get; set; } = "";
     [Parameter]
     public string forum4 { get; set; } = "";
+
+    private int pageNum;
+    private int numOfPages;
 
     private List<Forum> forums;
     private Forum parentForum = new Forum();
@@ -257,6 +301,11 @@
         user = userList.FirstOrDefault();
 
         await FetchData();
+
+        pageNum = 1;
+        numOfPages = threads.Count() / 10;
+        if (threads.Count() % 10 != 0)
+            numOfPages++;
     }
 
     protected override async Task OnParametersSetAsync()
@@ -285,6 +334,10 @@
         {
             _context.ForumThreads.Add(thread);
             await _context.SaveChangesAsync();
+
+            numOfPages = threads.Count() / 10;
+            if (threads.Count() % 10 != 0)
+                numOfPages++;
         }
         catch
         {
@@ -293,5 +346,35 @@
 
         NavManager.NavigateTo(NavManager.Uri, true);
 
+    }
+
+    private void FirstPage()
+    {
+        pageNum = 1;
+    }
+
+    private void PageBeforePrev()
+    {
+        pageNum -= 2;
+    }
+
+    private void PrevPage()
+    {
+        pageNum -= 1;
+    }
+
+    private void NextPage()
+    {
+        pageNum += 1;
+    }
+
+    private void PageAfterNext()
+    {
+        pageNum += 2;
+    }
+
+    private void LastPage()
+    {
+        pageNum = numOfPages;
     }
 }

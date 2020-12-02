@@ -8,7 +8,7 @@
 @inject IReplyData _rdata
 @inject IUserData _udata
 @inject UserState _ustate
-@inject IJSRuntime _js 
+@inject IJSRuntime _js
 @inject NavigationManager NavManager
 
 <div class="panel panel-default">
@@ -37,7 +37,7 @@
                         <div class="postmessage">@thread.Description</div>
                     </div>
                 </li>
-                
+
                 @if (replies.Count() == 0)
                 {
                     <li id="noposts" class="postwrapper">
@@ -46,18 +46,59 @@
                 }
                 else
                 {
-                    foreach (var reply in replies)
+                    for (int i = 0 + ((pageNum - 1) * 10); i < (pageNum * 10) && i < replies.Count(); i++)
                     {
                         <li id="threadreply" class="postwrapper d-flex">
                             <div class="pr-3">
-                                <Avatar UserName="@reply.UserName" />
+                                <Avatar UserName="@replies[i].UserName" />
                             </div>
                             <div>
-                                <div class="postdata">@reply.UserName | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time></div>
-                                <div class="postmessage">@reply.Text</div>
+                                <div class="postdata">@replies[i].UserName | <time class="timeago" datetime="@replies[i].CreatedTime.ToString("u")">@replies[i].CreatedTime.ToString("G")</time></div>
+                                <div class="postmessage">@replies[i].Text</div>
                             </div>
                         </li>
                     }
+                }
+            }
+        </ul>
+        @*this is the reply pagination section*@
+        <ul class="list-group list-group-horizontal">
+            @if (numOfPages > 0)
+            {
+                @if (pageNum != 1)
+                {
+                    <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPage">Prev</button></li>
+                    <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@FirstPage">1</button></li>
+                    @if (pageNum - 1 > 3)
+                    {
+                        <li id="replypagination" class="list-group-item">...</li>
+                    }
+                    @if (pageNum - 1 > 2)
+                    {
+                        <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageBeforePrev">@(pageNum - 2)</button></li>
+                    }
+                    @if (pageNum > 2)
+                    {
+                        <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPage">@(pageNum - 1)</button></li>
+                    }
+                }
+                <li id="replypagination" class="list-group-item"><b>@pageNum</b></li>
+                @if (pageNum != numOfPages)
+                {
+                    <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPage">@(pageNum + 1)</button></li>
+                    @if (numOfPages - pageNum > 2)
+                    {
+                        <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageAfterNext">@(pageNum + 2)</button></li>
+                    }
+                    @if (numOfPages - pageNum > 3)
+                    {
+                        <li id="replypagination" class="list-group-item">...</li>
+                    }
+                    @if (numOfPages - pageNum > 1)
+                    {
+                        <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@LastPage">@numOfPages</button></li>
+                    }
+                    <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPage">Next</button></li>
                 }
             }
         </ul>
@@ -118,6 +159,9 @@
     [Parameter]
     public int threadId { get; set; }
 
+    public int pageNum;
+    int numOfPages;
+
     List<ForumReply> replies;
     ForumThread thread;
     ReplyView replyView = new ReplyView();
@@ -128,6 +172,8 @@
     protected override async Task OnInitializedAsync()
     {
         await FetchData();
+
+        pageNum = 1;
     }
 
     protected override async void OnAfterRender(bool firstRender)
@@ -157,6 +203,9 @@
         if (threadsList.Count != 0)
         {
             replies = await _rdata.GetRepliesByThreadId(threadId);
+            numOfPages = replies.Count() / 10;
+            if (replies.Count() % 10 != 0)
+                numOfPages++;
         }
         else
         {
@@ -186,6 +235,9 @@
             await _context.SaveChangesAsync();
             replies = await _rdata.GetRepliesByThreadId(threadId);
             replyView = new ReplyView();
+            numOfPages = replies.Count() / 10;
+            if (replies.Count() % 10 != 0)
+                numOfPages++;
             StateHasChanged();
             await _js.InvokeVoidAsync("general.initTimeAgo");
         }
@@ -194,5 +246,35 @@
             //Suppose to log stuff but we'll do that later
             StateHasChanged();
         }
+    }
+
+    private void FirstPage()
+    {
+        pageNum = 1;
+    }
+
+    private void PageBeforePrev()
+    {
+        pageNum -= 2;
+    }
+
+    private void PrevPage()
+    {
+        pageNum -= 1;
+    }
+
+    private void NextPage()
+    {
+        pageNum += 1;
+    }
+
+    private void PageAfterNext()
+    {
+        pageNum += 2;
+    }
+
+    private void LastPage()
+    {
+        pageNum = numOfPages;
     }
 }
