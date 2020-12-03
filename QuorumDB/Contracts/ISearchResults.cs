@@ -7,7 +7,7 @@ namespace QuorumDB
 {
     public interface ISearchResults
     {
-        Task<List<SearchResults>> GetSearchResultsByPost(string keyword);
-        Task<List<SearchResults>> GetSearchResultsByQuorum(string keyword);
+        //Task<List<SearchResults>> GetSearchResultsByPost(string keyword);
+        //Task<List<SearchResults>> GetSearchResultsByQuorum(string keyword);
     }
 }
