@@ -7,7 +7,8 @@
 @inject Quorum.Data.ApplicationDbContext _context
 @inject QuorumDB.IUserData _udata
 @inject QuorumDB.IThreadData _tdata
-
+@inject UserState _ustate
+@inject IJSRuntime _js 
 
 @page "/q/{forum1}"
 @page "/q/{forum1}/{forum2}"
@@ -157,7 +158,7 @@
                                     <td>
                                         <a href="/p/@threads[i].Id">@threads[i].Title</a> 
                                         <div class="float-right">
-                                            <span class="oi oi-eye"></span> @threads[i].ViewCount &emsp; @threads[i].LastActivity.ToString("G")
+                                            <span class="oi oi-eye"></span> @threads[i].ViewCount &emsp; <time class="timeago" datetime="@threads[i].LastActivity.ToString("u")">@threads[i].CreatedTime.ToString("G")</time>
                                         </div>
                                     </td>
                                 </tr>
@@ -211,7 +212,7 @@
             <div class="rightside">
                 <div class="forumdetails">
                     <h5>@parentForum.Title</h5>
-                    <p>@parentForum.Description<br />@parentForum.DateCreated</p>
+                    <p>@parentForum.Description<br />@parentForum.DateCreated.ToString("G")</p>
                 </div>
             </div>
         </div>
@@ -239,6 +240,7 @@
     private ThreadView threadView = new ThreadView();
     private ForumThread thread = new ForumThread();
     private AspNetUser user;
+    private bool convertedDate = false;
 
     private List<ForumThread> threads;
 
@@ -311,6 +313,24 @@
             numOfPages++;
     }
 
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender && !convertedDate)
+        {
+            parentForum.DateCreated = await _ustate.GetLocalDateTime(parentForum.DateCreated);
+
+            foreach (var t in threads)
+            {
+                t.CreatedTime = await _ustate.GetLocalDateTime(t.CreatedTime);
+            }
+            convertedDate = true;
+            StateHasChanged();
+            await _js.InvokeVoidAsync("general.initTimeAgo");
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+
     protected override async Task OnParametersSetAsync()
     {
         await FetchData();
@@ -329,7 +349,7 @@
         {
             _context.ForumThreads.Add(thread);
             await _context.SaveChangesAsync();
-      
+
             threads = await _tdata.GetThreadsByForumId(parentForum.Id);
             threadView = new ThreadView();
 
