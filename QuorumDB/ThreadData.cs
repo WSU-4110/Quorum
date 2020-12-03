@@ -44,6 +44,13 @@ namespace QuorumDB
             return _db.LoadData<ForumThread, dynamic>(sql, new { });
         }
 
+        public Task<List<ForumThread>> GetTopThreads()
+        {
+            string sql = @" Select top 5 * from [dbo].[ForumThreads]
+                            order by ViewCount DESC";
+            return _db.LoadData<ForumThread, dynamic>(sql, new { });
+        }
+
         public async Task IncreaseViewCountById(int id)
         {
             string sql = "update dbo.ForumThreads set ViewCount=ViewCount+1 where id = @Id";

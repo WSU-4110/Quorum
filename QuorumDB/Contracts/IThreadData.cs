@@ -11,6 +11,7 @@ namespace QuorumDB
         Task<List<ForumThread>> GetThreadById(int id);
         Task<List<ForumThread>> GetThreadsByForumId(int id);
         Task<List<ForumThread>> GetRecentActivity();
+        Task<List<ForumThread>> GetTopThreads();
         Task IncreaseViewCountById(int id);
     }
 }
