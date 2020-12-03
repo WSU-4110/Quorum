@@ -43,5 +43,11 @@ namespace QuorumDB
                             "order by max(CreatedTime) DESC offset 0 rows);";
             return _db.LoadData<ForumThread, dynamic>(sql, new { });
         }
+
+        public async Task IncreaseViewCountById(int id)
+        {
+            string sql = "update dbo.ForumThreads set ViewCount=ViewCount+1 where id = @Id";
+            await _db.Execute<dynamic>(sql, new { Id = id });
+        }
     }
 }

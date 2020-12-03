@@ -20,6 +20,8 @@ namespace QuorumDB.Models
 
         public string UserId { get; set; }
 
+        public int ViewCount { get; set; }
+
         [MaxLength(450)] 
         public string UserName { get; set; }
 
