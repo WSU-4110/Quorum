@@ -1,4 +1,5 @@
 ﻿@page "/p/{threadId:int}"
+@page "/p/{threadId:int}/{page:int}"
 
 @using QuorumDB.Models
 @inject AuthenticationStateProvider _auth
@@ -14,7 +15,7 @@
 <div class="panel panel-default">
     <div class="posts">
         <ul>
-            @if (replies is null)
+            @if (loading)
             {
                 <li id="loading" class="postwrapper">
                     <div class="postmessage">Loading Data...</div>
@@ -28,17 +29,20 @@
                         <a class="btn btn-outline-dark" role="button" data-toggle="modal" data-target="#createReply">Reply</a>
                     </div>
                 </li>
-                <li id="description" class="postwrapper d-flex">
-                    <div class="pr-3">
-                        <Avatar UserName="@thread.UserName" />
-                    </div>
-                    <div>
-                        <div class="postdata"> <a href="profile/@thread.UserName">@thread.UserName</a> | Created on @thread.CreatedTime.ToString("G")</div>
-                        <div class="postmessage">
-                            <Markdown InputText="@thread.Description" />
+                @if (page == 1)
+                {
+                    <li id="description" class="postwrapper d-flex">
+                        <div class="pr-3">
+                            <Avatar UserName="@thread.UserName" />
                         </div>
-                    </div>
-                </li>
+                        <div>
+                            <div class="postdata"> <a href="profile/@thread.UserName">@thread.UserName</a> | Created on @thread.CreatedTime.ToString("G")</div>
+                            <div class="postmessage">
+                                <Markdown InputText="@thread.Description" />
+                            </div>
+                        </div>
+                    </li>
+                }
 
                 @if (replies.Count() == 0)
                 {
@@ -48,24 +52,24 @@
                 }
                 else
                 {
-                    for (int i = 0 + ((pageNum - 1) * 10); i < (pageNum * 10) && i < replies.Count(); i++)
+                    foreach (var reply in replies)
                     {
                         <li id="threadreply" class="postwrapper d-flex">
                             <div class="pr-3">
-                                <Avatar UserName="@replies[i].UserName" />
+                                <Avatar UserName="@reply.UserName" />
                             </div>
                             <div class="container p-0">
                                 <div class="postdata pt-1">
-                                    <a href="profile/@replies[i].UserName">@replies[i].UserName</a> | <time class="timeago" datetime="@replies[i].CreatedTime.ToString("u")">@replies[i].CreatedTime.ToString("G")</time>
-                                    <AuthorizeView >
-                                        @if(context.User.Identity.Name == reply.UserName)
+                                    <a href="profile/@reply.UserName">@reply.UserName</a> | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time>
+                                    <AuthorizeView>
+                                        @if (context.User.Identity.Name == reply.UserName)
                                         {
-                                            <span class="oi oi-circle-x btn float-right p-0" @onclick="() => deleteReply(replies[i].Id)"></span>   
+                                            <span class="oi oi-circle-x btn float-right p-0" @onclick="() => deleteReply(reply.Id)"></span>
                                         }
                                     </AuthorizeView>
                                 </div>
                                 <div class="postmessage">
-                                    <Markdown InputText="@replies[i].Text"/>
+                                    <Markdown InputText="@reply.Text" />
                                 </div>
                             </div>
                         </li>
@@ -74,9 +78,10 @@
             }
         </ul>
         @*this is the reply pagination section*@
-        <ul class="list-group list-group-horizontal">
-            @if (numOfPages > 0)
-            {
+        @if (numOfPages > 0 && loading == false)
+        {
+            <ul class="list-group list-group-horizontal">
+
                 @if (pageNum != 1)
                 {
                     <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPage">Prev</button></li>
@@ -112,8 +117,8 @@
                     }
                     <li id="replypagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPage">Next</button></li>
                 }
-            }
-        </ul>
+            </ul>
+         }
     </div>
 </div>
 
@@ -123,7 +128,7 @@
         <div class="modal fade" id="createReply" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <EditForm EditContext="EC">
+                    <EditForm EditContext="@EC">
                         <DataAnnotationsValidator />
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Create Reply</h5>
@@ -192,13 +197,17 @@
     [Parameter]
     public int threadId { get; set; }
 
-    public int pageNum;
+    [Parameter]
+    public int page { get; set; } = 1;
+
+    public int pageNum = 1;
     int numOfPages;
 
-    List<ForumReply> replies;
+    List<ForumReply> replies = new List<ForumReply>();
     ForumThread thread;
     ReplyView replyView = new ReplyView();
     AspNetUser user;
+    bool loading = true;
     bool convertedDate = false;
 
     public EditContext EC { get; set; }
@@ -206,9 +215,19 @@
     protected override async Task OnInitializedAsync()
     {
         EC = new EditContext(replyView);
-        await FetchData();
 
-        pageNum = 1;
+        var threadsList = await _tdata.GetThreadById(threadId);
+        thread = threadsList.FirstOrDefault();
+
+        //Only continue if url is valid
+        if (threadsList.Count == 0)
+            NavManager.NavigateTo("404");
+
+        if (page == 0)
+            page = 1;
+
+        await _tdata.IncreaseViewCountById(threadId).ConfigureAwait(false);
+        await FetchData();
     }
 
     protected override async void OnAfterRender(bool firstRender)
@@ -231,22 +250,14 @@
 
     private async Task FetchData()
     {
-        var threadsList = await _tdata.GetThreadById(threadId);
-        thread = threadsList.FirstOrDefault();
-
-        //Only fetch information if the url is valid
-        if (threadsList.Count != 0)
-        {
-            replies = await _rdata.GetRepliesByThreadId(threadId);
-            numOfPages = replies.Count() / 10;
-            if (replies.Count() % 10 != 0)
-                numOfPages++;
-        }
-        else
-        {
-            //tell them to screw off
-            NavManager.NavigateTo("404");
-        }
+        replies.Clear();
+        loading = true;
+        replies = await _rdata.GetRepliesByThreadId(threadId, page);
+        var replyCount = await _rdata.GetReplyCountByThreadId(threadId);
+        numOfPages = replyCount / 10;
+        if (replyCount % 10 != 0)
+            numOfPages++;
+        loading = false;
     }
 
     private async Task HandleValidSubmit()
@@ -271,14 +282,9 @@
             _context.ForumReplies.Add(reply);
             await _context.SaveChangesAsync();
 
-            replies = await _rdata.GetRepliesByThreadId(threadId);
             replyView = new ReplyView();
             EC = new EditContext(replyView);
-
-            numOfPages = replies.Count() / 10;
-            if (replies.Count() % 10 != 0)
-                numOfPages++;
-
+            await FetchData();
             StateHasChanged();
 
             await _js.InvokeVoidAsync("general.initTimeAgo");
@@ -295,37 +301,50 @@
     private async Task deleteReply(int replyId)
     {
         await _rdata.DeleteReplyById(replyId);
-        replies = await _rdata.GetRepliesByThreadId(threadId);
+        await FetchData();
         StateHasChanged();
     }
-                
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await FetchData();
+        StateHasChanged();
+        convertedDate = false;
+    }
+
     private void FirstPage()
     {
         pageNum = 1;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 
     private void PageBeforePrev()
     {
         pageNum -= 2;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 
     private void PrevPage()
     {
         pageNum -= 1;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 
     private void NextPage()
     {
         pageNum += 1;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 
     private void PageAfterNext()
     {
         pageNum += 2;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 
     private void LastPage()
     {
         pageNum = numOfPages;
+        NavManager.NavigateTo($"/p/{threadId}/{pageNum}");
     }
 }

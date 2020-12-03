@@ -78,7 +78,7 @@ app {
         display : flex;
     }
     
-    .main .navbar .login-display > a, .main .navbar .login-display .btn-link {
+    .main .navbar .login-display > a, .main .navbar .login-display .btn-login {
         color: #5c5c5c;
         font-size:1.25em;
     }
