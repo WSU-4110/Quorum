@@ -111,9 +111,7 @@ namespace Quorum
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapBlazorHub(options =>
-                    options.ApplicationMaxBufferSize = 10 * 1024 * 1024
-                );
+                endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

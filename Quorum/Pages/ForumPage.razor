@@ -36,13 +36,12 @@
 </nav>
 
 <div class="forumcontrols">
-    <a class="btn btn-outline-dark" href="#" role="button">New Section</a>
-    <a class="btn btn-outline-dark" href="#" role="button" data-toggle="modal" data-target="#createThread">New Thread</a>
     @*Insure that there can't be more than four layers*@
     @if (parentForum != null && BreadCrumbs.Count < 4)
     {
-        <a class="btn btn-outline-dark" href="forumcreation/@parentForum.Id" role="button">Create SubQuorum</a>
+        <a class="btn btn-outline-dark" href="forumcreation/@parentForum.Id" role="button">New Section</a>
     }
+    <a class="btn btn-outline-dark" href="#" role="button" data-toggle="modal" data-target="#createThread">New Thread</a>
 </div>
 
 <AuthorizeView>
@@ -156,9 +155,9 @@
                             {
                                 <tr>
                                     <td>
-                                        <a href="/p/@threads[i].Id">@threads[i].Title</a>
+                                        <a href="/p/@threads[i].Id">@threads[i].Title</a> 
                                         <div class="float-right">
-                                            @thread.LastActivity.ToString("G")
+                                            <span class="oi oi-eye"></span> @threads[i].ViewCount &emsp; @threads[i].LastActivity.ToString("G")
                                         </div>
                                     </td>
                                 </tr>
