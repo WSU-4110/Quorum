@@ -28,10 +28,29 @@ namespace QuorumDB
             return _db.LoadData<ForumReply, dynamic>(sql, new { Id = id });
         }
 
-        public Task<List<ForumReply>> GetRepliesByThreadId(int id)
+        public Task<List<ForumReply>> GetAllRepliesByThreadId(int id)
         {
             string sql = "select * from dbo.ForumReplies where ThreadId = @Id";
             return _db.LoadData<ForumReply, dynamic>(sql, new { Id = id });
+        }
+        
+        public Task<List<ForumReply>> GetRepliesByThreadId(int id, int page)
+        {
+            int rowsPerPage = 10;
+            string sql = @" Select * from dbo.ForumReplies 
+                            where ThreadId = @Id
+                            ORDER BY(SELECT NULL)
+                            OFFSET (@Page-1)*@RowsPerPage ROWS
+                            FETCH NEXT @RowsPerPage ROWS ONLY";
+            return _db.LoadData<ForumReply, dynamic>(sql, new { Id = id, Page = page, RowsPerPage = rowsPerPage});
+        }
+
+        public async Task<int> GetReplyCountByThreadId(int id)
+        {
+            string sql = "Select COUNT(*) from dbo.ForumReplies where ThreadId = @Id";
+
+            var numList = await _db.LoadData<int, dynamic>(sql, new { Id = id });
+            return numList[0];
         }
 
         public async Task DeleteReplyById(int id)
