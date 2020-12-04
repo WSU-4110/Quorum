@@ -60,14 +60,14 @@ namespace Quorum
             else
                 services.AddRazorPages();
 
-            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
-
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
             services.AddScoped<UserState>();
+
+            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
 
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
