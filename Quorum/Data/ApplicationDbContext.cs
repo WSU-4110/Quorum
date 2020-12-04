@@ -9,6 +9,10 @@ namespace Quorum.Data
 {
     public class ApplicationDbContext : IdentityDbContext<AspNetUser>
     {
+        public ApplicationDbContext()
+        {
+        }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Forum> Forums { get; set; }

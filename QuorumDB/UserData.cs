@@ -16,6 +16,10 @@ namespace QuorumDB
             _db = db;
         }
 
+        public UserData()
+        {
+        }
+
         public Task<List<AspNetUser>> GetUsers()
         {
             string sql = "select * from dbo.AspNetUsers";

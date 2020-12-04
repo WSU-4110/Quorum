@@ -11,6 +11,10 @@ namespace QuorumDB
     {
         private readonly IDbAccess _db;
 
+        public ThreadData()
+        {
+        }
+
         public ThreadData(IDbAccess db)
         {
             _db = db;
