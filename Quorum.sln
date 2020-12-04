@@ -12,6 +12,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuorumDB", "QuorumDB\Quorum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{97F99E8F-3311-42D9-9B8E-96650E83AE55}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuorumTest", "..\ProjectTest\QuorumTest\QuorumTest\QuorumTest.csproj", "{E3BAC337-635B-46DD-893A-4E53104539CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +32,10 @@ Global
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3BAC337-635B-46DD-893A-4E53104539CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3BAC337-635B-46DD-893A-4E53104539CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3BAC337-635B-46DD-893A-4E53104539CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3BAC337-635B-46DD-893A-4E53104539CC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

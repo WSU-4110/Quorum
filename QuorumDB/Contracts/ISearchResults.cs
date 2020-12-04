@@ -9,5 +9,6 @@ namespace QuorumDB
     {
         //Task<List<SearchResults>> GetSearchResultsByPost(string keyword);
         //Task<List<SearchResults>> GetSearchResultsByQuorum(string keyword);
+        void GetSearchResultsByQuorum(string input, string v, object p);
     }
 }

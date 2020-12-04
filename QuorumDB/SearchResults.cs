@@ -7,7 +7,7 @@ using QuorumDB.Models;
 
 namespace QuorumDB
 {
-    class SearchResults : ISearchResults
+    public class SearchResults : ISearchResults
     {
         private readonly IDbAccess _db;
 
