@@ -19,7 +19,7 @@ namespace QuorumUnit
     public class AvatarTests : TestContext
     {
         [Fact]
-        public void CheckAvatarWithUploadedPictur()
+        public void CheckAvatarWithUploadedPicture()
         {
             var UserDataMock = new Mock<IUserData>();
 
@@ -38,7 +38,7 @@ namespace QuorumUnit
         }
 
         [Fact]
-        public void CheckAvatarWithoutUploadedPictur()
+        public void CheckAvatarWithoutUploadedPicture()
         {
             var UserDataMock = new Mock<IUserData>();
 
