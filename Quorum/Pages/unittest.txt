@@ -1,0 +1,141 @@
+[Fact]
+public void PageFirstTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.FirstPage());
+	MockUserData.Setup(h => h.FirstPage());
+	MockUserState.Setup(h => h.FirstPage());
+	MockForumData.Setup(h => h.FirstPage());
+	MockerAuth.Setup(h => h.FirstPage());
+	MockAppContext.Setup(h => h.FirstPage());
+	MockThreadData.Setup(h => h.FirstPage());
+	MockerRuntime.Setup(h => h.FirstPage());
+	
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(1);
+}
+[Fact]
+public void PageBeforePrevTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.PageBeforePrev());
+	MockUserData.Setup(h => h.PageBeforePrev());
+	MockUserState.Setup(h => h.PageBeforePrev());
+	MockForumData.Setup(h => h.PageBeforePrev());
+	MockerAuth.Setup(h => h.PageBeforePrev());
+	MockAppContext.Setup(h => h.PageBeforePrev());
+	MockThreadData.Setup(h => h.PageBeforePrev());
+	MockerRuntime.Setup(h => h.PageBeforePrev());
+	int pageHolder=pageNum;
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(pageHolder-2);
+}
+[Fact]
+public void PagePrevTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.PrevPage());
+	MockUserData.Setup(h => h.PrevPage());
+	MockUserState.Setup(h => h.PrevPage());
+	MockForumData.Setup(h => h.PrevPage());
+	MockerAuth.Setup(h => h.PrevPage());
+	MockAppContext.Setup(h => h.PrevPage());
+	MockThreadData.Setup(h => h.PrevPage());
+	MockerRuntime.Setup(h => h.PrevPage());
+	
+	int pageHolder=pageNum;
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(pageHolder-1);
+}
+[Fact]
+public void PageNextTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.NextPage());
+	MockUserData.Setup(h => h.NextPage());
+	MockUserState.Setup(h => h.NextPage());
+	MockForumData.Setup(h => h.NextPage());
+	MockerAuth.Setup(h => h.NextPage());
+	MockAppContext.Setup(h => h.NextPage());
+	MockThreadData.Setup(h => h.NextPage());
+	MockerRuntime.Setup(h => h.NextPage());
+	
+	int pageHolder=pageNum;
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(pageHolder+1);
+}
+[Fact]
+public void PageAfterNextTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.PageAfterNext());
+	MockUserData.Setup(h => h.PageAfterNext());
+	MockUserState.Setup(h => h.PageAfterNext());
+	MockForumData.Setup(h => h.PageAfterNext());
+	MockerAuth.Setup(h => h.PageAfterNext());
+	MockAppContext.Setup(h => h.PageAfterNext());
+	MockThreadData.Setup(h => h.PageAfterNext());
+	MockerRuntime.Setup(h => h.PageAfterNext());
+	
+	int pageHolder=pageNum;
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(pageHolder+2);
+}
+[Fact]
+public void PageLastTest()
+{
+	var MockManager= new Mock<NavigationManager>();
+	var MockUserData= new Mock<QuorumDB.IUserData>();
+	var MockUserState= new Mock<UserState>();
+	var MockForumData=new Mock<QuorumDB.IForumData>();
+	var MockerAuth= new Mock<AuthenticationStateProvider>();
+	var MockAppContext= new Mock<Quorum.Data.ApplicationDbContext>();
+	var MockThreadData= new Mock<QuorumDB.IThreadData>();
+	var MockerRuntime= new Mock<IJSRuntime>();
+	MockManager.Setup(h => h.LastPage());
+	MockUserData.Setup(h => h.LastPage());
+	MockUserState.Setup(h => h.LastPage());
+	MockForumData.Setup(h => h.LastPage());
+	MockerAuth.Setup(h => h.LastPage());
+	MockAppContext.Setup(h => h.LastPage());
+	MockThreadData.Setup(h => h.LastPage());
+	MockerRuntime.Setup(h => h.LastPage());
+	
+	var cut=RenderComponent<ForumPage>(Parameter(pageNum));
+	cut.Find(pageNum).MarkupMatches(numOfPages);
+}
