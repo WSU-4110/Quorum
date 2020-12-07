@@ -250,8 +250,8 @@
 
     private async Task FetchData()
     {
-        replies.Clear();
-        loading = true;
+        //replies.Clear();
+        //loading = true;
         replies = await _rdata.GetRepliesByThreadId(threadId, page);
         var replyCount = await _rdata.GetReplyCountByThreadId(threadId);
         numOfPages = replyCount / 10;

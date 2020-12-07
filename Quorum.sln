@@ -12,6 +12,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuorumDB", "QuorumDB\Quorum
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorInputFile", "BlazorInputFile\BlazorInputFile.csproj", "{97F99E8F-3311-42D9-9B8E-96650E83AE55}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuorumUnit", "QuorumUnit\QuorumUnit.csproj", "{C2CB417E-91CA-4100-A97F-DA85783BD779}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BE842086-D2E8-4506-A63C-88C59D376263} = {BE842086-D2E8-4506-A63C-88C59D376263}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +35,10 @@ Global
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Debug|Any CPU.Build.0 = Release|Any CPU
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97F99E8F-3311-42D9-9B8E-96650E83AE55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2CB417E-91CA-4100-A97F-DA85783BD779}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2CB417E-91CA-4100-A97F-DA85783BD779}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2CB417E-91CA-4100-A97F-DA85783BD779}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2CB417E-91CA-4100-A97F-DA85783BD779}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,7 +18,7 @@
             var sanitizedHtml = _sanatize.Sanitize(value);
 
 
-            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions().Build();
+            var pipeline = new MarkdownPipelineBuilder().UseBootstrap().UseAdvancedExtensions().Build();
             // Convert markdown string to HTML
             var html = Markdig.Markdown.ToHtml(sanitizedHtml, pipeline);
 
