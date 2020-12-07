@@ -28,11 +28,15 @@
 
     private async Task HandleValidSubmitQuorum()
     {
-        NavManager.NavigateTo("/squorum/" + query);
+        if (!(query == null || query == "")) { 
+            NavManager.NavigateTo("/squorum/" + query); 
+        }
     }
 
     private async Task HandleValidSubmitThread()
     {
-        NavManager.NavigateTo("/sthread/" + query);
+        if (!(query == null || query == "")) { 
+            NavManager.NavigateTo("/sthread/" + query); 
+        }
     }
 }
