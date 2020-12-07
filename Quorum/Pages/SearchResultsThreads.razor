@@ -1,0 +1,67 @@
+﻿@page "/sthread/{query}"
+
+@using QuorumDB.Models
+@inject AuthenticationStateProvider _auth
+@inject Quorum.Data.ApplicationDbContext _context
+@inject IThreadData _tdata
+@inject ISearchResults _sresults
+
+
+<h3>Thread Search Results</h3>
+
+<div class="panel panel-default">
+    <div class="row">
+        <div class="column">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Threads</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (threadList is null)
+                    {
+                        <tr>
+                            <td>Loading Data...</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @if (threadList.Count == 0)
+                        {
+                            <tr>
+                                <td>No Threads Found</td>
+                            </tr>
+                        }
+                        else {
+                        @foreach (var thread in threadList)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="/p/@thread.Id">@thread.Title</a>
+                                    <div class="float-right">
+                                        <span class="oi oi-eye"></span> @thread.ViewCount &emsp; @thread.LastActivity.ToString("G")
+                                    </div>
+                                </td>
+                            </tr>
+                             }
+                         }
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+            @code {
+                [Parameter]
+                public string query { get; set; }
+
+                public List<ForumThread> threadList = new List<ForumThread>();
+
+                protected override async Task OnInitializedAsync()
+                {
+                    threadList = await _sresults.GetSearchResultsByPost(query);
+                }
+            }

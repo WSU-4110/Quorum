@@ -69,6 +69,7 @@ namespace Quorum
             services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
             services.AddScoped<UserState>();
 
+            services.AddTransient<ISearchResults, SearchResults>();
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
             services.AddTransient<IForumData, ForumData>();

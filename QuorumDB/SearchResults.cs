@@ -7,20 +7,25 @@ using QuorumDB.Models;
 
 namespace QuorumDB
 {
-    class SearchResults : ISearchResults
+    public class SearchResults : ISearchResults
     {
         private readonly IDbAccess _db;
 
-        public Task<List<SearchResults>> GetSearchResultsByQuorum(string keyword)
+        public SearchResults(IDbAccess db)
         {
-            string sql = "SELECT Title FROM dbo.Forums WHERE dbo.Forums.Title LIKE '@Keyword'";
-            return _db.LoadData<SearchResults, dynamic>(sql, new { Keyword = keyword });
+            _db = db;
         }
 
-        public Task<List<SearchResults>> GetSearchResultsByPost(string keyword)
+        public Task<List<Forum>> GetSearchResultsByQuorum(string keyword)
         {
-            string sql = "SELECT Title FROM dbo.ForumThreads WHERE dbo.ForumThreads.Title LIKE '@Keyword'";
-            return _db.LoadData<SearchResults, dynamic>(sql, new { Keyword = keyword });
+            string sql = "SELECT Title FROM dbo.Forums WHERE dbo.Forums.Title LIKE '%' + @Keyword + '%'";
+            return _db.LoadData<Forum, dynamic>(sql, new { Keyword = keyword });
+        }
+
+        public Task<List<ForumThread>> GetSearchResultsByPost(string keyword)
+        {
+            string sql = "SELECT Title FROM dbo.ForumThreads WHERE dbo.ForumThreads.Title LIKE '%' + @Keyword + '%'";
+            return _db.LoadData<ForumThread, dynamic>(sql, new { Keyword = keyword });
         }
     }
 }
