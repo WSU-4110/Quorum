@@ -20,4 +20,9 @@
     {
         ImgUrl = await _uData.GetUserAvatar(UserName);
     }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        ImgUrl = await _uData.GetUserAvatar(UserName);
+    }
 }
