@@ -43,7 +43,9 @@ namespace Quorum.Services
         {
             try
             {
-                bool isAuthenticated = _httpClient.HttpContext.User.Identity.IsAuthenticated;
+                Console.WriteLine($"Id: {circuit.Id} is null : {_httpClient == null} ");
+                //bool isAuthenticated = _httpClient != null ? _httpClient.HttpContext.User.Identity.IsAuthenticated : false ;
+                bool isAuthenticated = false;
                 string username = "unknown";
                 if (isAuthenticated == true)
                     username = _httpClient.HttpContext.User.Identity.Name;
