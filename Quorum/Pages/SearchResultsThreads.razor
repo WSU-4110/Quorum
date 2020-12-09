@@ -54,14 +54,14 @@
     </div>
 </div>
 
-            @code {
-                [Parameter]
-                public string query { get; set; }
+@code {
+    [Parameter]
+    public string query { get; set; }
 
-                public List<ForumThread> threadList = new List<ForumThread>();
+    public List<ForumThread> threadList = new List<ForumThread>();
 
-                protected override async Task OnInitializedAsync()
-                {
-                    threadList = await _sresults.GetSearchResultsByPost(query);
-                }
-            }
+    protected override async Task OnInitializedAsync()
+    {
+        threadList = await _sresults.GetSearchResultsByPost(query);
+    }
+}

@@ -26,12 +26,12 @@
 @code{
     public string query;
 
-    private async Task HandleValidSubmitQuorum()
+    private void HandleValidSubmitQuorum()
     {
         NavManager.NavigateTo("/squorum/" + query);
     }
 
-    private async Task HandleValidSubmitThread()
+    private void HandleValidSubmitThread()
     {
         NavManager.NavigateTo("/sthread/" + query);
     }

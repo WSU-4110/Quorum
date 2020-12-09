@@ -120,7 +120,7 @@
         topThreads = await _tdata.GetTopThreads();
         currentID = idList.FirstOrDefault();
         forums = await _data.GetForumsByParentId(currentID);
-        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         (_circuit as TrackingCircuitHandler).CircuitsChanged += HandleCircuitsChanged;
     }
 
@@ -140,7 +140,7 @@
     {
         // notify the component that its state has changed
         // Important: You must use InvokeAsync
-        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         InvokeAsync(StateHasChanged);
     }
 }

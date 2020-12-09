@@ -24,6 +24,7 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Ganss.XSS;
+using Microsoft.AspNetCore.Http;
 
 namespace Quorum
 {
@@ -64,9 +65,11 @@ namespace Quorum
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
-            services.AddScoped<UserState>();
+            services.AddHttpContextAccessor();
 
+            services.AddSingleton<CircuitHandler>(ctx => new TrackingCircuitHandler(ctx.GetService<IHttpContextAccessor>()));
+
+            services.AddScoped<UserState>();
 
             services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
           
