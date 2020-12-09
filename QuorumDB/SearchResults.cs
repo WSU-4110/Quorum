@@ -18,13 +18,13 @@ namespace QuorumDB
 
         public Task<List<Forum>> GetSearchResultsByQuorum(string keyword)
         {
-            string sql = "SELECT Title FROM dbo.Forums WHERE dbo.Forums.Title LIKE '%' + @Keyword + '%'";
+            string sql = "SELECT * FROM dbo.Forums WHERE dbo.Forums.Title LIKE '%' + @Keyword + '%'";
             return _db.LoadData<Forum, dynamic>(sql, new { Keyword = keyword });
         }
 
         public Task<List<ForumThread>> GetSearchResultsByPost(string keyword)
         {
-            string sql = "SELECT Title FROM dbo.ForumThreads WHERE dbo.ForumThreads.Title LIKE '%' + @Keyword + '%'";
+            string sql = "SELECT * FROM dbo.ForumThreads WHERE dbo.ForumThreads.Title LIKE '%' + @Keyword + '%'";
             return _db.LoadData<ForumThread, dynamic>(sql, new { Keyword = keyword });
         }
     }
