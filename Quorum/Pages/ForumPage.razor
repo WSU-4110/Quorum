@@ -348,6 +348,11 @@
     {
         await FetchData();
         convertedDate = false;
+
+        pageNum = 1;
+        numOfPages = threads.Count() / 10;
+        if (threads.Count() % 10 != 0)
+            numOfPages++;
     }
 
     private async Task HandleValidSubmit()

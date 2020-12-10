@@ -6,8 +6,7 @@
     <nav class="navbar navbar-expand-sm">
         <a class="navbar-brand" href="/">Quorum</a>
         <input class="form-control" id="searchbox" type="text" placeholder="Search" @bind="@query" aria-label="Search">
-        <button type="button" class="btn btn-light" @onclick="@HandleValidSubmitQuorum">Search Quorum</button>
-        <button type="button" class="btn btn-light" @onclick="@HandleValidSubmitThread">Search Thread</button>
+        <button type="button" class="btn btn-light" @onclick="@HandleValidSubmit">Search</button>
         <div class="login-display align-items-center">
             <LoginDisplay />
         </div>
@@ -26,13 +25,8 @@
 @code{
     public string query;
 
-    private void HandleValidSubmitQuorum()
+    private void HandleValidSubmit()
     {
-        NavManager.NavigateTo("/squorum/" + query);
-    }
-
-    private void HandleValidSubmitThread()
-    {
-        NavManager.NavigateTo("/sthread/" + query);
+        NavManager.NavigateTo("/squorum/" + query + "/1/1");
     }
 }
