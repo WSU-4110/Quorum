@@ -25,6 +25,7 @@ namespace Quorum.Services
         }
 
         public event EventHandler CircuitsChanged;
+        public event EventHandler MessageEvent;
 
         public SignInManager<AspNetUser> Manager { get; }
         public IHttpContextAccessor _httpClient { get; }
@@ -95,12 +96,12 @@ namespace Quorum.Services
             }
         }
 
-        public HashSet<Circuit> GetUserConnections(string username)
+        public HashSet<Circuit> GetUserConnections(string uname)
         {
             var connections = new HashSet<Circuit>();
             try
             {
-                connections = userMap[username];
+                connections = userMap[uname];
             }
             catch (Exception e)
             {
@@ -113,5 +114,19 @@ namespace Quorum.Services
         {
             return userMap.Keys.ToList();
         }
+
+        public void SendNotification(string uname)
+        {
+            var connections = GetUserConnections(uname);
+
+            foreach(var connection in connections)
+            {
+                try
+                {
+                    await 
+                }
+            }
+        }
+
     }
 }
