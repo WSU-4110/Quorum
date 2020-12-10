@@ -6,7 +6,7 @@
 @inject CircuitHandler _circuit;
 @inject IForumData _data
 @inject IThreadData _tdata
-@inject UserState _user 
+@inject UserState _user
 @inject IJSRuntime _js
 
 <div class="panel panel-default">
@@ -20,6 +20,7 @@
             </div>
         </div>
     </div>
+    <a class="btn btn-outline-dark" href="forumcreation/@currentID" role="button">New Forum</a>
     <div class="row">
         <div class="column">
             <div class="leftside">
@@ -50,35 +51,11 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Pages2</th>
+                            <th>Top Threads</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><a href="counter">Counter</a></td>
-                        </tr>
-                        <tr>
-                            <td><a href="FetchData">Fetch Data</a></td>
-                        </tr>
-                        <tr>
-                            <td><a href="Users">Users</a></td>
-                        </tr>
-                        <tr>
-                            <td><a href="forumcreationpage">Forum Creation</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <div class="column">
-            <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Recent Activity</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (threads is null)
+                        @if (topThreads is null)
                         {
                             <tr>
                                 <td>Loading data...</td>
@@ -86,7 +63,7 @@
                         }
                         else
                         {
-                            @foreach (var thread in threads)
+                            @foreach (var thread in topThreads)
                             {
                                 <tr>
                                     <td><a href="p/@thread.Id">@thread.Title</a></td>
@@ -95,6 +72,33 @@
                         }
                     </tbody>
                 </table>
+            </div>
+        </div>
+        <div class="column">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Recent Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (recentThreads is null)
+                    {
+                        <tr>
+                            <td>Loading data...</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var thread in recentThreads)
+                        {
+                            <tr>
+                                <td><a href="p/@thread.Id">@thread.Title</a></td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -106,15 +110,17 @@
     //Root has q url
     string url = "q";
     private List<Forum> forums;
-    private List<ForumThread> threads;
+    private List<ForumThread> recentThreads;
+    private List<ForumThread> topThreads;
     //DateTimeOffset currentTimeStamp = DateTime.UtcNow;
     protected override async Task OnInitializedAsync()
     {
         var idList = await _data.GetCurrentForumID(url);
-        threads = await _tdata.GetRecentActivity();
+        recentThreads = await _tdata.GetRecentActivity();
+        topThreads = await _tdata.GetTopThreads();
         currentID = idList.FirstOrDefault();
         forums = await _data.GetForumsByParentId(currentID);
-        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         (_circuit as TrackingCircuitHandler).CircuitsChanged += HandleCircuitsChanged;
     }
 
@@ -125,16 +131,16 @@
         base.OnAfterRender(firstRender);
     }
 
-    public void Dispose()
-    {
-        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
-    }
-
     public void HandleCircuitsChanged(object sender, EventArgs args)
     {
         // notify the component that its state has changed
         // Important: You must use InvokeAsync
-        onlineUsers = (_circuit as TrackingCircuitHandler).ConnectedCircuits;
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
     }
 }
