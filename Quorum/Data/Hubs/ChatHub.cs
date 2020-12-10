@@ -11,18 +11,16 @@ namespace Quorum.Data.Hubs
     {
         public const string HubUrl = "/chat";
 
+        public IConnectionManager _manager { get; }
+
         public ChatHub(IConnectionManager manager)
         {
-
-        }
-
-        public async Task SendMessage(string username, Circuit circuit)
-        {
-
+            _manager = manager;
         }
 
         public override Task OnConnectedAsync()
         {
+            _manager.AddConnection()
             Console.WriteLine($"{Context.ConnectionId} connected");
             return base.OnConnectedAsync();
         }

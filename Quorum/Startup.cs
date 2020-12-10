@@ -68,7 +68,9 @@ namespace Quorum
             services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<CircuitHandler>(ctx => new TrackingCircuitHandler(ctx.GetService<IHttpContextAccessor>()));
+            services.AddSingleton<IConnectionManager, ConnectionManager>();
+            services.AddSingleton<TrackingCircuitHandler>();
+            services.AddSingleton<CircuitHandler>(ctx => ctx.GetService<TrackingCircuitHandler>());
 
             services.AddScoped<UserState>();
 

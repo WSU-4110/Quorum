@@ -1,4 +1,4 @@
-﻿@page "/chat"
+﻿@*@page "/chat"
 @using QuorumDB.Models
 @using Microsoft.AspNetCore.Components.Server.Circuits;
 @inject CircuitHandler _circuit;
@@ -200,3 +200,4 @@ else
         public string CSS => Mine ? "sent" : "received";
     }
 }
+*@
