@@ -139,7 +139,7 @@ app {
     padding-top: .5em;
     padding-left: 1em;
     padding-right: 1em;
-    width: 50%;
+    width: 70%;
 }
 .postmessage{
     color: black;
@@ -151,6 +151,7 @@ app {
     border-radius: 15px;
     box-shadow: 0 1px 1px rgba(0,0,0,0.12), 0 .5px .5px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.12), 0 1.5px 1.5px rgba(0,0,0,0.12), 0 3px 3px rgba(0,0,0,0.12);
     margin-bottom: 1em;
+    margin-left: 1.5em;
     padding-bottom: .5em;
     padding-top: .5em;
     padding-left: 1em;
@@ -164,7 +165,7 @@ app {
     background-color: #ffffff;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 800px) {
     .postwrapper {
         width: 100%;
     }
