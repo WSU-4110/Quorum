@@ -60,7 +60,15 @@
                             </div>
                             <div class="container p-0">
                                 <div class="postdata pt-1">
-                                    <a href="profile/@reply.UserName">@reply.UserName</a> | <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time>
+                                    <a href="profile/@reply.UserName">@reply.UserName</a> |
+                                    @if (readyToRenderTime == false)
+                                    {
+                                        @reply.CreatedTime.ToString("G")
+                                    }
+                                    else
+                                    {
+                                        <time class="timeago" datetime="@reply.CreatedTime.ToString("u")">@reply.CreatedTime.ToString("G")</time>
+                                    }
                                     <AuthorizeView>
                                         @if (context.User.Identity.Name == reply.UserName)
                                         {
@@ -209,6 +217,7 @@
     AspNetUser user;
     bool loading = true;
     bool convertedDate = false;
+    bool readyToRenderTime = false;
 
     public EditContext EC { get; set; }
 
@@ -228,11 +237,12 @@
 
         await _tdata.IncreaseViewCountById(threadId).ConfigureAwait(false);
         await FetchData();
+        loading = false;
     }
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        if (!firstRender && !convertedDate)
+        if (!firstRender && !convertedDate && readyToRenderTime)
         {
             thread.CreatedTime = await _ustate.GetLocalDateTime(thread.CreatedTime);
 
@@ -248,16 +258,22 @@
         base.OnAfterRender(firstRender);
     }
 
+    protected override async Task OnParametersSetAsync()
+    {
+        await FetchData();
+        StateHasChanged();
+        convertedDate = false;
+    }
+
     private async Task FetchData()
     {
-        //replies.Clear();
-        //loading = true;
+        readyToRenderTime = false;
         replies = await _rdata.GetRepliesByThreadId(threadId, page);
         var replyCount = await _rdata.GetReplyCountByThreadId(threadId);
         numOfPages = replyCount / 10;
         if (replyCount % 10 != 0)
             numOfPages++;
-        loading = false;
+        readyToRenderTime = true;
     }
 
     private async Task HandleValidSubmit()
@@ -303,13 +319,6 @@
         await _rdata.DeleteReplyById(replyId);
         await FetchData();
         StateHasChanged();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        await FetchData();
-        StateHasChanged();
-        convertedDate = false;
     }
 
     private void FirstPage()

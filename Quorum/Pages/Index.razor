@@ -6,7 +6,7 @@
 @inject CircuitHandler _circuit;
 @inject IForumData _data
 @inject IThreadData _tdata
-@inject UserState _user 
+@inject UserState _user
 @inject IJSRuntime _js
 
 <div class="panel panel-default">
@@ -76,29 +76,29 @@
         </div>
         <div class="column">
             <table class="table">
-                    <thead>
+                <thead>
+                    <tr>
+                        <th>Recent Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (recentThreads is null)
+                    {
                         <tr>
-                            <th>Recent Activity</th>
+                            <td>Loading data...</td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @if (recentThreads is null)
+                    }
+                    else
+                    {
+                        @foreach (var thread in recentThreads)
                         {
                             <tr>
-                                <td>Loading data...</td>
+                                <td><a href="p/@thread.Id">@thread.Title</a></td>
                             </tr>
                         }
-                        else
-                        {
-                            @foreach (var thread in recentThreads)
-                            {
-                                <tr>
-                                    <td><a href="p/@thread.Id">@thread.Title</a></td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
@@ -131,16 +131,16 @@
         base.OnAfterRender(firstRender);
     }
 
-    public void Dispose()
-    {
-        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
-    }
-
     public void HandleCircuitsChanged(object sender, EventArgs args)
     {
         // notify the component that its state has changed
         // Important: You must use InvokeAsync
         onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
     }
 }

@@ -158,7 +158,15 @@
                                     <td>
                                         <a href="/p/@threads[i].Id">@threads[i].Title</a> 
                                         <div class="float-right">
-                                            <span class="oi oi-eye"></span> @threads[i].ViewCount &emsp; <time class="timeago" datetime="@threads[i].LastActivity.ToString("u")">@threads[i].CreatedTime.ToString("G")</time>
+                                            <span class="oi oi-eye"></span> @threads[i].ViewCount &emsp;
+                                            @if (readyToRenderTime == false)
+                                            {
+                                                @threads[i].CreatedTime.ToString("G")
+                                            }
+                                            else
+                                            {
+                                                <time class="timeago" datetime="@threads[i].LastActivity.ToString("u")">@threads[i].CreatedTime.ToString("G")</time>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -240,7 +248,9 @@
     private ThreadView threadView = new ThreadView();
     private ForumThread thread = new ForumThread();
     private AspNetUser user;
+
     private bool convertedDate = false;
+    bool readyToRenderTime = false;
 
     private List<ForumThread> threads;
 
@@ -251,6 +261,7 @@
 
         var forumParentList = await _fdata.GetForumByURL(forumUrl);
 
+        readyToRenderTime = false;
         //Only fetch information if the url is valid
         if (forumParentList.Count != 0)
         {
@@ -294,6 +305,8 @@
             //tell them to screw off
             NavManager.NavigateTo("404");
         }
+
+        readyToRenderTime = true;
     }
 
     protected override async Task OnInitializedAsync()
@@ -315,7 +328,7 @@
 
     protected override async void OnAfterRender(bool firstRender)
     {
-        if (!firstRender && !convertedDate)
+        if (!firstRender && !convertedDate && readyToRenderTime)
         {
             parentForum.DateCreated = await _ustate.GetLocalDateTime(parentForum.DateCreated);
 
@@ -334,6 +347,7 @@
     protected override async Task OnParametersSetAsync()
     {
         await FetchData();
+        convertedDate = false;
     }
 
     private async Task HandleValidSubmit()
