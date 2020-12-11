@@ -255,6 +255,10 @@ footer{
     padding-right: 0px;
 }
 
+.img-fluid.youtube{
+    height: 281px;
+}
+
 span.text-avatar {
     background: #010101;
     border-radius: 50%;
