@@ -76,7 +76,7 @@ namespace QuorumUnit
 
 
             UserDataMock.Setup(_udata => _udata.GetUserAvatar(userName)).
-                ReturnsAsync("Photos/khalid4747-20201123-07021.jpeg");
+                ReturnsAsync("Photos/khalid4747-20201123-070821.jpeg");
 
             Console.WriteLine(UserDataMock.Object.GetUserAvatar(userName));
 
