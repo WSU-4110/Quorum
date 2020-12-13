@@ -55,11 +55,22 @@ textarea {
 
 /* div within bubble for name */
 .user {
-    font-size: 0.8em;
+    font-size: 0.9em;
     font-weight: bold;
-    color: #000;
+    color: #272727;
 }
 
-.msg {
-    /*display: inline;*/
+.timestamp {
+    font-size: 0.9em;
+    font-weight: normal;
+    color: #4e4e4e;
+}
+
+/* Deep signifies that its both children and parent must have the same css id*/
+::deep .msg > * {
+    margin: 0px;
+}
+
+::deep .msg > p {
+    font-size: 1.3rem;
 }

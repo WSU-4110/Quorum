@@ -1,22 +1,35 @@
 ﻿@page "/test"
 @using Quorum.Data.Hubs
+@using Microsoft.AspNetCore.SignalR.Client
 @inject IConnectionManager _manager
 @inject NavigationManager _nav
-@inject AuthenticationStateProvider _auth 
-@implements IDisposable
+@inject AuthenticationStateProvider _auth
+@implements IAsyncDisposable
 @attribute [Authorize]
-<h3>TempChatPage</h3>
 
-<EditForm Model="toUsername">
-    <InputSelect class="form-control" @bind-Value="@toUsername">
+<h3>Quessage</h3>
+
+@if (onlineUsers.Count > 1)
+{
+    <select class="form-control" @bind="@toUsername">
         @foreach (var user in onlineUsers)
         {
-            <option>@user</option>
+            <option value="@user">@user</option>
         }
-    </InputSelect>
+    </select>
     <br />
     <button type="submit" class="btn btn-primary" @onclick="SelectUser"> Select User </button>
-</EditForm>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="SelectUser">Note to self</button>
+}
+
+@foreach (var user in onlineUsers)
+{
+    <p>user :  @user</p>
+}
+<p>selected username @toUsername</p>
 
 @foreach (var connection in connections)
 {
@@ -29,9 +42,14 @@
 
         @foreach (var message in messages)
         {
-            <div class="() => @MessageCss(message.FromUserName)">
-                <div class="user">@message.FromUserName</div>
-                <div class="msg">@message.Text</div>
+            <div class="@MessageCss(message.FromUserName)">
+                <div class="user">@message.FromUserName </div>
+                <div class="msg">
+                    <Markdown InputText="@message.Text" />
+                </div>
+                <div class="timestamp">
+                    <CurrentUserTime Time="@message.TimeStamp" ToStringParam="t" />
+                </div>
             </div>
         }
         <hr />
@@ -41,42 +59,55 @@
 }
 
 @code {
-    string toUsername = "";
+    public string toUsername { get; set; } = "";
     string username = "";
     List<Message> messages = new List<Message>();
     List<string> onlineUsers = new List<string>();
     HashSet<string> connections = new HashSet<string>();
 
+    private HubConnection hubConnection;
     string newMessageText;
-    ChatClient client = null;
-    bool chatting = false;
 
     protected override async Task OnInitializedAsync()
     {
         AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
         username = authState.User.Identity.Name;
 
-        onlineUsers = _manager.ListOnlineUsers;
-
         messages.Clear();
 
         // Create the chat client
         string baseUrl = _nav.BaseUri;
-        client = new ChatClient(username, baseUrl);
-        // add an event handler for incoming messages
-        client.MessageReceived += MessageReceived;
-        client.UserEvent += UserEvent;
-        // start the client
-        Console.WriteLine("Index: chart starting...");
-        await client.StartAsync();
-        Console.WriteLine("Index: chart started?");
+        var hubUrl = baseUrl.TrimEnd('/') + ChatHub.HubUrl;
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl)
+            .Build();
 
-        chatting = true;
+        hubConnection.On<Message>(MessageFunctions.RECEIVE, (m) =>
+        {
+            Console.WriteLine($"Receive from {m.FromUserName} : {m.Text}");
+            messages.Add(m);
+            StateHasChanged();
+        });
+
+        hubConnection.On(MessageFunctions.USEREVENT, () =>
+        {
+            onlineUsers = _manager.ListOnlineUsers.ToList();
+            connections.Clear();
+            SelectUser();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+        await hubConnection.SendAsync(MessageFunctions.REGISTER, username);
+
+        onlineUsers = _manager.ListOnlineUsers.ToList();
     }
 
     void SelectUser()
     {
-        connections = _manager.GetConnections(toUsername);
+        toUsername = string.IsNullOrWhiteSpace(toUsername) ? username : toUsername;
+        connections.Clear();
+        connections = _manager.GetConnections(toUsername).ToHashSet();
     }
 
     void MessageReceived(object sender, MessageReceivedEventArgs e)
@@ -98,7 +129,7 @@
             newMessage.FromUserName = username;
             newMessage.ToUserName = toUsername;
             newMessage.Text = newMessageText;
-            await client.SendAsync(newMessage);
+            await hubConnection.SendAsync(MessageFunctions.SEND, newMessage);
             // clear input box
             newMessageText = "";
         }
@@ -106,18 +137,22 @@
 
     public void UserEvent(object sender, EventArgs args)
     {
-        onlineUsers = _manager.ListOnlineUsers;
+        onlineUsers = _manager.ListOnlineUsers.ToList();
+        connections.Clear();
+        SelectUser();
         StateHasChanged();
     }
+
+    public bool chatting =>
+        hubConnection.State == HubConnectionState.Connected;
 
     public string MessageCss(string fromUsername)
     {
         return fromUsername == username ? "sent" : "received";
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        client.MessageReceived -= MessageReceived;
-        client.UserEvent -= UserEvent;
+        await hubConnection.DisposeAsync();
     }
 }

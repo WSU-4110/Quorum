@@ -22,30 +22,48 @@ namespace Quorum.Data.Hubs
         // TODO : Make the user event broadcast the user whos actually removed
         public override async Task OnConnectedAsync()
         {
-            Console.WriteLine($"{Context.ConnectionId} connected");
+            Console.WriteLine($"\n{Context.ConnectionId} connected");
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception e)
         {
+            Console.WriteLine($"\nDisconnected {Context.ConnectionId} {e?.Message}");
             _manager.RemoveConnection(Context.ConnectionId);
-            Console.WriteLine($"Disconnected {e?.Message} {Context.ConnectionId}");
             await Clients.AllExcept(Context.ConnectionId).SendAsync(MessageFunctions.USEREVENT);
+            Console.WriteLine($"\n{e?.StackTrace}");
             await base.OnDisconnectedAsync(e);
         }
 
         public async Task Register(string username)
         {
+            Console.WriteLine($"Trying to add {username} with id: {Context.ConnectionId}");
             _manager.AddConnection(username, Context.ConnectionId);
-            await Clients.AllExcept(Context.ConnectionId).SendAsync(MessageFunctions.USEREVENT);
+            await Clients.All.SendAsync(MessageFunctions.USEREVENT);
         }
 
         public async Task SendMessage(Message message)
         {
-            HashSet<string> connections = _manager.GetConnections(message.ToUserName);
-            //Include yourself
-            connections.Add(Context.ConnectionId);
-            await Clients.Clients(connections).SendAsync(MessageFunctions.RECEIVE, message);
+            try {
+                HashSet<string> toConnections = _manager.GetConnections(message.ToUserName).ToHashSet();
+                HashSet<string> fromConnections = _manager.GetConnections(message.FromUserName).ToHashSet();
+
+                //Include yourself
+                foreach(var connection in toConnections)
+                {
+                    Console.WriteLine($"To {message.ToUserName} with id: {connection}");
+                }
+                foreach (var connection in fromConnections)
+                {
+                    Console.WriteLine($"From {message.FromUserName} with id: {connection}");
+                }
+                toConnections.UnionWith(fromConnections);
+                await Clients.Clients(toConnections).SendAsync(MessageFunctions.RECEIVE, message);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message, e.StackTrace);
+            }
         }
 
         public async Task BroadcastMessage(string message)

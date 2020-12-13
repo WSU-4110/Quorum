@@ -1,0 +1,20 @@
+﻿@inject UserState _ustate
+
+@Time.ToString(ToStringParam)
+
+@code {
+    [Parameter]
+    public DateTimeOffset Time { get; set; }
+    [Parameter]
+    public string ToStringParam { get; set; } = "G";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        Time = await _ustate.GetLocalDateTime(Time);
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Time = await _ustate.GetLocalDateTime(Time);
+    }
+}
