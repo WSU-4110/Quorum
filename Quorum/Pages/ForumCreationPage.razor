@@ -25,11 +25,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="IsPrivate">Private?</label>
-                    <InputCheckbox id="IsPrivate" class="form-control" @bind-Value="forumView.IsPrivate" />
-                </div>
-
-                <div class="form-group">
                     <button class="btn btn-primary" type="submit">Create Forum</button>
                 </div>
             </EditForm>
@@ -89,7 +84,7 @@
         //Assign the view model to the database model
         forum.Title = forumView.Title;
         forum.Description = forumView.Description;
-        forum.IsPrivate = forumView.IsPrivate;
+        forum.IsPrivate = false;
         forum.ForumId = ForumParentID;
 
         forum.Url = $"{parentForum.Url}/{forumView.Title.Replace(" ", "-").ToLower()}";
