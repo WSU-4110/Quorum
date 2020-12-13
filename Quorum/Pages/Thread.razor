@@ -153,7 +153,7 @@
                                         <a class="nav-item nav-link" id="nav-preview-tab" data-toggle="tab" href="#nav-preview" role="tab" aria-controls="nav-preview" aria-selected="false">Preview</a>
                                     </div>
                                 </nav>
-                                <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-content p-2 pt-3" id="nav-tabContent">
                                     <div class="tab-pane fade show active" id="nav-text" role="tabpanel" aria-labelledby="nav-text-tab">
                                         <LiveInputText rows="5" id="message-text" placeholder="Message" class="form-control" @bind-Value="replyView.Text" />
                                     </div>
@@ -171,7 +171,7 @@
                             }
                             else
                             {
-                                <button type="button" class="btn btn-primary">Submit</button>
+                                <button type="button" class="btn btn-primary" disabled>Submit</button>
                             }
                         </div>
                     </EditForm>
