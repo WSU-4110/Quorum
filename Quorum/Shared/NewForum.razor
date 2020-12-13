@@ -1,0 +1,54 @@
+﻿@using QuorumDB
+@using QuorumDB.Models;
+@using Quorum.Services;
+@using Microsoft.AspNetCore.Components.Server.Circuits;
+@inject CircuitHandler _circuit;
+@inject IForumData _data
+@inject IThreadData _tdata
+@inject UserState _user
+@inject IJSRuntime _js
+
+
+<a class="btn btn-outline-dark" href="forumcreation/@currentID" role="button">New Forum</a>
+
+@code {
+    int currentID;
+    int onlineUsers;
+
+    //Root has q url
+    string url = "q";
+    private List<Forum> forums;
+    private List<ForumThread> recentThreads;
+    private List<ForumThread> topThreads;
+    //DateTimeOffset currentTimeStamp = DateTime.UtcNow;
+    protected override async Task OnInitializedAsync()
+    {
+        var idList = await _data.GetCurrentForumID(url);
+        recentThreads = await _tdata.GetRecentActivity();
+        topThreads = await _tdata.GetTopThreads();
+        currentID = idList.FirstOrDefault();
+        forums = await _data.GetForumsByParentId(currentID);
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
+        (_circuit as TrackingCircuitHandler).CircuitsChanged += HandleCircuitsChanged;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        //currentTimeStamp = await _user.GetLocalDateTime(currentTimeStamp);
+        //_js.InvokeVoidAsync("general.initTimeAgo");
+        base.OnAfterRender(firstRender);
+    }
+
+    public void HandleCircuitsChanged(object sender, EventArgs args)
+    {
+        // notify the component that its state has changed
+        // Important: You must use InvokeAsync
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        (_circuit as TrackingCircuitHandler).CircuitsChanged -= HandleCircuitsChanged;
+    }
+}
