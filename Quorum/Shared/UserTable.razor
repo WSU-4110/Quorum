@@ -1,0 +1,37 @@
+﻿@inject IUserData _udata
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Users</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (users is null)
+        {
+            <tr>
+                <td>Loading data...</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<AspNetUser> users { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        users = await _udata.GetUsers();
+    }
+}

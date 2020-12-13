@@ -1,0 +1,37 @@
+﻿@inject IThreadData _tdata
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Threads</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (threads is null)
+        {
+            <tr>
+                <td>Loading data...</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var thread in threads)
+            {
+                <tr>
+                    <td>@thread.Title</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<ForumThread> threads { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        threads = await _tdata.GetForumThreads();
+    }
+}

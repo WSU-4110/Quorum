@@ -1,0 +1,38 @@
+﻿@inject IForumData _fdata
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Quorums</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (forums is null)
+        {
+            <tr>
+                <td>Loading data...</td>
+            </tr>
+        }
+        else
+        {
+            @foreach (var forum in forums)
+            {
+                <tr>
+                    <td>@forum.Title</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+
+@code {
+    private List<Forum> forums { get; set; }
+
+    int currentID = 3;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forums = await _fdata.GetForumsByParentId(currentID);
+    }
+}

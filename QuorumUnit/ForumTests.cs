@@ -9,6 +9,9 @@ using Ganss.XSS;
 using Moq;
 using Microsoft.Extensions.DependencyInjection;
 using QuorumDB;
+using QuorumDB.Models;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace QuorumUnit
 {
@@ -18,72 +21,59 @@ namespace QuorumUnit
     /// </summary>
     public class ForumTests : TestContext
     {
+
         [Fact]
-        public void CheckThreadInForum()
+        public async void CheckIfForumUnderForumID()
         {
-            var UserDataMock = new Mock<IUserData>();
+            var ForumDataMock = new Mock<IForumData>();
 
-            string userName = "khalid4747";
+            int ForumID = 3;
+            string ForumName = "testForum";
 
+            Forum testForum = new Forum();
+            testForum.ForumId = ForumID;
+            testForum.Title = ForumName;
+
+            List<Forum> ForumList = new List<Forum>();
+
+            ForumList.Add(testForum);
+            //string pladsf = ForumList[0].Title;
             //// Arrange
-            UserDataMock.Setup(_udata => _udata.GetUserAvatar(userName)).
-                ReturnsAsync("Photos/khalid4747-20201123-070821.jpeg");
+            ForumDataMock.Setup(_fdata => _fdata.GetForumsByParentId(ForumID)).ReturnsAsync(ForumList);
+            Services.AddSingleton<IForumData>(ForumDataMock.Object);
 
-            Services.AddSingleton<IUserData>(UserDataMock.Object);
+            List<Forum> TestList = await ForumDataMock.Object.GetForumsByParentId(ForumID);
+            //// Assert
+            var cut = RenderComponent<ForumTable>();
+            cut.MarkupMatches("<table class=\"table\"><thead><tr><th>Quorums</th></tr></thead><tbody><tr><td>testForum</td></tr></tbody></table>");
+            
+            //Assert.Equal(ForumList, TestList);
 
-            // Assert that it removes the script and text
-            var cut = RenderComponent<Avatar>(Parameter("UserName", userName));
-            //Escaped component
-            cut.MarkupMatches("<div class=\"avatar-icon\"><img src=\"Photos/khalid4747-20201123-070821.jpeg\" class=\"rounded-circle\" id=\"avatar-icon\" width=\"48\" height=\"48\"></div>");
         }
 
         [Fact]
-        public void CheckSubForumInForum()
+        public async void CheckIfNoForumsUnderTable()
         {
-            var UserDataMock = new Mock<IUserData>();
+            var ForumDataMock = new Mock<IForumData>();
 
-            string userName = "khalid4747";
+            int ForumID = 3;
+            string ForumName = "testForum";
 
+            Forum testForum = new Forum();
+            testForum.ForumId = ForumID;
+            testForum.Title = ForumName;
+
+            List<Forum> ForumList = new List<Forum>();
+
+            //string pladsf = ForumList[0].Title;
             //// Arrange
-            UserDataMock.Setup(_udata => _udata.GetUserAvatar(userName)).
-                ReturnsAsync("");
+            ForumDataMock.Setup(_fdata => _fdata.GetForumsByParentId(ForumID)).ReturnsAsync(ForumList);
+            Services.AddSingleton<IForumData>(ForumDataMock.Object);
 
-            Services.AddSingleton<IUserData>(UserDataMock.Object);
-
-            // Assert that it removes the script and text
-            var cut = RenderComponent<Avatar>(Parameter("UserName", userName));
-            //Escaped component
-            cut.MarkupMatches("<div class=\"avatar-icon\"><span class=\"text-avatar\" id=\"avatar-icon\" width=\"48\" height=\"48\">K</span></div>");
+            List<Forum> TestList = await ForumDataMock.Object.GetForumsByParentId(ForumID);
+            //// Assert
+            var cut = RenderComponent<ForumTable>();
+            cut.MarkupMatches("<table class=\"table\"><thead><tr><th>Quorums</th></tr></thead><tbody></tbody></table>");
         }
-
-        [Fact]
-        public void CheckDescriptionInForum()
-        {
-            var UserDataMock = new Mock<IUserData>();
-
-            string userName = "khalid4747";
-
-            //// Arrange
-            UserDataMock.Setup(_udata => _udata.GetUserAvatar(userName)).
-                ReturnsAsync("");
-
-            Services.AddSingleton<IUserData>(UserDataMock.Object);
-
-            // Assert that it removes the script and text
-            var cut = RenderComponent<Avatar>(Parameter("UserName", userName));
-            //Escaped component
-            cut.MarkupMatches("<div class=\"avatar-icon\"><span class=\"text-avatar\" id=\"avatar-icon\" width=\"48\" height=\"48\">K</span></div>");
-
-
-            UserDataMock.Setup(_udata => _udata.GetUserAvatar(userName)).
-                ReturnsAsync("Photos/khalid4747-20201123-070821.jpeg");
-
-            Console.WriteLine(UserDataMock.Object.GetUserAvatar(userName));
-
-            cut.SetParametersAndRender(parameters => parameters
-                            .Add(p => p.UserName, userName));
-            cut.MarkupMatches("<div class=\"avatar-icon\"><img src=\"Photos/khalid4747-20201123-070821.jpeg\" class=\"rounded-circle\" id=\"avatar-icon\" width=\"48\" height=\"48\"></div>");
-        }
-
     }
 }
