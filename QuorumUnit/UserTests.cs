@@ -50,5 +50,32 @@ namespace QuorumUnit
             //Assert.Equal(ForumList, TestList);
 
         }
+
+        [Fact]
+        public void CheckIfNoUsersOnList()
+        {
+            var UserDataMock = new Mock<IUserData>();
+
+            string UserID = "3";
+            string UserName = "testUser";
+
+            AspNetUser testUser = new AspNetUser();
+            testUser.Id = UserID;
+            testUser.UserName = UserName;
+
+            List<AspNetUser> UserList = new List<AspNetUser>();
+
+            //// Arrange
+            UserDataMock.Setup(_udata => _udata.GetUsers()).ReturnsAsync(UserList);
+            Services.AddSingleton<IUserData>(UserDataMock.Object);
+
+            //List<AspNetUser> TestList = await ForumDataMock.Object.GetForumsByParentId(ForumID);
+            //// Assert
+            var cut = RenderComponent<UserTable>();
+            cut.MarkupMatches("<table class=\"table\"><thead><tr><th>Users</th></tr></thead><tbody></tbody></table>");
+
+            //Assert.Equal(ForumList, TestList);
+
+        }
     }
 }

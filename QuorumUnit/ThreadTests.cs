@@ -50,5 +50,32 @@ namespace QuorumUnit
             //Assert.Equal(ForumList, TestList);
 
         }
+
+        [Fact]
+        public void CheckIfNoThreadsOnList()
+        {
+            var ThreadDataMock = new Mock<IThreadData>();
+
+            int ThreadID = 1;
+            string ThreadName = "testThread";
+
+            ForumThread testThread = new ForumThread();
+            testThread.Id = ThreadID;
+            testThread.Title = ThreadName;
+
+            List<ForumThread> ThreadList = new List<ForumThread>();
+
+            //// Arrange
+            ThreadDataMock.Setup(_udata => _udata.GetForumThreads()).ReturnsAsync(ThreadList);
+            Services.AddSingleton<IThreadData>(ThreadDataMock.Object);
+
+            //List<Thread> TestList = await ForumDataMock.Object.GetForumsByParentId(ForumID);
+            //// Assert
+            var cut = RenderComponent<ThreadTable>();
+            cut.MarkupMatches("<table class=\"table\"><thead><tr><th>Threads</th></tr></thead><tbody></tbody></table>");
+
+            //Assert.Equal(ForumList, TestList);
+
+        }
     }
 }
