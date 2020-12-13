@@ -1,0 +1,158 @@
+﻿@page "/test"
+@using Quorum.Data.Hubs
+@using Microsoft.AspNetCore.SignalR.Client
+@inject IConnectionManager _manager
+@inject NavigationManager _nav
+@inject AuthenticationStateProvider _auth
+@implements IAsyncDisposable
+@attribute [Authorize]
+
+<h3>Quessage</h3>
+
+@if (onlineUsers.Count > 1)
+{
+    <select class="form-control" @bind="@toUsername">
+        @foreach (var user in onlineUsers)
+        {
+            <option value="@user">@user</option>
+        }
+    </select>
+    <br />
+    <button type="submit" class="btn btn-primary" @onclick="SelectUser"> Select User </button>
+}
+else
+{
+    <button class="btn btn-primary" @onclick="SelectUser">Note to self</button>
+}
+
+@foreach (var user in onlineUsers)
+{
+    <p>user :  @user</p>
+}
+<p>selected username @toUsername</p>
+
+@foreach (var connection in connections)
+{
+    <p>@toUsername : @connection</p>
+}
+
+@if (chatting)
+{
+    <div id="scrollbox">
+
+        @foreach (var message in messages)
+        {
+            <div class="@MessageCss(message.FromUserName)">
+                <div class="user">@message.FromUserName </div>
+                <div class="msg">
+                    <Markdown InputText="@message.Text" />
+                </div>
+                <div class="timestamp">
+                    <CurrentUserTime Time="@message.TimeStamp" ToStringParam="t" />
+                </div>
+            </div>
+        }
+        <hr />
+        <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessageText"></textarea>
+        <button class="btn btn-outline-primary" @onclick="@SendAsync">Send</button>
+    </div>
+}
+
+@code {
+    public string toUsername { get; set; } = "";
+    string username = "";
+    List<Message> messages = new List<Message>();
+    List<string> onlineUsers = new List<string>();
+    HashSet<string> connections = new HashSet<string>();
+
+    private HubConnection hubConnection;
+    string newMessageText;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
+        username = authState.User.Identity.Name;
+
+        messages.Clear();
+
+        // Create the chat client
+        string baseUrl = _nav.BaseUri;
+        var hubUrl = baseUrl.TrimEnd('/') + ChatHub.HubUrl;
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubUrl)
+            .Build();
+
+        hubConnection.On<Message>(MessageFunctions.RECEIVE, (m) =>
+        {
+            Console.WriteLine($"Receive from {m.FromUserName} : {m.Text}");
+            messages.Add(m);
+            StateHasChanged();
+        });
+
+        hubConnection.On(MessageFunctions.USEREVENT, () =>
+        {
+            onlineUsers = _manager.ListOnlineUsers.ToList();
+            connections.Clear();
+            SelectUser();
+            StateHasChanged();
+        });
+
+        await hubConnection.StartAsync();
+        await hubConnection.SendAsync(MessageFunctions.REGISTER, username);
+
+        onlineUsers = _manager.ListOnlineUsers.ToList();
+    }
+
+    void SelectUser()
+    {
+        toUsername = string.IsNullOrWhiteSpace(toUsername) ? username : toUsername;
+        connections.Clear();
+        connections = _manager.GetConnections(toUsername).ToHashSet();
+    }
+
+    void MessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        Console.WriteLine($"Blazor: receive {e.Message.FromUserName} {e.Message.Text}");
+
+        messages.Add(e.Message);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    async Task SendAsync()
+    {
+        if (chatting && !string.IsNullOrWhiteSpace(newMessageText))
+        {
+            // send message to hub
+            Message newMessage = new Message();
+            newMessage.FromUserName = username;
+            newMessage.ToUserName = toUsername;
+            newMessage.Text = newMessageText;
+            await hubConnection.SendAsync(MessageFunctions.SEND, newMessage);
+            // clear input box
+            newMessageText = "";
+        }
+    }
+
+    public void UserEvent(object sender, EventArgs args)
+    {
+        onlineUsers = _manager.ListOnlineUsers.ToList();
+        connections.Clear();
+        SelectUser();
+        StateHasChanged();
+    }
+
+    public bool chatting =>
+        hubConnection.State == HubConnectionState.Connected;
+
+    public string MessageCss(string fromUsername)
+    {
+        return fromUsername == username ? "sent" : "received";
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await hubConnection.DisposeAsync();
+    }
+}

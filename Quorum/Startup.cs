@@ -25,6 +25,7 @@ using System.IO;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Ganss.XSS;
 using Microsoft.AspNetCore.Http;
+using Quorum.Data.Hubs;
 
 namespace Quorum
 {
@@ -67,7 +68,8 @@ namespace Quorum
             services.Configure<AuthMessageSenderOptions>(Configuration);
             services.AddHttpContextAccessor();
 
-            services.AddSingleton<CircuitHandler>(ctx => new TrackingCircuitHandler(ctx.GetService<IHttpContextAccessor>()));
+            services.AddSingleton<IConnectionManager, ConnectionManager>();
+            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
 
             services.AddScoped<UserState>();
 
@@ -118,6 +120,7 @@ namespace Quorum
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapHub<ChatHub>(ChatHub.HubUrl);
             });
         }
     }
