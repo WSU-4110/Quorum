@@ -8,6 +8,7 @@
 @inject IThreadData _tdata
 @inject UserState _user
 @inject IJSRuntime _js
+@implements IDisposable
 
 <div class="panel panel-default">
     <div class="row">
@@ -122,13 +123,6 @@
         forums = await _data.GetForumsByParentId(currentID);
         onlineUsers = (_circuit as TrackingCircuitHandler).GetConnectedCircuitsCount();
         (_circuit as TrackingCircuitHandler).CircuitsChanged += HandleCircuitsChanged;
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        //currentTimeStamp = await _user.GetLocalDateTime(currentTimeStamp);
-        //_js.InvokeVoidAsync("general.initTimeAgo");
-        base.OnAfterRender(firstRender);
     }
 
     public void HandleCircuitsChanged(object sender, EventArgs args)

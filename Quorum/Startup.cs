@@ -69,8 +69,7 @@ namespace Quorum
             services.AddHttpContextAccessor();
 
             services.AddSingleton<IConnectionManager, ConnectionManager>();
-            services.AddSingleton<TrackingCircuitHandler>();
-            services.AddSingleton<CircuitHandler>(ctx => ctx.GetService<TrackingCircuitHandler>());
+            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
 
             services.AddScoped<UserState>();
 

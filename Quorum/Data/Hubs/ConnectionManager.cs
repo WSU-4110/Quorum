@@ -10,19 +10,19 @@ namespace Quorum.Data.Hubs
     public class ConnectionManager : IConnectionManager
     {
         // Relationship between users -> many connection ids
-        private static ConcurrentDictionary<string, HashSet <Circuit> > userMap = new ConcurrentDictionary<string, HashSet<Circuit>>();
+        private static ConcurrentDictionary<string, HashSet<string>> userMap = new ConcurrentDictionary<string, HashSet<string>>();
         // Relationship between circuit -> user
-        private static ConcurrentDictionary<Circuit, string> usersByClientId = new ConcurrentDictionary<Circuit, string>();
+        private static ConcurrentDictionary<string, string> usersByClientId = new ConcurrentDictionary<string, string>();
 
-        public List<string> OnlineUsers => throw new NotImplementedException();
+        public List<string> ListOnlineUsers => userMap.Keys.ToList();
 
-        public void AddConnection(string username, Circuit circuit)
+        public void AddConnection(string username, string circuit)
         {
             try
             {
                 if (userMap.ContainsKey(username) == false)
                 {
-                    userMap[username] = new HashSet<Circuit>();
+                    userMap[username] = new HashSet<string>();
                 }
                 userMap[username].Add(circuit);
                 usersByClientId.TryAdd(circuit, username);
@@ -33,9 +33,9 @@ namespace Quorum.Data.Hubs
             }
         }
 
-        public HashSet<Circuit> GetConnections(string username)
+        public HashSet<string> GetConnections(string username)
         {
-            var connections = new HashSet<Circuit>();
+            var connections = new HashSet<string>();
             try
             {
                 connections = userMap[username];
@@ -47,7 +47,7 @@ namespace Quorum.Data.Hubs
             return connections;
         }
 
-        public void RemoveConnection(Circuit circuit)
+        public void RemoveConnection(string circuit)
         {
             try
             {
@@ -67,6 +67,11 @@ namespace Quorum.Data.Hubs
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        public int UserCount()
+        {
+            return usersByClientId.Count;
         }
     }
 }

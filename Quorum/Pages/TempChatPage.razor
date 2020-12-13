@@ -1,0 +1,123 @@
+﻿@page "/test"
+@using Quorum.Data.Hubs
+@inject IConnectionManager _manager
+@inject NavigationManager _nav
+@inject AuthenticationStateProvider _auth 
+@implements IDisposable
+@attribute [Authorize]
+<h3>TempChatPage</h3>
+
+<EditForm Model="toUsername">
+    <InputSelect class="form-control" @bind-Value="@toUsername">
+        @foreach (var user in onlineUsers)
+        {
+            <option>@user</option>
+        }
+    </InputSelect>
+    <br />
+    <button type="submit" class="btn btn-primary" @onclick="SelectUser"> Select User </button>
+</EditForm>
+
+@foreach (var connection in connections)
+{
+    <p>@toUsername : @connection</p>
+}
+
+@if (chatting)
+{
+    <div id="scrollbox">
+
+        @foreach (var message in messages)
+        {
+            <div class="() => @MessageCss(message.FromUserName)">
+                <div class="user">@message.FromUserName</div>
+                <div class="msg">@message.Text</div>
+            </div>
+        }
+        <hr />
+        <textarea class="input-lg" placeholder="enter your comment" @bind="@newMessageText"></textarea>
+        <button class="btn btn-outline-primary" @onclick="@SendAsync">Send</button>
+    </div>
+}
+
+@code {
+    string toUsername = "";
+    string username = "";
+    List<Message> messages = new List<Message>();
+    List<string> onlineUsers = new List<string>();
+    HashSet<string> connections = new HashSet<string>();
+
+    string newMessageText;
+    ChatClient client = null;
+    bool chatting = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
+        username = authState.User.Identity.Name;
+
+        onlineUsers = _manager.ListOnlineUsers;
+
+        messages.Clear();
+
+        // Create the chat client
+        string baseUrl = _nav.BaseUri;
+        client = new ChatClient(username, baseUrl);
+        // add an event handler for incoming messages
+        client.MessageReceived += MessageReceived;
+        client.UserEvent += UserEvent;
+        // start the client
+        Console.WriteLine("Index: chart starting...");
+        await client.StartAsync();
+        Console.WriteLine("Index: chart started?");
+
+        chatting = true;
+    }
+
+    void SelectUser()
+    {
+        connections = _manager.GetConnections(toUsername);
+    }
+
+    void MessageReceived(object sender, MessageReceivedEventArgs e)
+    {
+        Console.WriteLine($"Blazor: receive {e.Message.FromUserName} {e.Message.Text}");
+
+        messages.Add(e.Message);
+
+        // Inform blazor the UI needs updating
+        StateHasChanged();
+    }
+
+    async Task SendAsync()
+    {
+        if (chatting && !string.IsNullOrWhiteSpace(newMessageText))
+        {
+            // send message to hub
+            Message newMessage = new Message();
+            newMessage.FromUserName = username;
+            newMessage.ToUserName = toUsername;
+            newMessage.Text = newMessageText;
+            await client.SendAsync(newMessage);
+            // clear input box
+            newMessageText = "";
+        }
+    }
+
+    public void UserEvent(object sender, EventArgs args)
+    {
+        onlineUsers = _manager.ListOnlineUsers;
+        StateHasChanged();
+    }
+
+    public string MessageCss(string fromUsername)
+    {
+        return fromUsername == username ? "sent" : "received";
+    }
+
+    public void Dispose()
+    {
+        client.MessageReceived -= MessageReceived;
+        client.UserEvent -= UserEvent;
+    }
+}

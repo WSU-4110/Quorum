@@ -9,14 +9,17 @@ using Microsoft.AspNetCore.Identity;
 using QuorumDB.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http;
+using Quorum.Data.Hubs;
 
 namespace Quorum.Services
 {
     public class TrackingCircuitHandler : CircuitHandler
     {
+        HashSet<Circuit> circuits = new HashSet<Circuit>();
+        
         public int GetConnectedCircuitsCount()
         {
-            return 1;
+            return circuits.Count();
         }
 
         public event EventHandler CircuitsChanged;
@@ -30,7 +33,7 @@ namespace Quorum.Services
         {
             try
             {
-
+                circuits.Add(circuit);
                 OnCircuitsChanged();
                 return base.OnConnectionUpAsync(circuit, cancellationToken);
             }
@@ -44,8 +47,8 @@ namespace Quorum.Services
         public override Task OnConnectionDownAsync(Circuit circuit, CancellationToken cancellationToken)
         {
             try
-            { 
-
+            {
+                circuits.Remove(circuit);
                 OnCircuitsChanged();
                 return base.OnConnectionDownAsync(circuit, cancellationToken);
             }
