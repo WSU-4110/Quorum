@@ -1,11 +1,7 @@
 ﻿@page "/squorum/{query}/{forumPage:int}/{threadPage:int}"
 
 @using QuorumDB.Models
-@inject AuthenticationStateProvider _auth
-@inject Quorum.Data.ApplicationDbContext _context
-@inject IForumData _fdata
 @inject ISearchResults _sresults
-@inject NavigationManager navManager 
 
 
 <h3>Quorum Search Results</h3>
@@ -180,8 +176,8 @@
     public int numOfForumPages;
     public int numOfThreadPages;
 
-    public List<Forum> forumList = new List<Forum>();
-    public List<ForumThread> threadList = new List<ForumThread>();
+    public List<Forum> forumList;
+    public List<ForumThread> threadList;
 
     protected override async Task OnInitializedAsync()
     {
