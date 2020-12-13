@@ -1,0 +1,45 @@
+﻿@page "/chat"
+@using QuorumDB.Models
+@using Microsoft.AspNetCore.Components.Server.Circuits;
+@inject CircuitHandler _circuit;
+<h3>chat</h3>
+
+<EditForm Model="username">
+    <InputSelect class="form-control" @bind-Value="@username">
+        @foreach (var username in onlineUsers)
+        {
+            <option>@username</option>
+        }
+    </InputSelect>
+    <br />
+    <button type="submit" class="btn btn-primary" @onclick="SelectUser"> Select User </button>
+</EditForm>
+
+
+@foreach (var message in messages)
+{
+    <p>@message.UserName : @message.Text</p>
+}
+
+@foreach(var connection in connections)
+{
+    <p>@connection.Id</p>
+}
+
+@code {
+    string username = "";
+    List<Message> messages = new List<Message>();
+    List<string> onlineUsers = new List<string>();
+    HashSet<Circuit> connections = new HashSet<Circuit>();
+
+    protected override Task OnInitializedAsync()
+    {
+        onlineUsers = (_circuit as TrackingCircuitHandler).GetAllUsers();
+        return base.OnInitializedAsync();
+    }
+
+    void SelectUser()
+    {
+        connections = (_circuit as TrackingCircuitHandler).GetUserConnections(username);
+    }
+}
