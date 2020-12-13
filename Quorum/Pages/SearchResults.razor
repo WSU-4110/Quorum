@@ -1,0 +1,270 @@
+﻿@page "/squorum/{query}/{forumPage:int}/{threadPage:int}"
+
+@using QuorumDB.Models
+@inject AuthenticationStateProvider _auth
+@inject Quorum.Data.ApplicationDbContext _context
+@inject IForumData _fdata
+@inject ISearchResults _sresults
+@inject NavigationManager navManager 
+
+
+<h3>Quorum Search Results</h3>
+
+<div class="panel panel-default">
+    <div class="row">
+        <div class="column">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sub-Quorums</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (forumList is null)
+                    {
+                        <tr>
+                            <td>Loading data...</td>
+                        </tr>
+                    }
+                    else
+                    {
+
+                        @if (forumList.Count == 0)
+                        {
+                            <tr>
+                                <td>No Quorums Found</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @for (int i = 0 + ((forumPage - 1) * 10); i < (forumPage * 10) && i < forumList.Count(); i++)
+                            {
+                                <tr>
+                                    <td><a href="@forumList[i].Url">@forumList[i].Title</a></td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+            <ul class="list-group list-group-horizontal">
+                @if (numOfForumPages > 0)
+                {
+                    @if (forumPage != 1)
+                    {
+                        <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPageForum">Prev</button></li>
+                        <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@FirstPageForum">1</button></li>
+                        @if (forumPage - 1 > 3)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item">...</li>
+                        }
+                        @if (forumPage - 1 > 2)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageBeforePrevForum">@(forumPage - 2)</button></li>
+                        }
+                        @if (forumPage > 2)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPageForum">@(forumPage - 1)</button></li>
+                        }
+                    }
+                    <li id="forumsearchpagination" class="list-group-item"><b>@forumPage</b></li>
+                    @if (forumPage != numOfForumPages)
+                    {
+                        <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPageForum">@(forumPage + 1)</button></li>
+                        @if (numOfForumPages - forumPage > 2)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageAfterNextForum">@(forumPage + 2)</button></li>
+                        }
+                        @if (numOfForumPages - forumPage > 3)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item">...</li>
+                        }
+                        @if (numOfForumPages - forumPage > 1)
+                        {
+                            <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@LastPageForum">@numOfForumPages</button></li>
+                        }
+                        <li id="forumsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPageForum">Next</button></li>
+                    }
+                }
+            </ul>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Threads</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (threadList is null)
+                    {
+                        <tr>
+                            <td>Loading Data...</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @if (threadList.Count == 0)
+                        {
+                            <tr>
+                                <td>No Threads Found</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @for (int i = 0 + ((threadPage - 1) * 10); i < (threadPage * 10) && i < threadList.Count(); i++)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="/p/@threadList[i].Id">@threadList[i].Title</a>
+                                        <div class="float-right">
+                                            <span class="oi oi-eye"></span> @threadList[i].ViewCount
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+            <ul class="list-group list-group-horizontal">
+                @if (numOfThreadPages > 0)
+                {
+                    @if (threadPage != 1)
+                    {
+                        <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPageThread">Prev</button></li>
+                        <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@FirstPageThread">1</button></li>
+                        @if (threadPage - 1 > 3)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item">...</li>
+                        }
+                        @if (threadPage - 1 > 2)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageBeforePrevThread">@(threadPage - 2)</button></li>
+                        }
+                        @if (threadPage > 2)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PrevPageThread">@(threadPage - 1)</button></li>
+                        }
+                    }
+                    <li id="threadsearchpagination" class="list-group-item"><b>@threadPage</b></li>
+                    @if (threadPage != numOfThreadPages)
+                    {
+                        <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPageThread">@(threadPage + 1)</button></li>
+                        @if (numOfThreadPages - threadPage > 2)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@PageAfterNextThread">@(threadPage + 2)</button></li>
+                        }
+                        @if (numOfThreadPages - threadPage > 3)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item">...</li>
+                        }
+                        @if (numOfThreadPages - threadPage > 1)
+                        {
+                            <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@LastPageThread">@numOfThreadPages</button></li>
+                        }
+                        <li id="threadsearchpagination" class="list-group-item"><button type="button" class="pagbutton" @onclick="@NextPageThread">Next</button></li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string query { get; set; }
+    [Parameter]
+    public int forumPage { get; set; }
+    [Parameter]
+    public int threadPage { get; set; }
+
+    public int numOfForumPages;
+    public int numOfThreadPages;
+
+    public List<Forum> forumList = new List<Forum>();
+    public List<ForumThread> threadList = new List<ForumThread>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        forumList = await _sresults.GetSearchResultsByQuorum(query);
+        threadList = await _sresults.GetSearchResultsByPost(query);
+
+        numOfForumPages = forumList.Count() / 10;
+        if (forumList.Count() % 10 != 0)
+            numOfForumPages++;
+
+        numOfThreadPages = threadList.Count() / 10;
+        if (threadList.Count() % 10 != 0)
+            numOfThreadPages++;
+    }
+
+    protected override void OnParametersSet()
+    {
+        numOfForumPages = forumList.Count() / 10;
+        if (forumList.Count() % 10 != 0)
+            numOfForumPages++;
+
+        numOfThreadPages = threadList.Count() / 10;
+        if (threadList.Count() % 10 != 0)
+            numOfThreadPages++;
+    }
+
+    private void FirstPageForum()
+    {
+        forumPage = 1;
+    }
+
+    private void PageBeforePrevForum()
+    {
+        forumPage -= 2;
+    }
+
+    private void PrevPageForum()
+    {
+        forumPage -= 1;
+    }
+
+    private void NextPageForum()
+    {
+        forumPage += 1;
+    }
+
+    private void PageAfterNextForum()
+    {
+        forumPage += 2;
+    }
+
+    private void LastPageForum()
+    {
+        forumPage = numOfForumPages;
+    }
+
+    private void FirstPageThread()
+    {
+        threadPage = 1;
+    }
+
+    private void PageBeforePrevThread()
+    {
+        threadPage -= 2;
+    }
+
+    private void PrevPageThread()
+    {
+        threadPage -= 1;
+    }
+
+    private void NextPageThread()
+    {
+        threadPage += 1;
+    }
+
+    private void PageAfterNextThread()
+    {
+        threadPage += 2;
+    }
+
+    private void LastPageThread()
+    {
+        threadPage = numOfForumPages;
+    }
+}
