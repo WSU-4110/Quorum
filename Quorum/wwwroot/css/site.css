@@ -50,16 +50,12 @@ app {
         width: 100%;
     }
 }
-@media screen and (min-width: 1201px){
-    .main {
-        max-width: 75em;
-        margin: 0 auto !important;
-        float: none !important;
-    }
-}
+
 .main {
     flex: 1;
     background-color: #e5e5e5;
+    margin-right: 10rem;
+    margin-left: 10rem;
 }
 .main .content{
     margin-bottom: 2em;
@@ -82,7 +78,7 @@ app {
         display : flex;
     }
     
-    .main .navbar .login-display > a, .main .navbar .login-display .btn-login {
+    .main .navbar .login-display > a, .main .navbar .login-display .btn-link {
         color: #5c5c5c;
         font-size:1.25em;
     }
@@ -106,10 +102,6 @@ app {
 .main .top-row a:first-child {
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.form-control {
-    max-width: 400px;
 }
 
 .forumdetails {
@@ -139,7 +131,7 @@ app {
     padding-top: .5em;
     padding-left: 1em;
     padding-right: 1em;
-    width: 70%;
+    width: 50%;
 }
 .postmessage{
     color: black;
@@ -151,7 +143,6 @@ app {
     border-radius: 15px;
     box-shadow: 0 1px 1px rgba(0,0,0,0.12), 0 .5px .5px rgba(0,0,0,0.12), 0 1px 1px rgba(0,0,0,0.12), 0 1.5px 1.5px rgba(0,0,0,0.12), 0 3px 3px rgba(0,0,0,0.12);
     margin-bottom: 1em;
-    margin-left: 1.5em;
     padding-bottom: .5em;
     padding-top: .5em;
     padding-left: 1em;
@@ -165,7 +156,7 @@ app {
     background-color: #ffffff;
 }
 
-@media screen and (max-width: 800px) {
+@media screen and (max-width: 600px) {
     .postwrapper {
         width: 100%;
     }
@@ -255,10 +246,6 @@ footer{
     padding-right: 0px;
 }
 
-.img-fluid.youtube{
-    height: 281px;
-}
-
 span.text-avatar {
     background: #010101;
     border-radius: 50%;
@@ -307,8 +294,8 @@ span.text-avatar {
         margin-left: 0;
     }
     .main {
-        margin-left: 0;
-        margin-right: 0;
+        margin-left:0;
+        margin-right:0;
     }
     .main .navbar {
         background-color: #e5e5e5;

@@ -1,6 +1,5 @@
 ﻿@inject AuthenticationStateProvider _auth
 @inject UserState _userState
-@inject NavigationManager _nav
 @using System.IO
 
 <AuthorizeView>
@@ -28,7 +27,7 @@
     </Authorized>
     <NotAuthorized>
         <a href="Identity/Account/Register" class="btn">Register</a>
-        <button class="btn btn-login" @onclick="loginWithReturnUrl">Log in</button>
+        <a href="Identity/Account/Login" class="btn">Log in</a>
     </NotAuthorized>
 </AuthorizeView>
 
@@ -61,11 +60,6 @@
     {
         Task.FromResult(loadImage());
         StateHasChanged();
-    }
-
-    public void loginWithReturnUrl()
-    {
-        _nav.NavigateTo($"Identity/Account/Login?returnUrl=/{_nav.ToBaseRelativePath(_nav.Uri)}", true);
     }
 
     public void Dispose()

@@ -24,7 +24,6 @@ using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Components.Server.Circuits;
 using Ganss.XSS;
-using Microsoft.AspNetCore.Http;
 
 namespace Quorum
 {
@@ -61,19 +60,15 @@ namespace Quorum
             else
                 services.AddRazorPages();
 
+            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
+
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<AspNetUser>>();
             services.AddTransient<IEmailSender, EmailSender>();
             services.Configure<AuthMessageSenderOptions>(Configuration);
-            services.AddHttpContextAccessor();
-
-            services.AddSingleton<CircuitHandler>(ctx => new TrackingCircuitHandler(ctx.GetService<IHttpContextAccessor>()));
-
+            services.AddSingleton<CircuitHandler>(new TrackingCircuitHandler());
             services.AddScoped<UserState>();
 
-            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
-          
-            services.AddTransient<ISearchResults, SearchResults>();
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
             services.AddTransient<IForumData, ForumData>();
@@ -116,7 +111,9 @@ namespace Quorum
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapBlazorHub();
+                endpoints.MapBlazorHub(options =>
+                    options.ApplicationMaxBufferSize = 10 * 1024 * 1024
+                );
                 endpoints.MapFallbackToPage("/_Host");
             });
         }

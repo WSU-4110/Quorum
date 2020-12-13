@@ -24,6 +24,8 @@ namespace QuorumDB.Models
         [MaxLength(256)]
         public string Title { get; set; }
 
+        public int ViewCount { get; set; }
+
         public string Description { get; set; }
                 
         public string Group { get; set; }
