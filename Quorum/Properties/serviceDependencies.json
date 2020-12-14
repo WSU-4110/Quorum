@@ -3,10 +3,6 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "quorumDB"
-    },
-    "signalr1": {
-      "type": "signalr",
-      "connectionId": "Azure__SignalR__ConnectionString"
     }
   }
 }

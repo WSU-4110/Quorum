@@ -5,12 +5,6 @@
       "type": "mssql.azure",
       "connectionId": "quorumDB",
       "secretStore": "AzureAppSettings"
-    },
-    "signalr1": {
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.SignalRService/SignalR/Quorumservice",
-      "type": "signalr.azure",
-      "connectionId": "Azure__SignalR__ConnectionString",
-      "secretStore": "AzureAppSettings"
     }
   }
 }
