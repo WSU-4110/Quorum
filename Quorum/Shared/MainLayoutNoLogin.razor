@@ -1,0 +1,31 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager NavManager
+
+<div class="main">
+    <nav class="navbar navbar-expand-sm">
+        <a class="navbar-brand" href="/">Quorum</a>
+        <input class="form-control" id="searchbox" type="text" placeholder="Search" @bind="@query" aria-label="Search">
+        <button type="button" class="btn btn-light" @onclick="@HandleValidSubmit">Search</button>
+        <div class="login-display align-items-center">
+        </div>
+    </nav>
+    <div class="content px-4">
+        @Body
+    </div>
+    <footer>
+        <hr />
+        <div class="text-muted">
+            ©2020 Quorum
+        </div>
+    </footer>
+</div>
+
+@code{
+    public string query;
+
+    private void HandleValidSubmit()
+    {
+        NavManager.NavigateTo("/squorum/" + query + "/1/1");
+    }
+}
