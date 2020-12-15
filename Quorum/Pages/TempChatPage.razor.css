@@ -34,12 +34,28 @@ textarea {
     text-align: right;
 }
 
+    .sent ::deep .blockquote {
+        border-right: solid 4px #333;
+        padding: 0 1em;
+        margin: 1em;
+        font-size: 1.4rem;
+        line-height: 1.6em;
+    }
+
 .received {
     background: #4CAF50;
     color: #fff;
     margin-left: 10px;
     margin-right: 10%;
 }
+
+    .received ::deep .blockquote {
+        border-left: solid 4px #333;
+        padding: 0 1em;
+        margin: 1em;
+        font-size: 1.4rem;
+        line-height: 1.6em;
+    }
 
 .sent:after {
     border-left-color: #03a9f4;
@@ -66,11 +82,11 @@ textarea {
     color: #4e4e4e;
 }
 
-/* Deep signifies that its both children and parent must have the same css id*/
-::deep .msg > * {
+/* Deep signifies that both children and parent must have the same css id*/
+::deep .msg > *, ::deep p {
     margin: 0px;
 }
 
-::deep .msg > p {
+::deep p {
     font-size: 1.3rem;
 }

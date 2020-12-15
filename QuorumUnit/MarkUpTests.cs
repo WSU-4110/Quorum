@@ -17,19 +17,20 @@ namespace QuorumUnit
     /// </summary>
     public class MarkUpTests : TestContext
     {
+        public MarkUpTests()
+        {
+            Services.AddScoped<IHtmlSanitizer, HtmlSanitizer>(x =>
+            {
+                var sanitizer = new HtmlSanitizer();
+                sanitizer.AllowedAttributes.Add("class");
+                return sanitizer;
+            });
+        }
+
         [Fact]
         public void MarkupDirtyInput()
         {
-            //var HtmlSanitizerMoq = new Mock<IHtmlSanitizer>();
-
             string xssInput = "<script> alert(1) </script>";
-
-            //// Arrange
-            //HtmlSanitizerMoq.Setup(h => h.Sanitize(xssInput, "", null)).Returns("");
-            //var result = HtmlSanitizerMoq.Object.Sanitize(xssInput);
-
-            //Can add a service regularly 
-            Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
 
             // Assert that it removes the script and text
             var cut = RenderComponent<Markdown>(Parameter("InputText", xssInput));
@@ -40,9 +41,6 @@ namespace QuorumUnit
         public void MarkupCleanInput()
         {
             string input = "i am clean and innocent";
-
-            //Can add a service regularly 
-            Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
             
             var cut = RenderComponent<Markdown>(Parameter("InputText", input));
             cut.Find("p").MarkupMatches($"<p>{input}</p>");
@@ -51,11 +49,7 @@ namespace QuorumUnit
         [Fact]
         public void MarkupDirtyAndCleanInput()
         {
-            string input = @"i am clean and innocent but..
-                              <script>alert(1)</script>";
-
-            //Can add a service regularly 
-            Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
+            string input = @"i am clean and innocent but.. <script>alert(1)</script>";
 
             var cut = RenderComponent<Markdown>(Parameter("InputText", input));
             cut.Find("p").MarkupMatches($"<p>i am clean and innocent but..</p>");
@@ -66,9 +60,6 @@ namespace QuorumUnit
         {
             string input = @"![bug](https://64.media.tumblr.com/a173ece72bab1e6648c99ad4162eb046/tumblr_pw9hldCvv31us4qppo3_r1_500.gif)";
 
-            //Can add a service regularly 
-            Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
-
             var cut = RenderComponent<Markdown>(Parameter("InputText", input));
             cut.Find("p").MarkupMatches(@"<p><img src=""https://64.media.tumblr.com/a173ece72bab1e6648c99ad4162eb046/tumblr_pw9hldCvv31us4qppo3_r1_500.gif"" class=""img-fluid"" alt=""bug""></p>");
         }
@@ -78,11 +69,26 @@ namespace QuorumUnit
         {
             string input = @"![youtube.com](https://www.youtube.com/watch?v=mswPy5bt3TQ)";
 
-            //Can add a service regularly 
-            Services.AddSingleton<IHtmlSanitizer, HtmlSanitizer>();
-
             var cut = RenderComponent<Markdown>(Parameter("InputText", input));
             cut.Find("p").MarkupMatches("<p><iframe src=\"https://www.youtube.com/embed/mswPy5bt3TQ\" class=\"img-fluid youtube\" width=\"500\" height=\"281\" frameborder=\"0\" allowfullscreen=\"\"></iframe></p>");
+        }
+
+        [Fact]
+        public void MarkupBlockQuote()
+        {
+            string input = @"> blockquote";
+
+            var cut = RenderComponent<Markdown>(Parameter("InputText", input));
+            cut.MarkupMatches(@"<blockquote class=""blockquote""><p>blockquote</p></blockquote>");
+        }
+
+        [Fact]
+        public void FilterDirtyIframe()
+        {
+            string input = @"<iframe src=""javascript:alert(1)""></iframe>";
+
+            var cut = RenderComponent<Markdown>(Parameter("InputText", input));
+            cut.MarkupMatches("");
         }
     }
 }

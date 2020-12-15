@@ -14,13 +14,11 @@
     {
         if (!string.IsNullOrWhiteSpace(value))
         {
-            // Sanitize HTML before anything
-            var sanitizedHtml = _sanatize.Sanitize(value);
-
-
-            var pipeline = new MarkdownPipelineBuilder().UseBootstrap().UseAdvancedExtensions().Build();
-            // Convert markdown string to HTML
+            var sanitizedHtml = _sanatize.Sanitize(value).Replace("&gt;", ">");
+            var pipeline = new MarkdownPipelineBuilder().UseBootstrap()
+                .UseSoftlineBreakAsHardlineBreak().UseAdvancedExtensions().Build();
             var html = Markdig.Markdown.ToHtml(sanitizedHtml, pipeline);
+            // Convert markdown string to HTML
 
             // Return sanitized HTML as a MarkupString that Blazor can render
             return new MarkupString(html);

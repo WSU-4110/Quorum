@@ -73,8 +73,13 @@ namespace Quorum
 
             services.AddScoped<UserState>();
 
-            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>();
-          
+            services.AddScoped<IHtmlSanitizer, HtmlSanitizer>(x =>
+            {
+                var sanitizer = new HtmlSanitizer();
+                sanitizer.AllowedAttributes.Add("class");
+                return sanitizer;
+            });
+
             services.AddTransient<ISearchResults, SearchResults>();
             services.AddSingleton<IDbAccess, DbAccess>();
             services.AddTransient<IUserData, UserData>();
