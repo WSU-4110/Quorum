@@ -37,9 +37,9 @@ namespace Quorum.Data.Hubs
 
         public async Task Register(string username)
         {
-            Console.WriteLine($"Trying to add {username} with id: {Context.ConnectionId}");
+            Console.WriteLine($"Register... Trying to add {username} with id: {Context.ConnectionId}");
             _manager.AddConnection(username, Context.ConnectionId);
-            await Clients.All.SendAsync(MessageFunctions.USEREVENT);
+            await Clients.AllExcept(Context.ConnectionId).SendAsync(MessageFunctions.USEREVENT);
         }
 
         public async Task SendMessage(Message message)

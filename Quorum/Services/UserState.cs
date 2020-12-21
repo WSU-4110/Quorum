@@ -10,6 +10,8 @@ namespace Quorum.Services
 
         private TimeSpan? _userOffset;
 
+        public string Username { get; set; }
+
         public UserState(IJSRuntime jsRuntime)
         {
             _jsRuntime = jsRuntime;

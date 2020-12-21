@@ -20,7 +20,6 @@ namespace Quorum.Data.Hubs
         {
             try
             {
-
                 if (userMap.ContainsKey(username) == false)
                 {
                     Console.WriteLine($"\nmaking hashmap for {username}");
@@ -28,8 +27,9 @@ namespace Quorum.Data.Hubs
                 }
                 Console.WriteLine($"adding {username} to hashmap with id {circuit}");
                 userMap[username].Add(circuit);
-                usersByClientId.TryAdd(circuit, username);
+                usersByClientId[circuit] = username;
 
+                Console.WriteLine($"Usermap count: {userMap[username].Count}, usersByClientId count: {usersByClientId.Count}");
                 foreach (var connection in userMap[username])
                 {
                     Console.WriteLine($"{username} : {connection}");
@@ -37,7 +37,7 @@ namespace Quorum.Data.Hubs
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine(e.Message, e.StackTrace);
             }
         }
 
@@ -74,9 +74,15 @@ namespace Quorum.Data.Hubs
                 {
                     userMap[username].Remove(circuit);
                     if (userMap[username].Count == 0)
+                    {
+                        Console.WriteLine($"\nRemoving hashmap. User count: {userMap[username].Count}. {username} with id {circuit}");
+                        // TODO : Make sure this fucntions correctly 
                         userMap.TryRemove(userName, out var _);
+                    }
+                    Console.WriteLine($"Removing usersByClientId.");
                     usersByClientId.Remove(circuit, out var _);
                 }
+                //Console.WriteLine($"Usermap count: {userMap[username].Count}, usersByClientId count: {usersByClientId.Count}");
             }
             catch (Exception e)
             {

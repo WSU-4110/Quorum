@@ -1,4 +1,5 @@
-﻿
+﻿@inject UserState _ustate
+
 <CascadingAuthenticationState>
     <Router AppAssembly="@typeof(Program).Assembly">
         <Found Context="routeData">
@@ -11,3 +12,14 @@
         </NotFound>
     </Router>
 </CascadingAuthenticationState>
+
+@code {
+    [Parameter]
+    public string Username { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        _ustate.Username = Username;
+        return base.OnInitializedAsync();
+    }
+}

@@ -4,10 +4,13 @@
 @inject IConnectionManager _manager
 @inject NavigationManager _nav
 @inject AuthenticationStateProvider _auth
+@inject UserState _ustate
 @implements IAsyncDisposable
 @attribute [Authorize]
 
 <h3>Quessage</h3>
+
+@_ustate.Username
 
 @if (onlineUsers.Count > 1)
 {
@@ -73,6 +76,8 @@ else
         AuthenticationState authState = await _auth.GetAuthenticationStateAsync();
         username = authState.User.Identity.Name;
 
+        toUsername = username;
+
         messages.Clear();
 
         // Create the chat client
@@ -91,8 +96,9 @@ else
 
         hubConnection.On(MessageFunctions.USEREVENT, () =>
         {
-            onlineUsers = _manager.ListOnlineUsers.ToList();
             connections.Clear();
+            onlineUsers = _manager.ListOnlineUsers.ToList();
+            connections = _manager.GetConnections(toUsername).ToHashSet();
             SelectUser();
             StateHasChanged();
         });
